@@ -1,1 +1,14 @@
-﻿  Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.dll
+﻿  Application.cpp
+d:\gameengine\game-engine\game-engine\src\gameengine\log.h(21): warning C4251: 'ge::Log::s_CoreLogger': class 'std::shared_ptr<spdlog::logger>' needs to have dll-interface to be used by clients of class 'ge::Log'
+  d:\gameengine\game-engine\game-engine\vendor\spdlog\include\spdlog\details\registry.h(33): note: see declaration of 'std::shared_ptr<spdlog::logger>'
+d:\gameengine\game-engine\game-engine\src\gameengine\log.h(22): warning C4251: 'ge::Log::s_ClientLogger': class 'std::shared_ptr<spdlog::logger>' needs to have dll-interface to be used by clients of class 'ge::Log'
+  d:\gameengine\game-engine\game-engine\vendor\spdlog\include\spdlog\details\registry.h(33): note: see declaration of 'std::shared_ptr<spdlog::logger>'
+  Log.cpp
+d:\gameengine\game-engine\game-engine\src\gameengine\log.h(21): warning C4251: 'ge::Log::s_CoreLogger': class 'std::shared_ptr<spdlog::logger>' needs to have dll-interface to be used by clients of class 'ge::Log'
+  d:\gameengine\game-engine\game-engine\vendor\spdlog\include\spdlog\details\registry.h(33): note: see declaration of 'std::shared_ptr<spdlog::logger>'
+d:\gameengine\game-engine\game-engine\src\gameengine\log.h(22): warning C4251: 'ge::Log::s_ClientLogger': class 'std::shared_ptr<spdlog::logger>' needs to have dll-interface to be used by clients of class 'ge::Log'
+  d:\gameengine\game-engine\game-engine\vendor\spdlog\include\spdlog\details\registry.h(33): note: see declaration of 'std::shared_ptr<spdlog::logger>'
+  Generating Code...
+  LINK : ..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.dll not found or not built by the last incremental link; performing full link
+     Creating library ..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib and object ..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.exp
+  Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.dll
