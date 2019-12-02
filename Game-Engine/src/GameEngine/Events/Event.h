@@ -2,9 +2,6 @@
 
 #include "GameEngine/Core.h"
 
-#include <string>
-#include <functional>
-
 namespace ge {
 
 	// Events in the game engine are currently blocking, meaning when an event occurs it 

@@ -2,8 +2,6 @@
 
 #include "Event.h"
 
-#include <sstream>
-
 namespace ge {
 
 	class GE_API WindowResizeEvent : public Event
