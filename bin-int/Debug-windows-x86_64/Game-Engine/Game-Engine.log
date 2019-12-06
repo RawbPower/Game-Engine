@@ -1,0 +1,22 @@
+﻿  gepch.cpp
+d:\gameengine\game-engine\game-engine\src\gameengine\log.h(19): warning C4251: 'ge::Log::s_CoreLogger': class 'std::shared_ptr<spdlog::logger>' needs to have dll-interface to be used by clients of class 'ge::Log'
+  d:\gameengine\game-engine\game-engine\vendor\spdlog\include\spdlog\details\registry.h(33): note: see declaration of 'std::shared_ptr<spdlog::logger>'
+d:\gameengine\game-engine\game-engine\src\gameengine\log.h(20): warning C4251: 'ge::Log::s_ClientLogger': class 'std::shared_ptr<spdlog::logger>' needs to have dll-interface to be used by clients of class 'ge::Log'
+  d:\gameengine\game-engine\game-engine\vendor\spdlog\include\spdlog\details\registry.h(33): note: see declaration of 'std::shared_ptr<spdlog::logger>'
+  Application.cpp
+d:\gameengine\game-engine\game-engine\src\gameengine\application.h(17): warning C4251: 'ge::Application::m_Window': class 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::Application'
+          with
+          [
+              _Ty=ge::Window
+          ]
+  d:\gameengine\game-engine\game-engine\src\gameengine\application.h(17): note: see declaration of 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>'
+          with
+          [
+              _Ty=ge::Window
+          ]
+  Log.cpp
+  WindowsWindow.cpp
+  Generating Code...
+     Creating library ..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib and object ..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.exp
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.dll
