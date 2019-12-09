@@ -3,12 +3,12 @@ d:\gameengine\game-engine\game-engine\src\gameengine\log.h(19): warning C4251: '
   d:\gameengine\game-engine\game-engine\vendor\spdlog\include\spdlog\details\registry.h(33): note: see declaration of 'std::shared_ptr<spdlog::logger>'
 d:\gameengine\game-engine\game-engine\src\gameengine\log.h(20): warning C4251: 'ge::Log::s_ClientLogger': class 'std::shared_ptr<spdlog::logger>' needs to have dll-interface to be used by clients of class 'ge::Log'
   d:\gameengine\game-engine\game-engine\vendor\spdlog\include\spdlog\details\registry.h(33): note: see declaration of 'std::shared_ptr<spdlog::logger>'
-d:\gameengine\game-engine\game-engine\src\gameengine\application.h(17): warning C4251: 'ge::Application::m_Window': class 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::Application'
+d:\gameengine\game-engine\game-engine\src\gameengine\application.h(23): warning C4251: 'ge::Application::m_Window': class 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::Application'
           with
           [
               _Ty=ge::Window
           ]
-  d:\gameengine\game-engine\game-engine\src\gameengine\application.h(17): note: see declaration of 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>'
+  d:\gameengine\game-engine\game-engine\src\gameengine\application.h(23): note: see declaration of 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>'
           with
           [
               _Ty=ge::Window

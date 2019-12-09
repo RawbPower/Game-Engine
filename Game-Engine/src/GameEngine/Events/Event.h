@@ -70,7 +70,8 @@ namespace ge {
 		template<typename T>
 		bool Dispatch(EventFn<T> func)
 		{
-			if (m_Event.GetEventType() = T::GetStaticType())
+			// Check is the event type of the incoming event is equal to the static type of the template used between <>
+			if (m_Event.GetEventType() == T::GetStaticType())
 			{
 				m_Event.m_Handled = func(*(T*)&m_Event);
 				return true;
