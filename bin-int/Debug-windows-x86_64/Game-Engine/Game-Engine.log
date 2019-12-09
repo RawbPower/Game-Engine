@@ -1,16 +1,63 @@
-﻿  Application.cpp
-d:\gameengine\game-engine\game-engine\src\gameengine\application.h(23): warning C4251: 'ge::Application::m_Window': class 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::Application'
+﻿cl : Command line warning D9025: overriding '/MTd' with '/MDd'
+  Application.cpp
+d:\gameengine\game-engine\game-engine\src\gameengine\layer.h(21): warning C4251: 'ge::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'ge::Layer'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\xstring(4373): note: see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(23): warning C4251: 'ge::LayerStack::m_Layers': class 'std::vector<ge::Layer *,std::allocator<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::LayerStack'
+          with
+          [
+              _Ty=ge::Layer *
+          ]
+  d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(20): note: see declaration of 'std::vector<ge::Layer *,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=ge::Layer *
+          ]
+d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(25): warning C4251: 'ge::LayerStack::m_LayerInsert': class 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>' needs to have dll-interface to be used by clients of class 'ge::LayerStack'
+          with
+          [
+              _Ty=ge::Layer *
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\vector(416): note: see declaration of 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>'
+          with
+          [
+              _Ty=ge::Layer *
+          ]
+d:\gameengine\game-engine\game-engine\src\gameengine\application.h(27): warning C4251: 'ge::Application::m_Window': class 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::Application'
           with
           [
               _Ty=ge::Window
           ]
-  d:\gameengine\game-engine\game-engine\src\gameengine\application.h(23): note: see declaration of 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>'
+  d:\gameengine\game-engine\game-engine\src\gameengine\application.h(27): note: see declaration of 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>'
           with
           [
               _Ty=ge::Window
+          ]
+  Layer.cpp
+d:\gameengine\game-engine\game-engine\src\gameengine\layer.h(21): warning C4251: 'ge::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'ge::Layer'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\xstring(4373): note: see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+  LayerStack.cpp
+d:\gameengine\game-engine\game-engine\src\gameengine\layer.h(21): warning C4251: 'ge::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'ge::Layer'
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\xstring(4373): note: see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
+d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(23): warning C4251: 'ge::LayerStack::m_Layers': class 'std::vector<ge::Layer *,std::allocator<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::LayerStack'
+          with
+          [
+              _Ty=ge::Layer *
+          ]
+  d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(20): note: see declaration of 'std::vector<ge::Layer *,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=ge::Layer *
+          ]
+d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(25): warning C4251: 'ge::LayerStack::m_LayerInsert': class 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>' needs to have dll-interface to be used by clients of class 'ge::LayerStack'
+          with
+          [
+              _Ty=ge::Layer *
+          ]
+  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\vector(416): note: see declaration of 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>'
+          with
+          [
+              _Ty=ge::Layer *
           ]
   WindowsWindow.cpp
   Generating Code...
-     Creating library ..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib and object ..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.exp
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.dll

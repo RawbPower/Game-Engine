@@ -37,8 +37,10 @@ namespace ge {
 	// Event class (base class for events)
 	class GE_API Event
 	{
-		friend class EventDispatcher;
 	public:
+		// Says if event is handled so it doesn't propogate further in the layers
+		bool Handled = false;
+
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
@@ -48,9 +50,6 @@ namespace ge {
 		inline bool IsInCategory(EventCategory category) {
 			return GetCategoryFlags() & category;
 		}
-	protected:
-		// Says if event is handled so it doesn't propogate further in the layers
-		bool m_Handled = false;
 	};
 
 	// Way to dispatch events based on type easily. When event is called
@@ -73,7 +72,7 @@ namespace ge {
 			// Check is the event type of the incoming event is equal to the static type of the template used between <>
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.m_Handled = func(*(T*)&m_Event);
+				m_Event.Handled = func(*(T*)&m_Event);
 				return true;
 			}
 			return false;
