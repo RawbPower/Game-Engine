@@ -26,12 +26,12 @@ d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(25): warning C
           [
               _Ty=ge::Layer *
           ]
-d:\gameengine\game-engine\game-engine\src\gameengine\application.h(27): warning C4251: 'ge::Application::m_Window': class 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::Application'
+d:\gameengine\game-engine\game-engine\src\gameengine\application.h(31): warning C4251: 'ge::Application::m_Window': class 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::Application'
           with
           [
               _Ty=ge::Window
           ]
-  d:\gameengine\game-engine\game-engine\src\gameengine\application.h(27): note: see declaration of 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>'
+  d:\gameengine\game-engine\game-engine\src\gameengine\application.h(31): note: see declaration of 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>'
           with
           [
               _Ty=ge::Window

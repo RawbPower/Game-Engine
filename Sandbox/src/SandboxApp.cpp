@@ -27,6 +27,7 @@ class Sandbox : public ge::Application
 public:
 	Sandbox() {
 		PushLayer(new ExampleLayer());
+		PushOverlay(new ge::ImGuiLayer());
 	}
 
 	~Sandbox() {
