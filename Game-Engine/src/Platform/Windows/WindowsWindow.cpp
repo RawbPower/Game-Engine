@@ -55,7 +55,7 @@ namespace ge {
 		// A pointer to our Windows data struct
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
-
+		
 		// Set GLFW callbacks - using a lambda function
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
 		{
@@ -103,6 +103,14 @@ namespace ge {
 			}
 		});
 
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
+		{
+			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+			KeyTypedEvent event(keycode);
+			data.EventCallback(event);
+		});
+
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -128,7 +136,7 @@ namespace ge {
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 
-			MouseScrollEvent event((float)xOffset, (float)yOffset);
+			MouseScrolledEvent event((float)xOffset, (float)yOffset);
 			data.EventCallback(event);
 		});
 
