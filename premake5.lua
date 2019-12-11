@@ -10,20 +10,26 @@ workspace "Game-Engine"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+startproject "Sandbox"
+
 -- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["GLFW"] = "Game-Engine/vendor/GLFW/include"
 IncludeDir["Glad"] = "Game-Engine/vendor/Glad/include"
 IncludeDir["ImGui"] = "Game-Engine/vendor/imgui"
 
-include "Game-Engine/vendor/GLFW"
-include "Game-Engine/vendor/Glad"
-include "Game-Engine/vendor/imgui"
+group "Dependencies"
+	include "Game-Engine/vendor/GLFW"
+	include "Game-Engine/vendor/Glad"
+	include "Game-Engine/vendor/imgui"
+
+group ""
 
 project "Game-Engine"
 	location "Game-Engine"
 	kind "SharedLib"
 	language "C++"
+	staticruntime "Off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -56,7 +62,6 @@ project "Game-Engine"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines
@@ -68,29 +73,29 @@ project "Game-Engine"
 
 		postbuildcommands
 		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")
 		}
 
 	filter "configurations:Debug"
 		defines "GE_DEBUG"
-		buildoptions "/MDd"
+		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "GE_Release"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "GE_DIST"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
-
 	language "C++"
+	staticruntime "Off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -114,7 +119,6 @@ project "Sandbox"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines
@@ -124,17 +128,17 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "GE_DEBUG"
-		buildoptions "/MDd"
+		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "GE_Release"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Dist"
 		defines "GE_DIST"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 
 
