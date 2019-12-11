@@ -1,9 +1,4 @@
-﻿  gepch.cpp
-d:\gameengine\game-engine\game-engine\src\gameengine\log.h(19): warning C4251: 'ge::Log::s_CoreLogger': class 'std::shared_ptr<spdlog::logger>' needs to have dll-interface to be used by clients of class 'ge::Log'
-  d:\gameengine\game-engine\game-engine\vendor\spdlog\include\spdlog\details\registry.h(33): note: see declaration of 'std::shared_ptr<spdlog::logger>'
-d:\gameengine\game-engine\game-engine\src\gameengine\log.h(20): warning C4251: 'ge::Log::s_ClientLogger': class 'std::shared_ptr<spdlog::logger>' needs to have dll-interface to be used by clients of class 'ge::Log'
-  d:\gameengine\game-engine\game-engine\vendor\spdlog\include\spdlog\details\registry.h(33): note: see declaration of 'std::shared_ptr<spdlog::logger>'
-  Application.cpp
+﻿  Application.cpp
 d:\gameengine\game-engine\game-engine\src\gameengine\layer.h(21): warning C4251: 'ge::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'ge::Layer'
   c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\xstring(4373): note: see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
 d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(23): warning C4251: 'ge::LayerStack::m_Layers': class 'std::vector<ge::Layer *,std::allocator<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::LayerStack'
@@ -36,78 +31,6 @@ d:\gameengine\game-engine\game-engine\src\gameengine\application.h(31): warning 
           [
               _Ty=ge::Window
           ]
-  ImGuiLayer.cpp
-d:\gameengine\game-engine\game-engine\src\gameengine\layer.h(21): warning C4251: 'ge::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'ge::Layer'
-  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\xstring(4373): note: see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
-d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(23): warning C4251: 'ge::LayerStack::m_Layers': class 'std::vector<ge::Layer *,std::allocator<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::LayerStack'
-          with
-          [
-              _Ty=ge::Layer *
-          ]
-  d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(20): note: see declaration of 'std::vector<ge::Layer *,std::allocator<_Ty>>'
-          with
-          [
-              _Ty=ge::Layer *
-          ]
-d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(25): warning C4251: 'ge::LayerStack::m_LayerInsert': class 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>' needs to have dll-interface to be used by clients of class 'ge::LayerStack'
-          with
-          [
-              _Ty=ge::Layer *
-          ]
-  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\vector(416): note: see declaration of 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>'
-          with
-          [
-              _Ty=ge::Layer *
-          ]
-d:\gameengine\game-engine\game-engine\src\gameengine\application.h(31): warning C4251: 'ge::Application::m_Window': class 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::Application'
-          with
-          [
-              _Ty=ge::Window
-          ]
-  d:\gameengine\game-engine\game-engine\src\gameengine\application.h(31): note: see declaration of 'std::unique_ptr<ge::Window,std::default_delete<_Ty>>'
-          with
-          [
-              _Ty=ge::Window
-          ]
-d:\gameengine\game-engine\game-engine\src\gameengine\imgui\imguilayer.cpp(72): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-d:\gameengine\game-engine\game-engine\src\gameengine\imgui\imguilayer.cpp(168): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-  Layer.cpp
-d:\gameengine\game-engine\game-engine\src\gameengine\layer.h(21): warning C4251: 'ge::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'ge::Layer'
-  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\xstring(4373): note: see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
-  LayerStack.cpp
-d:\gameengine\game-engine\game-engine\src\gameengine\layer.h(21): warning C4251: 'ge::Layer::m_DebugName': class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'ge::Layer'
-  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\xstring(4373): note: see declaration of 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>'
-d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(23): warning C4251: 'ge::LayerStack::m_Layers': class 'std::vector<ge::Layer *,std::allocator<_Ty>>' needs to have dll-interface to be used by clients of class 'ge::LayerStack'
-          with
-          [
-              _Ty=ge::Layer *
-          ]
-  d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(20): note: see declaration of 'std::vector<ge::Layer *,std::allocator<_Ty>>'
-          with
-          [
-              _Ty=ge::Layer *
-          ]
-d:\gameengine\game-engine\game-engine\src\gameengine\layerstack.h(25): warning C4251: 'ge::LayerStack::m_LayerInsert': class 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>' needs to have dll-interface to be used by clients of class 'ge::LayerStack'
-          with
-          [
-              _Ty=ge::Layer *
-          ]
-  c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\vector(416): note: see declaration of 'std::_Vector_iterator<std::_Vector_val<std::_Simple_types<_Ty>>>'
-          with
-          [
-              _Ty=ge::Layer *
-          ]
-  Log.cpp
-  ImGuiOpenGLRenderer.cpp
-d:\gameengine\game-engine\game-engine\src\platform\opengl\imguiopenglrenderer.cpp(66): warning C4603: '_CRT_SECURE_NO_WARNINGS': macro is not defined or definition is different after precompiled header use
-  d:\gameengine\game-engine\game-engine\src\platform\opengl\imguiopenglrenderer.cpp(66): note: Add macro to precompiled header instead of defining here
-  d:\gameengine\game-engine\game-engine\src\platform\opengl\imguiopenglrenderer.cpp(69): note: use of precompiled header
-d:\gameengine\game-engine\game-engine\src\platform\opengl\imguiopenglrenderer.cpp(175): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\string.h(132): note: see declaration of 'strcpy'
-d:\gameengine\game-engine\game-engine\src\platform\opengl\imguiopenglrenderer.cpp(176): warning C4996: 'strcat': This function or variable may be unsafe. Consider using strcat_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\string.h(89): note: see declaration of 'strcat'
-d:\gameengine\game-engine\game-engine\src\platform\opengl\imguiopenglrenderer.cpp(492): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(2261): note: see declaration of 'sscanf'
-  WindowsWindow.cpp
-  Generating Code...
+     Creating library ..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib and object ..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.exp
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.dll

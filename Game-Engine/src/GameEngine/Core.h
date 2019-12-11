@@ -2,6 +2,7 @@
 
 #ifdef GE_PLATFORM_WINDOWS
 	#ifdef GE_BUILD_DLL
+		// Exports in dll file
 		#define GE_API __declspec(dllexport)
 	#else
 		#define GE_API __declspec(dllimport)
