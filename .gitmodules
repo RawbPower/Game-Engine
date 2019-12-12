@@ -7,3 +7,6 @@
 [submodule "Game-Engine/vendor/imgui"]
 	path = Game-Engine/vendor/imgui
 	url = https://github.com/RawbPower/imgui
+[submodule "Game-Engine/vendor/glm"]
+	path = Game-Engine/vendor/glm
+	url = https://github.com/g-truc/glm
