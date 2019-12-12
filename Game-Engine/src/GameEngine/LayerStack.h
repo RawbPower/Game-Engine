@@ -22,6 +22,6 @@ namespace ge {
 	private:
 		std::vector<Layer*> m_Layers;
 		// Keeps track of layer count
-		std::vector<Layer*>::iterator m_LayerInsert;
+		unsigned int m_LayerInsertIndex = 0;
 	};
 }
