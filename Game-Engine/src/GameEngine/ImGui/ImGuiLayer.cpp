@@ -95,6 +95,10 @@ namespace ge {
 	{
 		static bool show = true;
 		ImGui::ShowDemoWindow(&show);
+
+		// These were put here so they are used for sandbox using the dll
+		//ImGui::Begin("");
+		//ImGui::End();
 	}
 
 }
