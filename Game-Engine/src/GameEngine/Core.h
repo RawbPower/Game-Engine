@@ -1,12 +1,17 @@
 #pragma once
 
 #ifdef GE_PLATFORM_WINDOWS
+// Code for using dll instead of static library
+#if GE_DYNAMIC_LINK
 	#ifdef GE_BUILD_DLL
 		// Exports in dll file
 		#define GE_API __declspec(dllexport)
 	#else
 		#define GE_API __declspec(dllimport)
 	#endif
+#else
+	#define GE_API
+#endif
 
 #else 
 	#error Game Engine only support Windows (for now)
