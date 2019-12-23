@@ -1,11 +1,2 @@
-﻿  gepch.cpp
-  Application.cpp
-  ImGuiBuild.cpp
-  ImGuiLayer.cpp
-  Layer.cpp
-  LayerStack.cpp
-  Log.cpp
-  WindowsInput.cpp
-  WindowsWindow.cpp
-  Generating Code...
+﻿  OpenGLContext.cpp
   Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib
