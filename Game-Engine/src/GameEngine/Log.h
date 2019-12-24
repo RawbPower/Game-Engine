@@ -27,14 +27,14 @@ namespace ge {
 #define GE_CORE_INFO(...)     ::ge::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define GE_CORE_WARN(...)     ::ge::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define GE_CORE_ERROR(...)    ::ge::Log::GetCoreLogger()->error(__VA_ARGS__)
-#define GE_CORE_FATAL(...)    ::ge::Log::GetCoreLogger()->fatal(__VA_ARGS__)
+#define GE_CORE_FATAL(...)    ::ge::Log::GetCoreLogger()->critical(__VA_ARGS__)
 
 // Client log macros
 #define GE_TRACE(...)    ::ge::Log::GetClientLogger()->trace(__VA_ARGS__)
 #define GE_INFO(...)     ::ge::Log::GetClientLogger()->info(__VA_ARGS__)
 #define GE_WARN(...)     ::ge::Log::GetClientLogger()->warn(__VA_ARGS__)
 #define GE_ERROR(...)    ::ge::Log::GetClientLogger()->error(__VA_ARGS__)
-#define GE_FATAL(...)    ::ge::Log::GetClientLogger()->fatal(__VA_ARGS__)
+#define GE_FATAL(...)    ::ge::Log::GetClientLogger()->critical(__VA_ARGS__)
 
 /* Macros are used here instead of functions so that they can be
 	stripped from the distribution built with
