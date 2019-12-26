@@ -1,16 +1,3 @@
-﻿  gepch.cpp
-  Application.cpp
-  ImGuiBuild.cpp
-  ImGuiLayer.cpp
-  Layer.cpp
-  LayerStack.cpp
-  Log.cpp
-  Buffer.cpp
-  Renderer.cpp
-  Shader.cpp
-  OpenGLBuffer.cpp
-  OpenGLContext.cpp
-  WindowsInput.cpp
-  WindowsWindow.cpp
-  Generating Code...
+﻿  Application.cpp
+d:\gameengine\game-engine\game-engine\src\gameengine\application.cpp(85): warning C4312: 'type cast': conversion from 'const uint32_t' to 'const void *' of greater size
   Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib
