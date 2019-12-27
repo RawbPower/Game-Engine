@@ -3,9 +3,11 @@
 
 namespace ge {
 
-	void Renderer::BeginScene()
+	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
+
+	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
-		// Does nothing for now
+		m_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 
 	void Renderer::EndScene()
@@ -15,8 +17,12 @@ namespace ge {
 
 	// The vertex array will be submitted into a RenderCommand queue to be evaluated later and get rendered
 	// For now it is much simpler
-	void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray)
+	// Shader needs to be a parameter in submit because it can change for different objects in the scene
+	void Renderer::Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray)
 	{
+		shader->Bind();
+		shader->UploadUniformMat4("u_ViewProjection", m_SceneData->ViewProjectionMatrix);
+
 		vertexArray->Bind();
 		RenderCommand::DrawIndexed(vertexArray);
 	}
