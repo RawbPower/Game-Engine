@@ -1,3 +1,5 @@
-﻿  Application.cpp
-d:\gameengine\game-engine\game-engine\src\gameengine\application.cpp(85): warning C4312: 'type cast': conversion from 'const uint32_t' to 'const void *' of greater size
+﻿  VertexArray.cpp
+  OpenGLVertexArray.cpp
+d:\gameengine\game-engine\game-engine\src\platform\opengl\openglvertexarray.cpp(66): warning C4312: 'type cast': conversion from 'const uint32_t' to 'const void *' of greater size
+  Generating Code...
   Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib
