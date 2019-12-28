@@ -28,7 +28,7 @@ public:
 			0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
 		};
 
-		std::shared_ptr<ge::VertexBuffer> vertexBuffer;
+		ge::Ref<ge::VertexBuffer> vertexBuffer;
 		vertexBuffer.reset(ge::VertexBuffer::Create(vertices, sizeof(vertices)));
 
 		ge::BufferLayout layout = {
@@ -45,7 +45,7 @@ public:
 		/* Index Buffer (gives index to vertices, describes what order to draw vertices) */
 
 		uint32_t indices[3] = { 0, 1, 2 };		// 3 points in the triangle
-		std::shared_ptr<ge::IndexBuffer> indexBuffer;
+		ge::Ref<ge::IndexBuffer> indexBuffer;
 		indexBuffer.reset(ge::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
@@ -60,7 +60,7 @@ public:
 			-0.5f, 0.5f, 0.0f
 		};
 
-		std::shared_ptr<ge::VertexBuffer> squareVB;
+		ge::Ref<ge::VertexBuffer> squareVB;
 		squareVB.reset(ge::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 
 		squareVB->SetLayout({
@@ -70,7 +70,7 @@ public:
 		m_SquareVA->AddVertexBuffer(squareVB);
 
 		uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-		std::shared_ptr<ge::IndexBuffer> squareIB;
+		ge::Ref<ge::IndexBuffer> squareIB;
 		squareIB.reset(ge::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		m_SquareVA->SetIndexBuffer(squareIB);
 
@@ -231,11 +231,11 @@ public:
 	}
 
 private:
-	std::shared_ptr<ge::Shader> m_Shader;
-	std::shared_ptr<ge::VertexArray> m_VertexArray;
+	ge::Ref<ge::Shader> m_Shader;
+	ge::Ref<ge::VertexArray> m_VertexArray;
 
-	std::shared_ptr<ge::Shader> m_FlatColorShader;
-	std::shared_ptr<ge::VertexArray> m_SquareVA;
+	ge::Ref<ge::Shader> m_FlatColorShader;
+	ge::Ref<ge::VertexArray> m_SquareVA;
 
 	ge::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
