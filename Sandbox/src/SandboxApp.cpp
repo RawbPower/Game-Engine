@@ -5,6 +5,9 @@
 #include "imgui/imgui.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include "Platform/OpenGL/OpenGLShader.h"
 
 class ExampleLayer : public ge::Layer {
 public:
@@ -95,7 +98,7 @@ public:
 		
 		)";
 
-		std::string fragmentSrc = R"(
+		std::string pixelSrc = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 color;
@@ -110,9 +113,9 @@ public:
 		
 		)";
 
-		m_Shader.reset(new ge::Shader(vertexSrc, fragmentSrc));
+		m_Shader.reset(ge::Shader::Create(vertexSrc, pixelSrc));
 
-		std::string blueShaderVertexSrc = R"(
+		std::string flatColorShaderVertexSrc = R"(
 			#version 330 core
 
 			layout(location = 0) in vec3 a_Position;
@@ -129,22 +132,22 @@ public:
 		
 		)";
 
-		std::string flatColorShaderFragmentSrc = R"(
+		std::string flatColorShaderPixelSrc = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 color;
 
 			in vec3 v_Position;
 
-			uniform vec4 u_Color;
+			uniform vec3 u_Color;
 
 			void main() {
-				color = u_Color;
+				color = vec4(u_Color, 1.0);
 			}
 		
 		)";
 
-		m_FlatColorShader.reset(new ge::Shader(blueShaderVertexSrc, flatColorShaderFragmentSrc));
+		m_FlatColorShader.reset(ge::Shader::Create(flatColorShaderVertexSrc, flatColorShaderPixelSrc));
 	}
 
 	void OnUpdate(ge::DeltaTime dt) override
@@ -192,18 +195,14 @@ public:
 
 		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
-		glm::vec4 redColor(0.8f, 0.2f, 0.3f, 1.0f);
-		glm::vec4 blueColor(0.2f, 0.3f, 0.8f, 1.0f);
+		std::dynamic_pointer_cast<ge::OpenGLShader>(m_FlatColorShader)->Bind();
+		std::dynamic_pointer_cast<ge::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
 
 		// Render grid of blue squares
 		for (int x = -10; x < 11; x++) {
 			for (int y = -10; y < 11; y++) {
 				glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_SquarePosition + pos) * scale;
-				if (x % 2 == 0)
-					m_FlatColorShader->UploadUniformFloat4("u_Color", redColor);
-				else
-					m_FlatColorShader->UploadUniformFloat4("u_Color", blueColor);
 				ge::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
 			}
 		}
@@ -216,7 +215,9 @@ public:
 
 	virtual void OnImGuiRender() override
 	{
-
+		ImGui::Begin("Settings");
+		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+		ImGui::End();
 	}
 
 	void OnEvent(ge::Event& event) override
@@ -244,6 +245,7 @@ private:
 
 	glm::vec3  m_SquarePosition;
 	float m_SquareMoveSpeed = 1.0f;
+	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
 };
 
 
