@@ -129,20 +129,22 @@ public:
 		
 		)";
 
-		std::string blueShaderFragmentSrc = R"(
+		std::string flatColorShaderFragmentSrc = R"(
 			#version 330 core
 
 			layout(location = 0) out vec4 color;
 
 			in vec3 v_Position;
 
+			uniform vec4 u_Color;
+
 			void main() {
-				color = vec4(0.2, 0.3, 0.8, 1.0);
+				color = u_Color;
 			}
 		
 		)";
 
-		m_BlueShader.reset(new ge::Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
+		m_FlatColorShader.reset(new ge::Shader(blueShaderVertexSrc, flatColorShaderFragmentSrc));
 	}
 
 	void OnUpdate(ge::DeltaTime dt) override
@@ -190,12 +192,19 @@ public:
 
 		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
+		glm::vec4 redColor(0.8f, 0.2f, 0.3f, 1.0f);
+		glm::vec4 blueColor(0.2f, 0.3f, 0.8f, 1.0f);
+
 		// Render grid of blue squares
 		for (int x = -10; x < 11; x++) {
 			for (int y = -10; y < 11; y++) {
 				glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_SquarePosition + pos) * scale;
-				ge::Renderer::Submit(m_BlueShader, m_SquareVA, transform);
+				if (x % 2 == 0)
+					m_FlatColorShader->UploadUniformFloat4("u_Color", redColor);
+				else
+					m_FlatColorShader->UploadUniformFloat4("u_Color", blueColor);
+				ge::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
 			}
 		}
 
@@ -224,7 +233,7 @@ private:
 	std::shared_ptr<ge::Shader> m_Shader;
 	std::shared_ptr<ge::VertexArray> m_VertexArray;
 
-	std::shared_ptr<ge::Shader> m_BlueShader;
+	std::shared_ptr<ge::Shader> m_FlatColorShader;
 	std::shared_ptr<ge::VertexArray> m_SquareVA;
 
 	ge::OrthographicCamera m_Camera;
