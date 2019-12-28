@@ -143,6 +143,7 @@
     <ClInclude Include="src\GameEngine.h" />
     <ClInclude Include="src\GameEngine\Application.h" />
     <ClInclude Include="src\GameEngine\Core.h" />
+    <ClInclude Include="src\GameEngine\Core\DeltaTime.h" />
     <ClInclude Include="src\GameEngine\EntryPoint.h" />
     <ClInclude Include="src\GameEngine\Events\ApplicationEvent.h" />
     <ClInclude Include="src\GameEngine\Events\Event.h" />

@@ -1,5 +1,7 @@
 ﻿  Application.cpp
   ImGuiLayer.cpp
+  Layer.cpp
+  LayerStack.cpp
   WindowsInput.cpp
   Generating Code...
   Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib

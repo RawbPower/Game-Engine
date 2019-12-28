@@ -7,6 +7,8 @@
 
 #include "Input.h"
 
+#include <GLFW/glfw3.h>
+
 namespace ge {
 
 #define BIND_EVENT_FN(x) std::bind(&Application::x, this, std::placeholders::_1)
@@ -61,11 +63,16 @@ namespace ge {
 		}
 	}
 
-	void Application::Run() {
-		while (m_Running) {
+	void Application::Run() 
+	{
+		while (m_Running) 
+		{
+			float time = (float)glfwGetTime();			// Will be in Platform GetTime() in the future
+			DeltaTime deltaTime = time - m_LastFrameTime;
+			m_LastFrameTime = time;
 
 			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(deltaTime);
 
 			// Render ImGui
 			m_ImGuiLayer->Begin();

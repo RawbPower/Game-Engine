@@ -2,6 +2,7 @@
 
 #include "GameEngine/Core.h"
 #include "GameEngine/Events/Event.h"
+#include "GameEngine/Core/DeltaTime.h"
 
 namespace ge {
 
@@ -13,7 +14,7 @@ namespace ge {
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(DeltaTime dt) {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}
 

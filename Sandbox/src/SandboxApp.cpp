@@ -141,25 +141,27 @@ public:
 		m_BlueShader.reset(new ge::Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
 	}
 
-	void OnUpdate() override
+	void OnUpdate(ge::DeltaTime dt) override
 	{
 
+		GE_TRACE("Delta time: {0}s ({1}ms)", dt.GetSeconds(), dt.GetMilliseconds());
+
 		if (ge::Input::IsKeyPressed(GE_KEY_LEFT))
-			m_CameraPosition.x -= m_CameraMoveSpeed;
+			m_CameraPosition.x -= m_CameraMoveSpeed * dt;
 		else if (ge::Input::IsKeyPressed(GE_KEY_RIGHT))
-			m_CameraPosition.x += m_CameraMoveSpeed;
+			m_CameraPosition.x += m_CameraMoveSpeed * dt;
 
 		if (ge::Input::IsKeyPressed(GE_KEY_DOWN))
-			m_CameraPosition.y -= m_CameraMoveSpeed;
+			m_CameraPosition.y -= m_CameraMoveSpeed * dt;
 		else if (ge::Input::IsKeyPressed(GE_KEY_UP))
-			m_CameraPosition.y += m_CameraMoveSpeed;
+			m_CameraPosition.y += m_CameraMoveSpeed * dt;
 
 		// For some reason the positive rotation is clockwise
 		if (ge::Input::IsKeyPressed(GE_KEY_A))
-			m_CameraRotation += m_CameraRotSpeed;
+			m_CameraRotation += m_CameraRotSpeed * dt;
 
 		if (ge::Input::IsKeyPressed(GE_KEY_D))
-			m_CameraRotation -= m_CameraRotSpeed;
+			m_CameraRotation -= m_CameraRotSpeed * dt;
 
 		ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		ge::RenderCommand::Clear();
@@ -200,8 +202,8 @@ private:
 	ge::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
 	float m_CameraRotation;
-	float m_CameraMoveSpeed = 0.1f;
-	float m_CameraRotSpeed = 2.0f;
+	float m_CameraMoveSpeed = 5.0f;
+	float m_CameraRotSpeed = 180.0f;
 };
 
 

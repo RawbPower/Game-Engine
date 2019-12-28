@@ -6,6 +6,8 @@
 #include "GameEngine/Layer.h"
 #include "GameEngine/Log.h"
 
+#include "GameEngine/Core/DeltaTime.h"
+
 #include "GameEngine/Input.h"
 #include "GameEngine/MouseButtonCodes.h"
 #include "GameEngine/KeyCodes.h"
