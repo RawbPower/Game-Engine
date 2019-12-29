@@ -8,6 +8,8 @@ namespace ge {
 
 	class Renderer {
 	public:
+		static void Init();
+
 		static void BeginScene(OrthographicCamera& camera);		// We take in a reference to the camera because OrthographicCamera is a large class
 		static void EndScene();
 
