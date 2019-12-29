@@ -53,18 +53,19 @@ public:
 
 		m_SquareVA.reset(ge::VertexArray::Create());
 
-		float squareVertices[3 * 4] = {
-			-0.5f, -0.5f, 0.0f,			// vertex coordinate on each row
-			0.5f, -0.5f, 0.0f,
-			0.5f, 0.5f, 0.0f,
-			-0.5f, 0.5f, 0.0f
+		float squareVertices[5 * 4] = {
+			-0.5f, -0.5f, 0.0f,	0.0f, 0.0f,		// 3 vertex coordinate on each row and 2 texture coords
+			0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+			0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+			-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
 		};
 
 		ge::Ref<ge::VertexBuffer> squareVB;
 		squareVB.reset(ge::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 
 		squareVB->SetLayout({
-			{ ge::ShaderDataType::Float3, "a_Position" }
+			{ ge::ShaderDataType::Float3, "a_Position" },
+			{ ge::ShaderDataType::Float2, "a_TexCoord" }
 			});
 
 		m_SquareVA->AddVertexBuffer(squareVB);
@@ -115,6 +116,7 @@ public:
 
 		m_Shader.reset(ge::Shader::Create(vertexSrc, pixelSrc));
 
+
 		std::string flatColorShaderVertexSrc = R"(
 			#version 330 core
 
@@ -148,12 +150,53 @@ public:
 		)";
 
 		m_FlatColorShader.reset(ge::Shader::Create(flatColorShaderVertexSrc, flatColorShaderPixelSrc));
+
+
+		std::string textureShaderVertexSrc = R"(
+			#version 330 core
+
+			layout(location = 0) in vec3 a_Position;
+			layout(location = 1) in vec2 a_TexCoord;
+
+			uniform mat4 u_ViewProjection;
+			uniform mat4 u_Transform;
+
+			out vec2 v_TexCoord;
+
+			void main() {
+				v_TexCoord = a_TexCoord;
+				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+			}
+		
+		)";
+
+		std::string textureShaderPixelSrc = R"(
+			#version 330 core
+
+			layout(location = 0) out vec4 color;
+
+			in vec2 v_TexCoord;
+
+			uniform sampler2D u_Texture;
+
+			void main() {
+				color = texture(u_Texture, v_TexCoord);
+			}
+		
+		)";
+
+		m_TextureShader.reset(ge::Shader::Create(textureShaderVertexSrc, textureShaderPixelSrc));
+
+		m_Texture = ge::Texture2D::Create("assets/textures/Checkerboard.png");
+
+		std::dynamic_pointer_cast<ge::OpenGLShader>(m_TextureShader)->Bind();
+		std::dynamic_pointer_cast<ge::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);		// 0 is the texure slot of m_Texture
 	}
 
 	void OnUpdate(ge::DeltaTime dt) override
 	{
 
-		GE_TRACE("Delta time: {0}s ({1}ms)", dt.GetSeconds(), dt.GetMilliseconds());
+		//GE_TRACE("Delta time: {0}s ({1}ms)", dt.GetSeconds(), dt.GetMilliseconds());
 
 		// Camera Movement
 		if (ge::Input::IsKeyPressed(GE_KEY_LEFT))
@@ -175,7 +218,7 @@ public:
 			m_CameraRotation -= m_CameraRotSpeed * dt;
 
 		// Game Object transform movement
-		if (ge::Input::IsKeyPressed(GE_KEY_J))
+		/*if (ge::Input::IsKeyPressed(GE_KEY_J))
 			m_SquarePosition.x -= m_SquareMoveSpeed * dt;
 		else if (ge::Input::IsKeyPressed(GE_KEY_L))
 			m_SquarePosition.x += m_SquareMoveSpeed * dt;
@@ -183,7 +226,7 @@ public:
 		if (ge::Input::IsKeyPressed(GE_KEY_K))
 			m_SquarePosition.y -= m_SquareMoveSpeed * dt;
 		else if (ge::Input::IsKeyPressed(GE_KEY_I))
-			m_SquarePosition.y += m_SquareMoveSpeed * dt;
+			m_SquarePosition.y += m_SquareMoveSpeed * dt;*/
 
 		ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		ge::RenderCommand::Clear();
@@ -195,6 +238,7 @@ public:
 
 		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
+		// Set up uniform
 		std::dynamic_pointer_cast<ge::OpenGLShader>(m_FlatColorShader)->Bind();
 		std::dynamic_pointer_cast<ge::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
 
@@ -207,8 +251,11 @@ public:
 			}
 		}
 
+		m_Texture->Bind();
+		ge::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
 		// Render triangle
-		ge::Renderer::Submit(m_Shader, m_VertexArray);
+		//ge::Renderer::Submit(m_Shader, m_VertexArray);
 
 		ge::Renderer::EndScene();
 	}
@@ -234,8 +281,10 @@ private:
 	ge::Ref<ge::Shader> m_Shader;
 	ge::Ref<ge::VertexArray> m_VertexArray;
 
-	ge::Ref<ge::Shader> m_FlatColorShader;
+	ge::Ref<ge::Shader> m_FlatColorShader, m_TextureShader;
 	ge::Ref<ge::VertexArray> m_SquareVA;
+
+	ge::Ref<ge::Texture2D> m_Texture;
 
 	ge::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;

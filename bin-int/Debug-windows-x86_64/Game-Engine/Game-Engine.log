@@ -1,24 +1,2 @@
-﻿  gepch.cpp
-  Application.cpp
-  ImGuiBuild.cpp
-  ImGuiLayer.cpp
-  Layer.cpp
-  LayerStack.cpp
-  Log.cpp
-  Buffer.cpp
-  OrthographicCamera.cpp
-  RenderCommand.cpp
-  Renderer.cpp
-  RendererAPI.cpp
-  Shader.cpp
-  VertexArray.cpp
-  OpenGLBuffer.cpp
-  OpenGLContext.cpp
-  OpenGLRendererAPI.cpp
-  OpenGLShader.cpp
-  OpenGLVertexArray.cpp
-d:\gameengine\game-engine\game-engine\src\platform\opengl\openglvertexarray.cpp(66): warning C4312: 'type cast': conversion from 'const uint32_t' to 'const void *' of greater size
-  WindowsInput.cpp
-  WindowsWindow.cpp
-  Generating Code...
+﻿  OpenGLTexture.cpp
   Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib
