@@ -114,7 +114,7 @@ public:
 		
 		)";
 
-		m_Shader.reset(ge::Shader::Create(vertexSrc, pixelSrc));
+		m_Shader = ge::Shader::Create("VertexPosColor", vertexSrc, pixelSrc);
 
 
 		std::string flatColorShaderVertexSrc = R"(
@@ -149,15 +149,15 @@ public:
 		
 		)";
 
-		m_FlatColorShader.reset(ge::Shader::Create(flatColorShaderVertexSrc, flatColorShaderPixelSrc));
+		m_FlatColorShader = ge::Shader::Create("FlatColor", flatColorShaderVertexSrc, flatColorShaderPixelSrc);
 
-		m_TextureShader.reset(ge::Shader::Create("assets/shaders/Texture.glsl"));
+		auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
 		m_Texture = ge::Texture2D::Create("assets/textures/Checkerboard.png");
 		m_BlendTexture = ge::Texture2D::Create("assets/textures/ChernoLogo.png");
 
-		std::dynamic_pointer_cast<ge::OpenGLShader>(m_TextureShader)->Bind();
-		std::dynamic_pointer_cast<ge::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);		// 0 is the texure slot of m_Texture
+		std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->Bind();
+		std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);		// 0 is the texure slot of m_Texture
 	}
 
 	void OnUpdate(ge::DeltaTime dt) override
@@ -218,11 +218,13 @@ public:
 			}
 		}
 
+		auto textureShader = m_ShaderLibrary.Get("Texture");
+
 		m_Texture->Bind();
-		ge::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		ge::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 		m_BlendTexture->Bind();
-		ge::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		ge::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 		// Render triangle
 		//ge::Renderer::Submit(m_Shader, m_VertexArray);
@@ -248,10 +250,12 @@ public:
 	}
 
 private:
+	ge::ShaderLibrary m_ShaderLibrary;
+
 	ge::Ref<ge::Shader> m_Shader;
 	ge::Ref<ge::VertexArray> m_VertexArray;
 
-	ge::Ref<ge::Shader> m_FlatColorShader, m_TextureShader;
+	ge::Ref<ge::Shader> m_FlatColorShader;
 	ge::Ref<ge::VertexArray> m_SquareVA;
 
 	ge::Ref<ge::Texture2D> m_Texture, m_BlendTexture;
