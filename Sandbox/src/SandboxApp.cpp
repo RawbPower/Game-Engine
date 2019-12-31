@@ -12,7 +12,7 @@
 class ExampleLayer : public ge::Layer {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f), m_CameraRotation(0.0f), m_SquarePosition(0.0f)
+		: Layer("Example"), m_CameraController(1280.0f / 720.0f, true)
 	{
 		/* Vertex Array (required for core OpenGL profile) */
 		m_VertexArray.reset(ge::VertexArray::Create());
@@ -162,46 +162,14 @@ public:
 
 	void OnUpdate(ge::DeltaTime dt) override
 	{
+		// Update
+		m_CameraController.OnUpdate(dt);
 
-		//GE_TRACE("Delta time: {0}s ({1}ms)", dt.GetSeconds(), dt.GetMilliseconds());
-
-		// Camera Movement
-		if (ge::Input::IsKeyPressed(GE_KEY_LEFT))
-			m_CameraPosition.x -= m_CameraMoveSpeed * dt;
-		else if (ge::Input::IsKeyPressed(GE_KEY_RIGHT))
-			m_CameraPosition.x += m_CameraMoveSpeed * dt;
-
-		if (ge::Input::IsKeyPressed(GE_KEY_DOWN))
-			m_CameraPosition.y -= m_CameraMoveSpeed * dt;
-		else if (ge::Input::IsKeyPressed(GE_KEY_UP))
-			m_CameraPosition.y += m_CameraMoveSpeed * dt;
-
-		// Camera Rotation
-		// For some reason the positive rotation is clockwise
-		if (ge::Input::IsKeyPressed(GE_KEY_A))
-			m_CameraRotation += m_CameraRotSpeed * dt;
-
-		if (ge::Input::IsKeyPressed(GE_KEY_D))
-			m_CameraRotation -= m_CameraRotSpeed * dt;
-
-		// Game Object transform movement
-		/*if (ge::Input::IsKeyPressed(GE_KEY_J))
-			m_SquarePosition.x -= m_SquareMoveSpeed * dt;
-		else if (ge::Input::IsKeyPressed(GE_KEY_L))
-			m_SquarePosition.x += m_SquareMoveSpeed * dt;
-
-		if (ge::Input::IsKeyPressed(GE_KEY_K))
-			m_SquarePosition.y -= m_SquareMoveSpeed * dt;
-		else if (ge::Input::IsKeyPressed(GE_KEY_I))
-			m_SquarePosition.y += m_SquareMoveSpeed * dt;*/
-
+		// Render
 		ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 		ge::RenderCommand::Clear();
 
-		m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetRotation(m_CameraRotation);
-
-		ge::Renderer::BeginScene(m_Camera);
+		ge::Renderer::BeginScene(m_CameraController.GetCamera());
 
 		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -213,7 +181,7 @@ public:
 		for (int x = -10; x < 11; x++) {
 			for (int y = -10; y < 11; y++) {
 				glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
-				glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_SquarePosition + pos) * scale;
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
 				ge::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
 			}
 		}
@@ -239,9 +207,9 @@ public:
 		ImGui::End();
 	}
 
-	void OnEvent(ge::Event& event) override
+	void OnEvent(ge::Event& e) override
 	{
-
+		m_CameraController.OnEvent(e);
 	}
 
 	bool OnKeyPressedEvent(ge::KeyPressedEvent& event) 
@@ -260,14 +228,8 @@ private:
 
 	ge::Ref<ge::Texture2D> m_Texture, m_BlendTexture;
 
-	ge::OrthographicCamera m_Camera;
-	glm::vec3 m_CameraPosition;
-	float m_CameraRotation;
-	float m_CameraMoveSpeed = 5.0f;
-	float m_CameraRotSpeed = 180.0f;
+	ge::OrthographicCameraController m_CameraController;
 
-	glm::vec3  m_SquarePosition;
-	float m_SquareMoveSpeed = 1.0f;
 	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
 };
 

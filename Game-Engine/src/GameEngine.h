@@ -11,6 +11,7 @@
 #include "GameEngine/Input.h"
 #include "GameEngine/MouseButtonCodes.h"
 #include "GameEngine/KeyCodes.h"
+#include "GameEngine/OrthographicCameraController.h"
 
 #include "GameEngine/ImGui/ImGuiLayer.h"
 

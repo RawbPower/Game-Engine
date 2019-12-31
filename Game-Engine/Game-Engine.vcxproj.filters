@@ -102,6 +102,9 @@
     <ClInclude Include="src\GameEngine\MouseButtonCodes.h">
       <Filter>src\GameEngine</Filter>
     </ClInclude>
+    <ClInclude Include="src\GameEngine\OrthographicCameraController.h">
+      <Filter>src\GameEngine</Filter>
+    </ClInclude>
     <ClInclude Include="src\GameEngine\Renderer\Buffer.h">
       <Filter>src\GameEngine\Renderer</Filter>
     </ClInclude>
@@ -1284,6 +1287,9 @@
       <Filter>src\GameEngine</Filter>
     </ClCompile>
     <ClCompile Include="src\GameEngine\Log.cpp">
+      <Filter>src\GameEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameEngine\OrthographicCameraController.cpp">
       <Filter>src\GameEngine</Filter>
     </ClCompile>
     <ClCompile Include="src\GameEngine\Renderer\Buffer.cpp">
