@@ -20,11 +20,6 @@ namespace ge {
 	{
 
 	}
-		
-	ImGuiLayer::~ImGuiLayer() 
-	{
-
-	}
 
 	void ImGuiLayer::OnAttach()
 	{

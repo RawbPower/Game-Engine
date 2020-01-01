@@ -58,8 +58,6 @@ namespace ge {
 	// function with that event. Otherwise it wont do anything.
 	class EventDispatcher
 	{
-		template<typename T>
-		using EventFn = std::function<bool(T&)>;
 	public:
 		EventDispatcher(Event& event)
 			: m_Event(event)

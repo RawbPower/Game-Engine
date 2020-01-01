@@ -66,6 +66,7 @@ namespace ge {
 			data.Height = height;
 
 			WindowResizeEvent event(width, height);
+			GE_CORE_WARN("{0}, {1}", width, height);
 			// Dispatch it
 			data.EventCallback(event);
 		});

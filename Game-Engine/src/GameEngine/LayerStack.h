@@ -3,6 +3,8 @@
 #include "GameEngine/Core.h"
 #include "Layer.h"
 
+#include <vector>
+
 namespace ge {
 
 	class GE_API LayerStack

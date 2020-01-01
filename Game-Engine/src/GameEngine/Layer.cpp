@@ -8,9 +8,4 @@ namespace ge {
 	{
 
 	}
-
-	Layer::~Layer() 
-	{
-
-	}
 }

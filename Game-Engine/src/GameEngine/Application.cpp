@@ -7,7 +7,7 @@
 
 #include "Input.h"
 
-#include <GLFW/glfw3.h>
+#include <glfw/glfw3.h>
 
 namespace ge {
 
@@ -30,22 +30,15 @@ namespace ge {
 		PushOverlay(m_ImGuiLayer);
 	}
 
-
-	Application::~Application()
-	{
-	}
-
-	// Essentailly a wrapper
+	// Essentially a wrapper
 	void Application::PushLayer(Layer* layer)
 	{
 		m_LayerStack.PushLayer(layer);
-		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* overlay)
 	{
 		m_LayerStack.PushOverlay(overlay);
-		overlay->OnAttach();
 	}
 
 	void Application::OnEvent(Event& e) {
@@ -54,6 +47,8 @@ namespace ge {
 		EventDispatcher dispatcher(e);
 		// Tell disptacher "If you see a window close event that dispatch it to this function"
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
 		//GE_CORE_TRACE("{0}", e);
 
@@ -73,8 +68,11 @@ namespace ge {
 			DeltaTime deltaTime = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
-			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate(deltaTime);
+			if (!m_Minimised)
+			{
+				for (Layer* layer : m_LayerStack)
+					layer->OnUpdate(deltaTime);
+			}
 
 			// Render ImGui
 			m_ImGuiLayer->Begin();
@@ -90,5 +88,21 @@ namespace ge {
 	{
 		m_Running = false;
 		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minimised = true;
+			return false;
+		}
+
+		m_Minimised = false;
+
+		// Tell Renderer that Frame Buffer has resized
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
+		return false;
 	}
 }

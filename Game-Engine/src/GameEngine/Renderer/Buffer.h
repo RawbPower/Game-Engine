@@ -81,7 +81,7 @@ namespace ge {
 			CalculateOffsetsAndStride();
 		}
 
-		inline const uint32_t GetStride() const { return m_Stride; }
+		inline uint32_t GetStride() const { return m_Stride; }
 		inline const std::vector<BufferElement>& GetElements() const { return m_Elements; }
 
 		// Make BufferLayour an iterator
@@ -111,7 +111,7 @@ namespace ge {
 	class VertexBuffer 
 	{
 	public:
-		virtual ~VertexBuffer() {}
+		virtual ~VertexBuffer() = default;
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
@@ -126,7 +126,7 @@ namespace ge {
 	class IndexBuffer 
 	{
 	public:
-		virtual ~IndexBuffer() {}
+		virtual ~IndexBuffer() = default;
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
