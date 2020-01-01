@@ -1,5 +1,5 @@
 #include "gepch.h"
-#include "LayerStack.h"
+#include "GameEngine/Core/LayerStack.h"
 
 namespace ge {
 
@@ -11,7 +11,10 @@ namespace ge {
 	LayerStack::~LayerStack()
 	{
 		for (Layer* layer : m_Layers)
+		{
+			layer->OnDetach();
 			delete layer;
+		}
 	}
 
 	void LayerStack::PushLayer(Layer* layer)

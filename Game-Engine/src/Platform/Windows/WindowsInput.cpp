@@ -2,7 +2,7 @@
 #include "WindowsInput.h"
 
 // It's fine to this as we a inside a platform specific file
-#include "GameEngine/Application.h"
+#include "GameEngine/Core/Application.h"
 #include <GLFW/glfw3.h>
 
 namespace ge 

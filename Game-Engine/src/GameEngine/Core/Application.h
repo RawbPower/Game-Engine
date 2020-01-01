@@ -3,7 +3,7 @@
 #include "Core.h"
 
 #include "Window.h"
-#include "GameEngine/LayerStack.h"
+#include "GameEngine/Core/LayerStack.h"
 #include "GameEngine/Events/Event.h"
 #include "GameEngine/Events/ApplicationEvent.h"
 

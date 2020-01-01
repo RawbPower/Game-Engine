@@ -2,16 +2,16 @@
 // Header file only intended to be included by client applications
 
 //#include <stdio.h>
-#include "GameEngine/Application.h"
-#include "GameEngine/Layer.h"
-#include "GameEngine/Log.h"
+#include "GameEngine/Core/Application.h"
+#include "GameEngine/Core/Layer.h"
+#include "GameEngine/Core/Log.h"
 
 #include "GameEngine/Core/DeltaTime.h"
 
-#include "GameEngine/Input.h"
-#include "GameEngine/MouseButtonCodes.h"
-#include "GameEngine/KeyCodes.h"
-#include "GameEngine/OrthographicCameraController.h"
+#include "GameEngine/Core/Input.h"
+#include "GameEngine/Core/MouseButtonCodes.h"
+#include "GameEngine/Core/KeyCodes.h"
+#include "GameEngine/Renderer/OrthographicCameraController.h"
 
 #include "GameEngine/ImGui/ImGuiLayer.h"
 
@@ -28,5 +28,5 @@
 //--------------------------------
 
 // ---Entry Point-----------------
-#include "GameEngine/EntryPoint.h"
+#include "GameEngine/Core/EntryPoint.h"
 //--------------------------------

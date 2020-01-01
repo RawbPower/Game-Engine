@@ -135,7 +135,11 @@ namespace ge {
 
 		// Always detach shaders after a successful link.
 		for (auto id : glShaderIDs)
+		{
 			glDetachShader(program, id);
+			glDeleteShader(id);
+		}
+			
 
 		// Now time to link them together into a program.
 		m_RendererID = program;

@@ -1,1 +1,2 @@
-﻿  Glad.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\vendor\Glad\bin\Debug-windows-x86_64\Glad\Glad.lib
+﻿  glad.c
+  Glad.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\vendor\Glad\bin\Debug-windows-x86_64\Glad\Glad.lib

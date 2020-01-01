@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameEngine/Core.h"
+#include "GameEngine/Core/Core.h"
 #include "GameEngine/Events/Event.h"
 #include "GameEngine/Core/DeltaTime.h"
 
