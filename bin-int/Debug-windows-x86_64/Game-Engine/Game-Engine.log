@@ -1,9 +1,2 @@
-﻿  Application.cpp
-  Buffer.cpp
-  OrthographicCamera.cpp
-  OrthographicCameraController.cpp
-  Renderer.cpp
-  Shader.cpp
-  Texture.cpp
-  VertexArray.cpp
+﻿  OpenGLRendererAPI.cpp
   Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib

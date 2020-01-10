@@ -20,6 +20,7 @@ namespace ge {
 		virtual void Clear() = 0;
 
 		virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) = 0;
+		virtual void DrawIndexed3D(const std::shared_ptr<VertexArray>& vertexArray, int vertices) = 0;
 
 		inline static API GetAPI() { return s_API; }
 	private:

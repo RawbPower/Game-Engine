@@ -13,5 +13,6 @@ namespace ge {
 		virtual void Clear() override;
 
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
+		virtual void DrawIndexed3D(const Ref<VertexArray>& vertexArray, int vertices) override;
 	};
 }

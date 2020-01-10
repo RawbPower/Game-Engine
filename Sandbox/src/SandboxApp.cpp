@@ -164,29 +164,78 @@ public:
 		{
 			// Square vertex array test
 
-			m_SquareVA.reset(ge::VertexArray::Create());
+			m_CubeVA.reset(ge::VertexArray::Create());
 
-			float squareVertices[5 * 4] = {
-				-0.5f, -0.5f, 0.0f,	0.0f, 0.0f,		// 3 vertex coordinate on each row and 2 texture coords
-				0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-				0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-				-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
+			float cubeVertices[] = {
+				-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+				-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 			};
 
-			ge::Ref<ge::VertexBuffer> squareVB;
-			squareVB.reset(ge::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+			// world space positions of our cubes
+			m_CubePositions[0] = glm::vec3(0.0f, 0.0f, 0.0f);
+			m_CubePositions[1] = glm::vec3(2.0f, 5.0f, -15.0f);
+			m_CubePositions[2] = glm::vec3(-1.5f, -2.2f, -2.5f);
+			m_CubePositions[3] = glm::vec3(-3.8f, -2.0f, -12.3f);
+			m_CubePositions[4] = glm::vec3(2.4f, -0.4f, -3.5f);
+			m_CubePositions[5] = glm::vec3(-1.7f, 3.0f, -7.5f);
+			m_CubePositions[6] = glm::vec3(1.3f, -2.0f, -2.5f);
+			m_CubePositions[7] = glm::vec3(1.5f, 2.0f, -2.5f);
+			m_CubePositions[8] = glm::vec3(1.5f, 0.2f, -1.5f);
+			m_CubePositions[9] = glm::vec3(-1.3f, 1.0f, -1.5f);
 
-			squareVB->SetLayout({
+			ge::Ref<ge::VertexBuffer> cubeVB;
+			cubeVB.reset(ge::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices)));
+
+			cubeVB->SetLayout({
 				{ ge::ShaderDataType::Float3, "a_Position" },
 				{ ge::ShaderDataType::Float2, "a_TexCoord" }
 			});
 
-			m_SquareVA->AddVertexBuffer(squareVB);
+			m_CubeVA->AddVertexBuffer(cubeVB);
 
-			uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-			ge::Ref<ge::IndexBuffer> squareIB;
-			squareIB.reset(ge::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
-			m_SquareVA->SetIndexBuffer(squareIB);
+			//uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
+			//ge::Ref<ge::IndexBuffer> squareIB;
+			//squareIB.reset(ge::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+			//m_SquareVA->SetIndexBuffer(squareIB);
 
 			/* Shader (If we do nothing GPU drivers will make a default one) */
 
@@ -254,13 +303,24 @@ public:
 			//ge::Renderer::BeginScene(m_CameraController.GetCamera());
 
 			static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
-			glm::mat4 transform = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			m_CubeRotation -= 1.0f * dt;
+			glm::mat4 transform = glm::rotate(glm::mat4(1.0f), m_CubeRotation, glm::vec3(0.5f, 1.0f, 0.0f));
 
 			auto textureShader = m_ShaderLibrary.Get("Texture");
 
 			m_Texture->Bind(0);
 			//ge::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
-			ge::Renderer::Submit(textureShader, m_SquareVA, transform);
+			//ge::Renderer::Submit3D(textureShader, m_CubeVA, transform, 36);			// since the cube has no indexBuffer I will added the number of vertices manually. Will change in future
+
+			for (unsigned int i = 0; i < 10; i++)
+			{
+				// calculate the model matrix for each object and pass it to shader before drawing
+				glm::mat4 transform = glm::mat4(1.0f);
+				transform = glm::translate(transform, m_CubePositions[i]);
+				m_CubeRotations[i] -= m_CubeRotationSpeed * dt;
+				transform = glm::rotate(transform, glm::radians(m_CubeRotations[i]), glm::vec3(1.0f, 0.3f, 0.5f));
+				ge::Renderer::Submit3D(textureShader, m_CubeVA, transform, 36);
+			}
 
 			ge::Renderer::EndScene();
 		}
@@ -301,6 +361,12 @@ private:
 	ge::PerspectiveCamera m_PerspectiveCamera;
 
 	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
+
+	float m_CubeRotation = 0.0f;
+	float m_CubeRotationSpeed = 50.0f;
+
+	glm::vec3 m_CubePositions[10];
+	float m_CubeRotations[10] = { 0.0f, 20.0f, 40.0f, 60.0f, 80.0f, 100.0f, 120.0f, 140.0f, 160.0f, 180.0f };
 
 	enum class Scene : uint32_t
 	{

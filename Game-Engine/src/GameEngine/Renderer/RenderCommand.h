@@ -32,6 +32,11 @@ namespace ge {
 		{
 			s_RendererAPI->DrawIndexed(vertexArray);
 		}
+
+		inline static void DrawIndexed3D(const std::shared_ptr<VertexArray>& vertexArray, int vertices)
+		{
+			s_RendererAPI->DrawIndexed3D(vertexArray, vertices);
+		}
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

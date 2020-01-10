@@ -8,6 +8,7 @@ namespace ge {
 	void OpenGLRendererAPI::Init()
 	{
 		glEnable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
@@ -29,5 +30,10 @@ namespace ge {
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
 	{
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+	}
+
+	void OpenGLRendererAPI::DrawIndexed3D(const Ref<VertexArray>& vertexArray, int vertices)
+	{
+		glDrawArrays(GL_TRIANGLES, 0, vertices);
 	}
 }
