@@ -25,6 +25,7 @@
 #include "GameEngine/Renderer/VertexArray.h"
 
 #include "GameEngine/Renderer/OrthographicCamera.h"
+#include "GameEngine/Renderer/PerspectiveCamera.h"
 //--------------------------------
 
 // ---Entry Point-----------------
