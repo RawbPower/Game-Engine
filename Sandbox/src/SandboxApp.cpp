@@ -12,7 +12,7 @@
 class ExampleLayer : public ge::Layer {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_OrthogonalCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Scene(Scene::Scene2D)
+		: Layer("Example"), m_OrthogonalCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Scene(Scene::Scene3D)
 	{
 		if (m_Scene == Scene::Scene2D) {
 			/* Vertex Array (required for core OpenGL profile) */
@@ -365,7 +365,7 @@ private:
 	float m_CubeRotation = 0.0f;
 	float m_CubeRotationSpeed = 50.0f;
 
-	glm::vec3 m_CubePositions[10] = { glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f) };
+	glm::vec3 m_CubePositions[10];
 	float m_CubeRotations[10] = { 0.0f, 20.0f, 40.0f, 60.0f, 80.0f, 100.0f, 120.0f, 140.0f, 160.0f, 180.0f };
 
 	float m_TotalTime = 0.0f;
