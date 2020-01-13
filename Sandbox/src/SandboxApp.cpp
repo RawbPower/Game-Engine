@@ -162,12 +162,14 @@ public:
 		} 
 		else if (m_Scene == Scene::Scene3D)
 		{
+			// Enable z-buffer for 3D rendering only
 			ge::RenderCommand::EnableZBuffer();
 
-			// Square vertex array test
-
+			// Instatiate vertex arrays for object and light source
 			m_CubeVA.reset(ge::VertexArray::Create());
+			m_LightCubeVA.reset(ge::VertexArray::Create());
 
+			// Vertices for cube
 			float cubeVertices[] = {
 				-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 				 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -212,18 +214,7 @@ public:
 				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 			};
 
-			// world space positions of our cubes
-			m_CubePositions[0] = glm::vec3(0.0f, 0.0f, 0.0f);
-			m_CubePositions[1] = glm::vec3(2.0f, 5.0f, -15.0f);
-			m_CubePositions[2] = glm::vec3(-1.5f, -2.2f, -2.5f);
-			m_CubePositions[3] = glm::vec3(-3.8f, -2.0f, -12.3f);
-			m_CubePositions[4] = glm::vec3(2.4f, -0.4f, -3.5f);
-			m_CubePositions[5] = glm::vec3(-1.7f, 3.0f, -7.5f);
-			m_CubePositions[6] = glm::vec3(1.3f, -2.0f, -2.5f);
-			m_CubePositions[7] = glm::vec3(1.5f, 2.0f, -2.5f);
-			m_CubePositions[8] = glm::vec3(1.5f, 0.2f, -1.5f);
-			m_CubePositions[9] = glm::vec3(-1.3f, 1.0f, -1.5f);
-
+			// Create a vertex buffer for the object
 			ge::Ref<ge::VertexBuffer> cubeVB;
 			cubeVB.reset(ge::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices)));
 
@@ -234,19 +225,22 @@ public:
 
 			m_CubeVA->AddVertexBuffer(cubeVB);
 
-			//uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-			//ge::Ref<ge::IndexBuffer> squareIB;
-			//squareIB.reset(ge::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
-			//m_SquareVA->SetIndexBuffer(squareIB);
+			// Even though the light is also a cube we want a different vertex buffer because it will change vertices in the future
+			ge::Ref<ge::VertexBuffer> lightCubeVB;
+			lightCubeVB.reset(ge::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices)));
 
-			/* Shader (If we do nothing GPU drivers will make a default one) */
+			lightCubeVB->SetLayout({
+				{ ge::ShaderDataType::Float3, "a_Position" },
+				{ ge::ShaderDataType::Float2, "a_TexCoord" }
+				});
 
-			auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
+			m_LightCubeVA->AddVertexBuffer(lightCubeVB);
 
-			m_Texture = ge::Texture2D::Create("assets/textures/container.jpg");
 
-			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);		// 0 is the texure slot of m_Texture
+			/* Shaders */
+			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/Lighting.glsl");
+			auto lampShader = m_ShaderLibrary.Load("assets/shaders/Lamp.glsl");
+
 		}
 	}
 
@@ -292,39 +286,45 @@ public:
 		}
 		else if (m_Scene == Scene::Scene3D)
 		{
-			// Update
+			// Update Camera
 			m_PerspectiveCameraController.OnUpdate(dt);
 
-			// Render
+			// Rendering
+			// Clear previous frame
 			ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 			ge::RenderCommand::Clear();
 
+			// Begin the current scene
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
-			//ge::Renderer::BeginScene(m_CameraController.GetCamera());
 
-			static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
-			//m_CubeRotation -= 1.0f * dt;
-			//glm::mat4 transform = glm::rotate(glm::mat4(1.0f), m_CubeRotation, glm::vec3(0.5f, 1.0f, 0.0f));
+			//----Object being lit rendering---//
+			auto lightingShader = m_ShaderLibrary.Get("Lighting");
 
-			auto textureShader = m_ShaderLibrary.Get("Texture");
+			// Set up uniforms
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_ObjectColor", m_ObjectColor);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_LightColor", m_LightColor);
 
-			m_Texture->Bind(0);
-			//ge::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
-			//ge::Renderer::Submit3D(textureShader, m_CubeVA, transform, 36);			// since the cube has no indexBuffer I will added the number of vertices manually. Will change in future
+			// calculate the model matrix for ethr object and pass it to shader before drawing
+			glm::mat4 objectTransform = glm::mat4(1.0f);
+				
+			ge::Renderer::Submit3D(lightingShader, m_CubeVA, objectTransform, 36);
 
-			for (unsigned int i = 0; i < 10; i++)
-			{
-				// calculate the model matrix for each object and pass it to shader before drawing
-				glm::mat4 transform = glm::mat4(1.0f);
-				transform = glm::translate(transform, m_CubePositions[i]);
-				transform = glm::rotate(transform, glm::radians(m_CubeRotations[i]), glm::vec3(1.0f, 0.3f, 0.5f));
-				ge::Renderer::Submit3D(textureShader, m_CubeVA, transform, 36);
-			}
+			//----Lamp rendering---//
+			auto lampShader = m_ShaderLibrary.Get("Lamp");
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lampShader)->Bind();
+
+			glm::mat4 lampTransform = glm::mat4(1.0f);
+			lampTransform = glm::translate(lampTransform, m_LightPosition);
+			lampTransform = glm::scale(lampTransform, glm::vec3(0.2f));
+
+			ge::Renderer::Submit3D(lampShader, m_LightCubeVA, lampTransform, 36);
 
 			ge::Renderer::EndScene();
 		}
 	}
 
+	// Adding GUI rendering 
 	virtual void OnImGuiRender() override
 	{
 		ImGui::Begin("Settings");
@@ -346,32 +346,44 @@ public:
 	}
 
 private:
-	ge::ShaderLibrary m_ShaderLibrary;
 
-	ge::Ref<ge::Shader> m_Shader;
-	ge::Ref<ge::VertexArray> m_VertexArray;
+	// General Variables
+	ge::ShaderLibrary m_ShaderLibrary;					// Library for shader files
 
-	ge::Ref<ge::Shader> m_FlatColorShader;
-	ge::Ref<ge::VertexArray> m_SquareVA;
+	ge::Ref<ge::Texture2D> m_Texture, m_BlendTexture;	// Texture files
 
-	ge::Ref<ge::Shader> m_CubeShader;
-	ge::Ref<ge::VertexArray> m_CubeVA;
+	float m_TotalTime = 0.0f;							// Total time passed in application life time (mod 2pi)
 
-	ge::Ref<ge::Texture2D> m_Texture, m_BlendTexture;
+	// 2D Scene Variables
+	ge::OrthographicCameraController m_OrthographicCameraController;	// Orthographic Camera Controller
 
-	ge::OrthographicCameraController m_OrthographicCameraController;
-	ge::PerspectiveCameraController m_PerspectiveCameraController;
+	ge::Ref<ge::Shader> m_Shader;					// Basic shader test
+	ge::Ref<ge::VertexArray> m_VertexArray;			// Basic vertex array for traingle
 
-	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
+	ge::Ref<ge::Shader> m_FlatColorShader;			// Flat color shader
+	ge::Ref<ge::VertexArray> m_SquareVA;			// Vertex array for square
 
-	float m_CubeRotation = 0.0f;
-	float m_CubeRotationSpeed = 50.0f;
+	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };	// Square color
 
-	glm::vec3 m_CubePositions[10];
-	float m_CubeRotations[10] = { 0.0f, 20.0f, 40.0f, 60.0f, 80.0f, 100.0f, 120.0f, 140.0f, 160.0f, 180.0f };
+	// 3D Scene Varaibles
+	ge::PerspectiveCameraController m_PerspectiveCameraController;	// Perspective Camera Controller
 
-	float m_TotalTime = 0.0f;
+	ge::Ref<ge::Shader> m_CubeShader;			// Shader for cube
+	ge::Ref<ge::VertexArray> m_CubeVA;			// Vertex array for cube
 
+	ge::Ref<ge::Shader> m_LightCubeShader;		// Shader for light source
+	ge::Ref<ge::VertexArray> m_LightCubeVA;		// Vertex array for light source
+
+	glm::vec3 m_ObjectColor = { 1.0f, 0.5f, 0.31f };	// Base colour of object being lit (in white light)
+	glm::vec3 m_LightColor = { 1.0f, 1.0f, 1.0f };		// Light colour
+
+	float m_CubeRotation = 0.0f;						// Initial roation of cube (Currently not used)
+	float m_CubeRotationSpeed = 50.0f;					// Rotation speed of cube (Currently not used)
+
+	glm::vec3 m_CubePosition = glm::vec3(1.0f);					// Position of cube
+	glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, 2.0f);	// Position of light source
+
+	// Enumerator for switching between 2D and 3D rendering
 	enum class Scene : uint32_t
 	{
 		Scene2D = 0, Scene3D = 1
