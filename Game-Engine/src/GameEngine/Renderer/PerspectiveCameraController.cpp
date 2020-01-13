@@ -6,62 +6,88 @@
 
 namespace ge {
 
-	PerspectiveCameraController::PerspectiveCameraController(float aspectRatio, bool rotation)
-		: m_AspectRatio(aspectRatio), m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel), m_Rotation(rotation)
+	PerspectiveCameraController::PerspectiveCameraController(float fov, float aspectRatio, float nearPlane, float farPlane)
+		: m_AspectRatio(aspectRatio), m_Fov(fov), m_Camera(fov, aspectRatio, nearPlane, farPlane)
 	{
 
 	}
 
 	void PerspectiveCameraController::OnUpdate(DeltaTime dt)
 	{
+		m_Camera.LookAt(m_CameraPosition, m_CameraPosition + m_CameraFront, m_CameraUp);
+
 		// Camera Movement
+		if (Input::IsKeyPressed(GE_KEY_W))
+			m_CameraPosition += (m_CameraTranslationSpeed * dt) * m_CameraFront;
+		else if (Input::IsKeyPressed(GE_KEY_S))
+			m_CameraPosition -= (m_CameraTranslationSpeed * dt) * m_CameraFront;
+
 		if (Input::IsKeyPressed(GE_KEY_A))
-			m_CameraPosition.x -= m_CameraTranslationSpeed * dt;
+			m_CameraPosition -= (m_CameraTranslationSpeed * dt) * glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
 		else if (Input::IsKeyPressed(GE_KEY_D))
-			m_CameraPosition.x += m_CameraTranslationSpeed * dt;
+			m_CameraPosition += (m_CameraTranslationSpeed * dt) * glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
 
-		if (Input::IsKeyPressed(GE_KEY_S))
-			m_CameraPosition.y -= m_CameraTranslationSpeed * dt;
-		else if (Input::IsKeyPressed(GE_KEY_W))
-			m_CameraPosition.y += m_CameraTranslationSpeed * dt;
-
-		// Camera Rotation
-		if (m_Rotation)
-		{
-			// For some reason the positive rotation is clockwise
-			if (Input::IsKeyPressed(GE_KEY_Q))
-				m_CameraRotation += m_CameraRotationSpeed * dt;
-
-			if (Input::IsKeyPressed(GE_KEY_E))
-				m_CameraRotation -= m_CameraRotationSpeed * dt;
-
-			m_Camera.SetRotation(m_CameraRotation);
-		}
-
-		m_Camera.SetPosition(m_CameraPosition);
-
-		m_CameraTranslationSpeed = m_ZoomLevel;
 	}
 
 	void PerspectiveCameraController::OnEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseScrolledEvent>(GE_BIND_EVENT_FN(PerspectiveCameraController::OnMouseScrolled));
+		dispatcher.Dispatch<MouseMovedEvent>(GE_BIND_EVENT_FN(PerspectiveCameraController::OnMouseMoved));
 		dispatcher.Dispatch<WindowResizeEvent>(GE_BIND_EVENT_FN(PerspectiveCameraController::OnWindowResized));
 	}
 
 	bool PerspectiveCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
-		m_ZoomLevel -= e.GetYOffset() * 0.25f;
-		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_Fov -= e.GetYOffset();
+		if (m_Fov <= 1.0f)
+			m_Fov = 1.0f;
+		else if (m_Fov >= 45.0f)
+			m_Fov = 45.0f;
+		m_Camera.SetProjection(m_Fov, m_AspectRatio, 0.1f, 1000.0f);
+		return false;
+	}
+
+	bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent& e)
+	{
+		float xpos = e.GetX(), ypos = e.GetY();
+		//GE_CORE_TRACE("({0},{1})", xpos, ypos);
+
+		if (m_FirstMouse)
+		{
+			m_LastX = xpos;
+			m_LastY = ypos;
+			m_FirstMouse = false;
+		}
+
+		float xoffset = xpos - m_LastX;
+		float yoffset = m_LastY - ypos;
+		m_LastX = xpos, m_LastY = ypos;
+
+		xoffset *= m_Sensitivity;
+		yoffset *= m_Sensitivity;
+
+		m_Yaw += xoffset;
+		m_Pitch += yoffset;
+
+		if (m_Pitch > 89.0f)
+			m_Pitch = 89.0f;
+		else if (m_Pitch < -89.0f)
+			m_Pitch = -89.0f;
+
+		glm::vec3 direction;
+		direction.x = cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+		direction.y = sin(glm::radians(m_Pitch));
+		direction.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+		m_CameraFront = glm::normalize(direction);
+
 		return false;
 	}
 
 	bool PerspectiveCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		m_Camera.SetProjection(m_Fov, m_AspectRatio, 0.1f, 1000.0f);
 		return false;
 	}
 }

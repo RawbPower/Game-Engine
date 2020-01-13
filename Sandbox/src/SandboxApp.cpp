@@ -12,7 +12,7 @@
 class ExampleLayer : public ge::Layer {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_CameraController(1280.0f / 720.0f, true), m_PerspectiveCamera(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Scene(Scene::Scene3D)
+		: Layer("Example"), m_OrthogonalCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Scene(Scene::Scene2D)
 	{
 		if (m_Scene == Scene::Scene2D) {
 			/* Vertex Array (required for core OpenGL profile) */
@@ -252,13 +252,13 @@ public:
 	{
 		if (m_Scene == Scene::Scene2D) {
 			// Update
-			m_CameraController.OnUpdate(dt);
+			m_OrthogonalCameraController.OnUpdate(dt);
 
 			// Render
 			ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 			ge::RenderCommand::Clear();
 
-			ge::Renderer::BeginScene(m_CameraController.GetCamera());
+			ge::Renderer::BeginScene(m_OrthogonalCameraController.GetCamera());
 
 			static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -291,20 +291,18 @@ public:
 		else if (m_Scene == Scene::Scene3D)
 		{
 			// Update
-			//m_CameraController.OnUpdate(dt);
-			//m_CameraController.GetCamera().SetRotation(-55.0f);
-			//m_CameraController.GetCamera().SetPosition(glm::vec3(0.0f, 0.0f, -3.0f));
+			m_PerspectiveCameraController.OnUpdate(dt);
 
 			// Render
 			ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 			ge::RenderCommand::Clear();
 
-			ge::Renderer::BeginScene(m_PerspectiveCamera);
+			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 			//ge::Renderer::BeginScene(m_CameraController.GetCamera());
 
 			static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
-			m_CubeRotation -= 1.0f * dt;
-			glm::mat4 transform = glm::rotate(glm::mat4(1.0f), m_CubeRotation, glm::vec3(0.5f, 1.0f, 0.0f));
+			//m_CubeRotation -= 1.0f * dt;
+			//glm::mat4 transform = glm::rotate(glm::mat4(1.0f), m_CubeRotation, glm::vec3(0.5f, 1.0f, 0.0f));
 
 			auto textureShader = m_ShaderLibrary.Get("Texture");
 
@@ -317,7 +315,6 @@ public:
 				// calculate the model matrix for each object and pass it to shader before drawing
 				glm::mat4 transform = glm::mat4(1.0f);
 				transform = glm::translate(transform, m_CubePositions[i]);
-				m_CubeRotations[i] -= m_CubeRotationSpeed * dt;
 				transform = glm::rotate(transform, glm::radians(m_CubeRotations[i]), glm::vec3(1.0f, 0.3f, 0.5f));
 				ge::Renderer::Submit3D(textureShader, m_CubeVA, transform, 36);
 			}
@@ -335,7 +332,10 @@ public:
 
 	void OnEvent(ge::Event& e) override
 	{
-		m_CameraController.OnEvent(e);
+		if (m_Scene == Scene::Scene2D)
+			m_OrthogonalCameraController.OnEvent(e);
+		else if (m_Scene == Scene::Scene3D)
+			m_PerspectiveCameraController.OnEvent(e);
 	}
 
 	bool OnKeyPressedEvent(ge::KeyPressedEvent& event) 
@@ -357,16 +357,18 @@ private:
 
 	ge::Ref<ge::Texture2D> m_Texture, m_BlendTexture;
 
-	ge::OrthographicCameraController m_CameraController;
-	ge::PerspectiveCamera m_PerspectiveCamera;
+	ge::OrthographicCameraController m_OrthogonalCameraController;
+	ge::PerspectiveCameraController m_PerspectiveCameraController;
 
 	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
 
 	float m_CubeRotation = 0.0f;
 	float m_CubeRotationSpeed = 50.0f;
 
-	glm::vec3 m_CubePositions[10];
+	glm::vec3 m_CubePositions[10] = { glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f), glm::vec3(1.0f) };
 	float m_CubeRotations[10] = { 0.0f, 20.0f, 40.0f, 60.0f, 80.0f, 100.0f, 120.0f, 140.0f, 160.0f, 180.0f };
+
+	float m_TotalTime = 0.0f;
 
 	enum class Scene : uint32_t
 	{

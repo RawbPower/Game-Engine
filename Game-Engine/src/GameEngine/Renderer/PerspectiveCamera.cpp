@@ -20,12 +20,11 @@ namespace ge {
 
 	void PerspectiveCamera::RecalculateViewMatrix()
 	{
-		// Transform matrix of the camera itself
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), m_Position) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(m_Rotation), glm::vec3(1.0f, 0.0f, 0.0f));
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
 
-		// To get the ViewMatrix (ie how objects in the scene transfrom with the camera) we simple get the inverse
-		m_ViewMatrix = glm::inverse(transform);
+	void PerspectiveCamera::LookAt(const glm::vec3& position, const glm::vec3& target, const glm::vec3& up) {
+		m_ViewMatrix = glm::lookAt(position, target, up);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 }
