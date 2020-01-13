@@ -12,7 +12,7 @@
 class ExampleLayer : public ge::Layer {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_OrthogonalCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Scene(Scene::Scene3D)
+		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Scene(Scene::Scene3D)
 	{
 		if (m_Scene == Scene::Scene2D) {
 			/* Vertex Array (required for core OpenGL profile) */
@@ -154,14 +154,16 @@ public:
 
 			auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
-			m_Texture = ge::Texture2D::Create("assets/textures/container.jpg");
-			m_BlendTexture = ge::Texture2D::Create("assets/textures/awesomeface.png");
+			m_Texture = ge::Texture2D::Create("assets/textures/Checkerboard.png");
+			m_BlendTexture = ge::Texture2D::Create("assets/textures/ChernoLogo.png");
 
 			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture1", 0);		// 0 is the texure slot of m_Texture
 		} 
 		else if (m_Scene == Scene::Scene3D)
 		{
+			ge::RenderCommand::EnableZBuffer();
+
 			// Square vertex array test
 
 			m_CubeVA.reset(ge::VertexArray::Create());
@@ -252,13 +254,13 @@ public:
 	{
 		if (m_Scene == Scene::Scene2D) {
 			// Update
-			m_OrthogonalCameraController.OnUpdate(dt);
+			m_OrthographicCameraController.OnUpdate(dt);
 
 			// Render
 			ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 			ge::RenderCommand::Clear();
 
-			ge::Renderer::BeginScene(m_OrthogonalCameraController.GetCamera());
+			ge::Renderer::BeginScene(m_OrthographicCameraController.GetCamera());
 
 			static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -333,7 +335,7 @@ public:
 	void OnEvent(ge::Event& e) override
 	{
 		if (m_Scene == Scene::Scene2D)
-			m_OrthogonalCameraController.OnEvent(e);
+			m_OrthographicCameraController.OnEvent(e);
 		else if (m_Scene == Scene::Scene3D)
 			m_PerspectiveCameraController.OnEvent(e);
 	}
@@ -357,7 +359,7 @@ private:
 
 	ge::Ref<ge::Texture2D> m_Texture, m_BlendTexture;
 
-	ge::OrthographicCameraController m_OrthogonalCameraController;
+	ge::OrthographicCameraController m_OrthographicCameraController;
 	ge::PerspectiveCameraController m_PerspectiveCameraController;
 
 	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
