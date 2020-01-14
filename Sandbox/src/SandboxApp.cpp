@@ -171,47 +171,47 @@ public:
 
 			// Vertices for cube
 			float cubeVertices[] = {
-				-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-				 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-				-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-				-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-				-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-				-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-				 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-				 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-				 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-				 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-				-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 			};
 
 			// Create a vertex buffer for the object
@@ -220,7 +220,7 @@ public:
 
 			cubeVB->SetLayout({
 				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float2, "a_TexCoord" }
+				{ ge::ShaderDataType::Float3, "a_Normal" }
 			});
 
 			m_CubeVA->AddVertexBuffer(cubeVB);
@@ -231,14 +231,14 @@ public:
 
 			lightCubeVB->SetLayout({
 				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float2, "a_TexCoord" }
+				{ ge::ShaderDataType::Float3, "a_Normal" }
 				});
 
 			m_LightCubeVA->AddVertexBuffer(lightCubeVB);
 
 
 			/* Shaders */
-			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/Lighting.glsl");
+			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/Specular.glsl");
 			auto lampShader = m_ShaderLibrary.Load("assets/shaders/Lamp.glsl");
 
 		}
@@ -298,12 +298,14 @@ public:
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
 			//----Object being lit rendering---//
-			auto lightingShader = m_ShaderLibrary.Get("Lighting");
+			auto lightingShader = m_ShaderLibrary.Get("Specular");
 
 			// Set up uniforms
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_ObjectColor", m_ObjectColor);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_LightColor", m_LightColor);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_LightPosition", m_LightPosition);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
 
 			// calculate the model matrix for ethr object and pass it to shader before drawing
 			glm::mat4 objectTransform = glm::mat4(1.0f);

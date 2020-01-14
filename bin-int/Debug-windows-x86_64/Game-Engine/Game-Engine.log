@@ -1,10 +1,2 @@
-﻿  Application.cpp
-  Buffer.cpp
-  RenderCommand.cpp
-  Renderer.cpp
-  RendererAPI.cpp
-  Shader.cpp
-  Texture.cpp
-  VertexArray.cpp
-  OpenGLRendererAPI.cpp
+﻿  PerspectiveCameraController.cpp
   Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib
