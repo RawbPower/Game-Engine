@@ -238,7 +238,7 @@ public:
 
 
 			/* Shaders */
-			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/Specular.glsl");
+			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/Material.glsl");
 			auto lampShader = m_ShaderLibrary.Load("assets/shaders/Lamp.glsl");
 
 		}
@@ -298,14 +298,32 @@ public:
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
 			//----Object being lit rendering---//
-			auto lightingShader = m_ShaderLibrary.Get("Specular");
+			auto lightingShader = m_ShaderLibrary.Get("Material");
 
 			// Set up uniforms
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_ObjectColor", m_ObjectColor);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_LightColor", m_LightColor);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_LightPosition", m_LightPosition);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.position", m_LightPosition);
+
+			// Set light properties
+			m_TotalTime += dt*0.4;
+			m_TotalTime = fmod(m_TotalTime, 2 * glm::pi<float>());
+			m_LightColor.x = sin(m_TotalTime * 2.0f);
+			m_LightColor.y = sin(m_TotalTime * 0.7f);
+			m_LightColor.z = sin(m_TotalTime * 1.3f);
+
+			glm::vec3 diffuseColor = m_LightColor * glm::vec3(0.5f);	// decrease with influence
+			glm::vec3 ambientColor = m_LightColor * glm::vec3(0.2f);	// low influence
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.ambient", ambientColor);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.diffuse", diffuseColor);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.specular", { 1.0f, 1.0f, 1.0f });
+
+			// Set material properties
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("material.ambient", { 1.0f, 0.5f, 0.31f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("material.diffuse", { 1.0f, 0.5f, 0.31f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("material.specular", { 0.5f, 0.5f, 0.5f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("material.shininess", 32.0f);
 
 			// calculate the model matrix for ethr object and pass it to shader before drawing
 			glm::mat4 objectTransform = glm::mat4(1.0f);
