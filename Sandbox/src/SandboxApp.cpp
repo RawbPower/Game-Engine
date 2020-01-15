@@ -253,7 +253,7 @@ public:
 
 
 			/* Shaders */
-			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/DirectionalLight.glsl");
+			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/PointLight.glsl");
 
 			m_Texture = ge::Texture2D::Create("assets/textures/container2.png");
 			m_SpecularMap = ge::Texture2D::Create("assets/textures/container2_specular.png");
@@ -320,7 +320,7 @@ public:
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
 			//----Object being lit rendering---//
-			auto lightingShader = m_ShaderLibrary.Get("DirectionalLight");
+			auto lightingShader = m_ShaderLibrary.Get("PointLight");
 
 			// Add textures
 			m_Texture->Bind(0);
@@ -329,8 +329,8 @@ public:
 			// Set up uniforms
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
-			//std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.position", m_LightPosition);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.direction", { -0.2f, -1.0f, -0.3f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.position", m_LightPosition);
+			//std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.direction", { -0.2f, -1.0f, -0.3f });
 
 			// Set light properties
 			glm::vec3 diffuseColor = m_LightColor * glm::vec3(0.5f);	// decrease with influence
@@ -339,6 +339,12 @@ public:
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.ambient", ambientColor);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.diffuse", diffuseColor);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.specular", { 1.0f, 1.0f, 1.0f });
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("light.constant", 1.0f);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("light.linear", 0.045f);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("light.quadratic", 0.0075f);
+
+
 
 			// Set material properties
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("material.specular", { 0.5f, 0.5f, 0.5f });
@@ -356,14 +362,14 @@ public:
 			}
 
 			//----Lamp rendering---//
-			/*auto lampShader = m_ShaderLibrary.Get("Lamp");
+			auto lampShader = m_ShaderLibrary.Get("Lamp");
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lampShader)->Bind();
 
 			glm::mat4 lampTransform = glm::mat4(1.0f);
 			lampTransform = glm::translate(lampTransform, m_LightPosition);
 			lampTransform = glm::scale(lampTransform, glm::vec3(0.2f));
 
-			ge::Renderer::Submit3D(lampShader, m_LightCubeVA, lampTransform, 36);*/
+			ge::Renderer::Submit3D(lampShader, m_LightCubeVA, lampTransform, 36);
 
 			ge::Renderer::EndScene();
 		}
