@@ -215,6 +215,18 @@ public:
 				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 			};
 
+			// world space positions of our cubes
+			m_CubePositions[0] = glm::vec3(0.0f, 0.0f, 0.0f);
+			m_CubePositions[1] = glm::vec3(2.0f, 5.0f, -15.0f);
+			m_CubePositions[2] = glm::vec3(-1.5f, -2.2f, -2.5f);
+			m_CubePositions[3] = glm::vec3(-3.8f, -2.0f, -12.3f);
+			m_CubePositions[4] = glm::vec3(2.4f, -0.4f, -3.5f);
+			m_CubePositions[5] = glm::vec3(-1.7f, 3.0f, -7.5f);
+			m_CubePositions[6] = glm::vec3(1.3f, -2.0f, -2.5f);
+			m_CubePositions[7] = glm::vec3(1.5f, 2.0f, -2.5f);
+			m_CubePositions[8] = glm::vec3(1.5f, 0.2f, -1.5f);
+			m_CubePositions[9] = glm::vec3(-1.3f, 1.0f, -1.5f);
+
 			// Create a vertex buffer for the object
 			ge::Ref<ge::VertexBuffer> cubeVB;
 			cubeVB.reset(ge::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices)));
@@ -241,7 +253,7 @@ public:
 
 
 			/* Shaders */
-			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/LightingMap.glsl");
+			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/DirectionalLight.glsl");
 
 			m_Texture = ge::Texture2D::Create("assets/textures/container2.png");
 			m_SpecularMap = ge::Texture2D::Create("assets/textures/container2_specular.png");
@@ -308,18 +320,19 @@ public:
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
 			//----Object being lit rendering---//
-			auto lightingShader = m_ShaderLibrary.Get("LightingMap");
+			auto lightingShader = m_ShaderLibrary.Get("DirectionalLight");
 
+			// Add textures
 			m_Texture->Bind(0);
 			m_SpecularMap->Bind(1);
 
 			// Set up uniforms
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.position", m_LightPosition);
+			//std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.position", m_LightPosition);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.direction", { -0.2f, -1.0f, -0.3f });
 
 			// Set light properties
-
 			glm::vec3 diffuseColor = m_LightColor * glm::vec3(0.5f);	// decrease with influence
 			glm::vec3 ambientColor = m_LightColor * glm::vec3(0.2f);	// low influence
 
@@ -332,19 +345,25 @@ public:
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("material.shininess", 32.0f);
 
 			// calculate the model matrix for ethr object and pass it to shader before drawing
-			glm::mat4 objectTransform = glm::mat4(1.0f);
-				
-			ge::Renderer::Submit3D(lightingShader, m_CubeVA, objectTransform, 36);
+			for (unsigned int i = 0; i < 10; i++)
+			{
+				// calculate the model matrix for each object and pass it to shader before drawing
+				glm::mat4 transform = glm::mat4(1.0f);
+				transform = glm::translate(transform, m_CubePositions[i]);
+				//m_CubeRotations[i] -= m_CubeRotationSpeed * dt;
+				transform = glm::rotate(transform, glm::radians(m_CubeRotations[i]), glm::vec3(1.0f, 0.3f, 0.5f));
+				ge::Renderer::Submit3D(lightingShader, m_CubeVA, transform, 36);
+			}
 
 			//----Lamp rendering---//
-			auto lampShader = m_ShaderLibrary.Get("Lamp");
+			/*auto lampShader = m_ShaderLibrary.Get("Lamp");
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lampShader)->Bind();
 
 			glm::mat4 lampTransform = glm::mat4(1.0f);
 			lampTransform = glm::translate(lampTransform, m_LightPosition);
 			lampTransform = glm::scale(lampTransform, glm::vec3(0.2f));
 
-			ge::Renderer::Submit3D(lampShader, m_LightCubeVA, lampTransform, 36);
+			ge::Renderer::Submit3D(lampShader, m_LightCubeVA, lampTransform, 36);*/
 
 			ge::Renderer::EndScene();
 		}
@@ -408,6 +427,10 @@ private:
 
 	glm::vec3 m_CubePosition = glm::vec3(1.0f);					// Position of cube
 	glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, 2.0f);	// Position of light source
+
+	// Used when multiple are on screen
+	glm::vec3 m_CubePositions[10];
+	float m_CubeRotations[10] = { 0.0f, 20.0f, 40.0f, 60.0f, 80.0f, 100.0f, 120.0f, 140.0f, 160.0f, 180.0f };
 
 	// Enumerator for switching between 2D and 3D rendering
 	enum class Scene : uint32_t

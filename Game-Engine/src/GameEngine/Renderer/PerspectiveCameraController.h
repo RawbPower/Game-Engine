@@ -40,7 +40,8 @@ namespace ge {
 		float m_Fov = 45.0f;
 		PerspectiveCamera m_Camera;
 
-		glm::vec3 m_CameraPosition = { -2.0f, -2.0f, 4.0f };
+		//glm::vec3 m_CameraPosition = { -2.0f, -2.0f, 4.0f };
+		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 10.0f };
 		glm::vec3 m_CameraFront = { 0.0f, 0.0f, -1.0f };
 		glm::vec3 m_CameraUp = { 0.0f, 1.0f, 0.0f };
 		float m_Yaw = -90.0f;
