@@ -158,7 +158,7 @@ public:
 			m_BlendTexture = ge::Texture2D::Create("assets/textures/ChernoLogo.png");
 
 			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture1", 0);		// 0 is the texure slot of m_Texture
+			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);		// 0 is the texure slot of m_Texture
 		} 
 		else if (m_Scene == Scene::Scene3D)
 		{
@@ -171,47 +171,48 @@ public:
 
 			// Vertices for cube
 			float cubeVertices[] = {
-				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-				 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-				-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+				// positions          // normals           // texture coords
+				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
-				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-				 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-				-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
 
-				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-				-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-				-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+				-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+				-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-				 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-				 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-				 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-				-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
 
-				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-				 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-				-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+				 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 			};
 
 			// Create a vertex buffer for the object
@@ -220,7 +221,8 @@ public:
 
 			cubeVB->SetLayout({
 				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float3, "a_Normal" }
+				{ ge::ShaderDataType::Float3, "a_Normal" },
+				{ ge::ShaderDataType::Float2, "a_TexCoords" }
 			});
 
 			m_CubeVA->AddVertexBuffer(cubeVB);
@@ -231,16 +233,24 @@ public:
 
 			lightCubeVB->SetLayout({
 				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float3, "a_Normal" }
-				});
+				{ ge::ShaderDataType::Float3, "a_Normal" },
+				{ ge::ShaderDataType::Float2, "a_TexCoords" }
+			});
 
 			m_LightCubeVA->AddVertexBuffer(lightCubeVB);
 
 
 			/* Shaders */
-			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/Material.glsl");
-			auto lampShader = m_ShaderLibrary.Load("assets/shaders/Lamp.glsl");
+			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/LightingMap.glsl");
 
+			m_Texture = ge::Texture2D::Create("assets/textures/container2.png");
+			m_SpecularMap = ge::Texture2D::Create("assets/textures/container2_specular.png");
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformInt("material.diffuse", 0);		// 0 is the texure slot of m_Texture
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformInt("material.specular", 1);
+
+			auto lampShader = m_ShaderLibrary.Load("assets/shaders/Lamp.glsl");
 		}
 	}
 
@@ -298,7 +308,10 @@ public:
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
 			//----Object being lit rendering---//
-			auto lightingShader = m_ShaderLibrary.Get("Material");
+			auto lightingShader = m_ShaderLibrary.Get("LightingMap");
+
+			m_Texture->Bind(0);
+			m_SpecularMap->Bind(1);
 
 			// Set up uniforms
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
@@ -306,11 +319,6 @@ public:
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.position", m_LightPosition);
 
 			// Set light properties
-			m_TotalTime += dt*0.4;
-			m_TotalTime = fmod(m_TotalTime, 2 * glm::pi<float>());
-			m_LightColor.x = sin(m_TotalTime * 2.0f);
-			m_LightColor.y = sin(m_TotalTime * 0.7f);
-			m_LightColor.z = sin(m_TotalTime * 1.3f);
 
 			glm::vec3 diffuseColor = m_LightColor * glm::vec3(0.5f);	// decrease with influence
 			glm::vec3 ambientColor = m_LightColor * glm::vec3(0.2f);	// low influence
@@ -320,8 +328,6 @@ public:
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.specular", { 1.0f, 1.0f, 1.0f });
 
 			// Set material properties
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("material.ambient", { 1.0f, 0.5f, 0.31f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("material.diffuse", { 1.0f, 0.5f, 0.31f });
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("material.specular", { 0.5f, 0.5f, 0.5f });
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("material.shininess", 32.0f);
 
@@ -370,7 +376,7 @@ private:
 	// General Variables
 	ge::ShaderLibrary m_ShaderLibrary;					// Library for shader files
 
-	ge::Ref<ge::Texture2D> m_Texture, m_BlendTexture;	// Texture files
+	ge::Ref<ge::Texture2D> m_Texture, m_BlendTexture, m_SpecularMap;	// Texture files
 
 	float m_TotalTime = 0.0f;							// Total time passed in application life time (mod 2pi)
 

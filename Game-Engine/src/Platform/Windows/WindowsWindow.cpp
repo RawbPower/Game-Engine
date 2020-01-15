@@ -58,7 +58,7 @@ namespace ge {
 		SetVSync(true);
 
 		// Turn of cursor
-		//glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		
 		// Set GLFW callbacks - using a lambda function
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)

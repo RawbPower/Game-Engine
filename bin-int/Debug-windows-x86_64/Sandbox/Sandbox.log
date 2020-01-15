@@ -1,3 +1,1 @@
-﻿  SandboxApp.cpp
-D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(309,1): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-  Sandbox.vcxproj -> D:\GameEngine\Game-Engine\Sandbox\..\bin\Debug-windows-x86_64\Sandbox\Sandbox.exe
+﻿  Sandbox.vcxproj -> D:\GameEngine\Game-Engine\Sandbox\..\bin\Debug-windows-x86_64\Sandbox\Sandbox.exe
