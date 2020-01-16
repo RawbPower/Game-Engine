@@ -227,6 +227,11 @@ public:
 			m_CubePositions[8] = glm::vec3(1.5f, 0.2f, -1.5f);
 			m_CubePositions[9] = glm::vec3(-1.3f, 1.0f, -1.5f);
 
+			m_PointLightPositions[0] = glm::vec3(0.7f, 0.2f, 2.0f);
+			m_PointLightPositions[1] = glm::vec3(2.3f, -3.3f, -4.0f);
+			m_PointLightPositions[2] = glm::vec3(-4.0f, 2.0f, -12.0f);
+			m_PointLightPositions[3] = glm::vec3(0.0f, 0.0f, -3.0f);
+
 			// Create a vertex buffer for the object
 			ge::Ref<ge::VertexBuffer> cubeVB;
 			cubeVB.reset(ge::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices)));
@@ -253,7 +258,7 @@ public:
 
 
 			/* Shaders */
-			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/SpotLight.glsl");
+			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/MultipleLights.glsl");
 
 			m_Texture = ge::Texture2D::Create("assets/textures/container2.png");
 			m_SpecularMap = ge::Texture2D::Create("assets/textures/container2_specular.png");
@@ -320,7 +325,7 @@ public:
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
 			//----Object being lit rendering---//
-			auto lightingShader = m_ShaderLibrary.Get("SpotLight");
+			auto lightingShader = m_ShaderLibrary.Get("MultipleLights");
 
 			// Add textures
 			m_Texture->Bind(0);
@@ -329,28 +334,58 @@ public:
 			// Set up uniforms
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.position", m_PerspectiveCameraController.GetCameraPosition());
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.direction", m_PerspectiveCameraController.GetCameraFront());
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("light.innerCutOff", glm::cos(glm::radians(12.5f)));
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
-
-			// Set light properties
-			glm::vec3 diffuseColor = m_LightColor * glm::vec3(0.5f);	// decrease with influence
-			glm::vec3 ambientColor = m_LightColor * glm::vec3(0.2f);	// low influence
-
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.ambient", ambientColor);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.diffuse", diffuseColor);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("light.specular", { 1.0f, 1.0f, 1.0f });
-
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("light.constant", 1.0f);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("light.linear", 0.045f);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("light.quadratic", 0.0075f);
-
-
-
-			// Set material properties
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("material.specular", { 0.5f, 0.5f, 0.5f });
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("material.shininess", 32.0f);
+
+			// Light Uniforms are set manually for now (will make a light class)
+			// directional light
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("dirLight.direction", { -0.2f, -1.0f, -0.3f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("dirLight.ambient", { 0.05f, 0.05f, 0.05f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("dirLight.diffuse", { 0.4f, 0.4f, 0.4f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("dirLight.specular", { 0.5f, 0.5f, 0.5f });
+			// point light 1
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[0].position", m_PointLightPositions[0]);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[0].ambient", { 0.05f, 0.05f, 0.05f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[0].diffuse", { 0.8f, 0.8f, 0.8f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[0].specular", { 1.0f, 1.0f, 1.0f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[0].constant", 1.0f);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[0].linear", 0.09);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[0].quadratic", 0.032);
+			// point light 2
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[1].position", m_PointLightPositions[1]);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[1].ambient", { 0.05f, 0.05f, 0.05f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[1].diffuse", { 0.8f, 0.8f, 0.8f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[1].specular", { 1.0f, 1.0f, 1.0f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[1].constant", 1.0f);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[1].linear", 0.09);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[1].quadratic", 0.032);
+			// point light 3
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[2].position", m_PointLightPositions[2]);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[2].ambient", { 0.05f, 0.05f, 0.05f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[2].diffuse", { 0.8f, 0.8f, 0.8f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[2].specular", { 1.0f, 1.0f, 1.0f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[2].constant", 1.0f);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[2].linear", 0.09);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[2].quadratic", 0.032);
+			// point light 4
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[3].position", m_PointLightPositions[3]);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[3].ambient", { 0.05f, 0.05f, 0.05f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[3].diffuse", { 0.8f, 0.8f, 0.8f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[3].specular", { 1.0f, 1.0f, 1.0f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[3].constant", 1.0f);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[3].linear", 0.09);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[3].quadratic", 0.032);
+			// spotLight
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("spotLight.position", m_PerspectiveCameraController.GetCameraPosition());
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("spotLight.direction", m_PerspectiveCameraController.GetCameraFront());
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("spotLight.ambient", { 0.0f, 0.0f, 0.0f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("spotLight.diffuse", { 1.0f, 1.0f, 1.0f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("spotLight.specular", { 1.0f, 1.0f, 1.0f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("spotLight.constant", 1.0f);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("spotLight.linear", 0.09);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("spotLight.quadratic", 0.032);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
 
 			// calculate the model matrix for ethr object and pass it to shader before drawing
 			for (unsigned int i = 0; i < 10; i++)
@@ -364,14 +399,17 @@ public:
 			}
 
 			//----Lamp rendering---//
-			/*auto lampShader = m_ShaderLibrary.Get("Lamp");
+			auto lampShader = m_ShaderLibrary.Get("Lamp");
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lampShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lampShader)->UploadUniformFloat3("u_LightColor", { 1.0f, 1.0f, 1.0f });
 
-			glm::mat4 lampTransform = glm::mat4(1.0f);
-			lampTransform = glm::translate(lampTransform, m_LightPosition);
-			lampTransform = glm::scale(lampTransform, glm::vec3(0.2f));
-
-			ge::Renderer::Submit3D(lampShader, m_LightCubeVA, lampTransform, 36);*/
+			for (unsigned int i = 0; i < 4; i++)
+			{
+				glm::mat4 lampTransform = glm::mat4(1.0f);
+				lampTransform = glm::translate(lampTransform, m_PointLightPositions[i]);
+				lampTransform = glm::scale(lampTransform, glm::vec3(0.2f));
+				ge::Renderer::Submit3D(lampShader, m_LightCubeVA, lampTransform, 36);
+			}
 
 			ge::Renderer::EndScene();
 		}
@@ -438,6 +476,7 @@ private:
 
 	// Used when multiple are on screen
 	glm::vec3 m_CubePositions[10];
+	glm::vec3 m_PointLightPositions[4];
 	float m_CubeRotations[10] = { 0.0f, 20.0f, 40.0f, 60.0f, 80.0f, 100.0f, 120.0f, 140.0f, 160.0f, 180.0f };
 
 	// Enumerator for switching between 2D and 3D rendering
