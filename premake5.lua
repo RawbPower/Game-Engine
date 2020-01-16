@@ -68,7 +68,8 @@ project "Game-Engine"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{prj.name}/vendor/assimp/include"
 	}
 
 	links
@@ -130,7 +131,8 @@ project "Sandbox"
 
 	links
 	{
-		"Game-Engine"
+		"Game-Engine",
+		"Game-Engine/vendor/assimp/win64/assimp.lib"
 	}
 
 	filter "system:windows"

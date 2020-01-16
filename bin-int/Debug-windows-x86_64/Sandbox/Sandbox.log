@@ -1,12 +1,7 @@
 ﻿  SandboxApp.cpp
-D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(351,1): warning C4305: 'argument': truncation from 'double' to 'const float'
+D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(347,1): warning C4305: 'argument': truncation from 'double' to 'const float'
 D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(352,1): warning C4305: 'argument': truncation from 'double' to 'const float'
-D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(359,1): warning C4305: 'argument': truncation from 'double' to 'const float'
-D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(360,1): warning C4305: 'argument': truncation from 'double' to 'const float'
-D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(367,1): warning C4305: 'argument': truncation from 'double' to 'const float'
-D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(368,1): warning C4305: 'argument': truncation from 'double' to 'const float'
-D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(375,1): warning C4305: 'argument': truncation from 'double' to 'const float'
-D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(376,1): warning C4305: 'argument': truncation from 'double' to 'const float'
-D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(384,1): warning C4305: 'argument': truncation from 'double' to 'const float'
-D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(385,1): warning C4305: 'argument': truncation from 'double' to 'const float'
+D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(357,1): warning C4305: 'argument': truncation from 'double' to 'const float'
+D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(362,1): warning C4305: 'argument': truncation from 'double' to 'const float'
+D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(370,1): warning C4305: 'argument': truncation from 'double' to 'const float'
   Sandbox.vcxproj -> D:\GameEngine\Game-Engine\Sandbox\..\bin\Debug-windows-x86_64\Sandbox\Sandbox.exe

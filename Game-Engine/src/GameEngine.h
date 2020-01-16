@@ -27,6 +27,8 @@
 
 #include "GameEngine/Renderer/OrthographicCamera.h"
 #include "GameEngine/Renderer/PerspectiveCamera.h"
+
+#include "GameEngine/Renderer/Lighting.h"
 //--------------------------------
 
 // ---Entry Point-----------------

@@ -336,56 +336,38 @@ public:
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
 			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("material.shininess", 32.0f);
 
-			// Light Uniforms are set manually for now (will make a light class)
+			// Light Uniforms
 			// directional light
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("dirLight.direction", { -0.2f, -1.0f, -0.3f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("dirLight.ambient", { 0.05f, 0.05f, 0.05f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("dirLight.diffuse", { 0.4f, 0.4f, 0.4f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("dirLight.specular", { 0.5f, 0.5f, 0.5f });
-			// point light 1
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[0].position", m_PointLightPositions[0]);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[0].ambient", { 0.05f, 0.05f, 0.05f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[0].diffuse", { 0.8f, 0.8f, 0.8f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[0].specular", { 1.0f, 1.0f, 1.0f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[0].constant", 1.0f);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[0].linear", 0.09);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[0].quadratic", 0.032);
-			// point light 2
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[1].position", m_PointLightPositions[1]);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[1].ambient", { 0.05f, 0.05f, 0.05f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[1].diffuse", { 0.8f, 0.8f, 0.8f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[1].specular", { 1.0f, 1.0f, 1.0f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[1].constant", 1.0f);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[1].linear", 0.09);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[1].quadratic", 0.032);
-			// point light 3
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[2].position", m_PointLightPositions[2]);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[2].ambient", { 0.05f, 0.05f, 0.05f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[2].diffuse", { 0.8f, 0.8f, 0.8f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[2].specular", { 1.0f, 1.0f, 1.0f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[2].constant", 1.0f);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[2].linear", 0.09);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[2].quadratic", 0.032);
-			// point light 4
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[3].position", m_PointLightPositions[3]);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[3].ambient", { 0.05f, 0.05f, 0.05f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[3].diffuse", { 0.8f, 0.8f, 0.8f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("pointLights[3].specular", { 1.0f, 1.0f, 1.0f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[3].constant", 1.0f);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[3].linear", 0.09);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("pointLights[3].quadratic", 0.032);
-			// spotLight
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("spotLight.position", m_PerspectiveCameraController.GetCameraPosition());
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("spotLight.direction", m_PerspectiveCameraController.GetCameraFront());
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("spotLight.ambient", { 0.0f, 0.0f, 0.0f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("spotLight.diffuse", { 1.0f, 1.0f, 1.0f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("spotLight.specular", { 1.0f, 1.0f, 1.0f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("spotLight.constant", 1.0f);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("spotLight.linear", 0.09);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("spotLight.quadratic", 0.032);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+			ge::DirLight::UploadUniforms(lightingShader, "dirLight", { -0.2f, -1.0f, -0.3f },								// shader, name, direction
+											{ 0.05f, 0.05f, 0.05f }, { 0.4f, 0.4f, 0.4f }, { 0.5f, 0.5f, 0.5f });			// ambient, diffuse, specular
 
+			// point light 1
+			ge::PointLight::UploadUniforms(lightingShader, "pointLights[0]", m_PointLightPositions[0],				// shader, name, position
+											{ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f },	// ambient, diffuse, specular
+											1.0f, 0.09, 0.032);														// constant, linear, quadratic	
+
+			// point light 2
+			ge::PointLight::UploadUniforms(lightingShader, "pointLights[1]", m_PointLightPositions[1],				// shader, name, position
+											{ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f },	// ambient, diffuse, specular
+											1.0f, 0.09, 0.032);														// constant, linear, quadratic
+
+			// point light 3
+			ge::PointLight::UploadUniforms(lightingShader, "pointLights[2]", m_PointLightPositions[2],				// shader, name, position
+											{ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f },	// ambient, diffuse, specular
+											1.0f, 0.09, 0.032);														// constant, linear, quadratic
+
+			// point light 4
+			ge::PointLight::UploadUniforms(lightingShader, "pointLights[3]", m_PointLightPositions[3],				// shader, name, position
+											{ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f },	// ambient, diffuse, specular
+											1.0f, 0.09, 0.032);														// constant, linear, quadratic
+
+			// spotLight
+			ge::SpotLight::UploadUniforms(lightingShader, "spotLight",												// shader, name
+											m_PerspectiveCameraController.GetCameraPosition(),						// position
+											m_PerspectiveCameraController.GetCameraFront(),							// direction
+											{ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f },		// ambient, linear, specular
+											1.0f, 0.09, 0.032,														// constant, linear, quadratic
+											12.5f, 15.0f);															// cutOff, outerCutOff
 
 			// calculate the model matrix for ethr object and pass it to shader before drawing
 			for (unsigned int i = 0; i < 10; i++)
