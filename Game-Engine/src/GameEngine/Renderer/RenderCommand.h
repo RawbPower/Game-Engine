@@ -38,9 +38,9 @@ namespace ge {
 			s_RendererAPI->DrawIndexed(vertexArray);
 		}
 
-		inline static void DrawIndexed3D(const std::shared_ptr<VertexArray>& vertexArray, int vertices)
+		inline static void DrawVertices(int vertices)
 		{
-			s_RendererAPI->DrawIndexed3D(vertexArray, vertices);
+			s_RendererAPI->DrawVertices(vertices);
 		}
 	private:
 		static RendererAPI* s_RendererAPI;

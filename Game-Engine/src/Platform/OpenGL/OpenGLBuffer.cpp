@@ -9,7 +9,7 @@ namespace ge {
 	// Vertex Buffer //////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(void* vertices, uint32_t size)
 	{
 		glCreateBuffers(1, &m_RendererID);
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
@@ -35,7 +35,7 @@ namespace ge {
 	// Index Buffer ///////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////
 
-	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count)
+	OpenGLIndexBuffer::OpenGLIndexBuffer(void* indices, uint32_t count)
 		: m_Count(count)
 	{
 		glCreateBuffers(1, &m_RendererID);

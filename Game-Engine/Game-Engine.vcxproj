@@ -164,6 +164,7 @@
     <ClInclude Include="src\GameEngine\Renderer\Buffer.h" />
     <ClInclude Include="src\GameEngine\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\GameEngine\Renderer\Lighting.h" />
+    <ClInclude Include="src\GameEngine\Renderer\Mesh.h" />
     <ClInclude Include="src\GameEngine\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\GameEngine\Renderer\OrthographicCameraController.h" />
     <ClInclude Include="src\GameEngine\Renderer\PerspectiveCamera.h" />
@@ -562,6 +563,7 @@
     <ClCompile Include="src\GameEngine\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\GameEngine\Renderer\Buffer.cpp" />
     <ClCompile Include="src\GameEngine\Renderer\Lighting.cpp" />
+    <ClCompile Include="src\GameEngine\Renderer\Mesh.cpp" />
     <ClCompile Include="src\GameEngine\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\GameEngine\Renderer\OrthographicCameraController.cpp" />
     <ClCompile Include="src\GameEngine\Renderer\PerspectiveCamera.cpp" />

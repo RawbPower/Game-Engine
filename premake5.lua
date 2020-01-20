@@ -132,7 +132,7 @@ project "Sandbox"
 	links
 	{
 		"Game-Engine",
-		"Game-Engine/vendor/assimp/win64/assimp.lib"
+		"Game-Engine/vendor/assimp/lib/assimp-vc142-mtd.lib"
 	}
 
 	filter "system:windows"

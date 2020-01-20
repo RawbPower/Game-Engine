@@ -1,2 +1,5 @@
-﻿  Lighting.cpp
+﻿  Mesh.cpp
+D:\GameEngine\Game-Engine\Game-Engine\src\GameEngine\Renderer\Mesh.cpp(45,74): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+D:\GameEngine\Game-Engine\Game-Engine\src\GameEngine\Renderer\Mesh.cpp(54,99): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+D:\GameEngine\Game-Engine\Game-Engine\src\GameEngine\Renderer\Mesh.cpp(64,81): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
   Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib

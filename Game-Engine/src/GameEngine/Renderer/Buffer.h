@@ -118,7 +118,7 @@ namespace ge {
 		virtual const BufferLayout& GetLayout() const = 0;
 
 		// Use this instead of constructor
-		static VertexBuffer* Create(float* vertices, uint32_t size);
+		static VertexBuffer* Create(void* vertices, uint32_t size);
 	};
 
 	class IndexBuffer 
@@ -132,7 +132,7 @@ namespace ge {
 		virtual uint32_t GetCount() const = 0;
 
 		// Use this instead of constructor
-		static IndexBuffer* Create(uint32_t* indices, uint32_t count);
+		static IndexBuffer* Create(void* indices, uint32_t count);
 	};
 
 }

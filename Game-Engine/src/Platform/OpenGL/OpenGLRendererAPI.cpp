@@ -36,7 +36,7 @@ namespace ge {
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
 
-	void OpenGLRendererAPI::DrawIndexed3D(const Ref<VertexArray>& vertexArray, int vertices)
+	void OpenGLRendererAPI::DrawVertices(int vertices)
 	{
 		glDrawArrays(GL_TRIANGLES, 0, vertices);
 	}

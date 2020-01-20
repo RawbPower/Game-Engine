@@ -12,7 +12,7 @@
 class ExampleLayer : public ge::Layer {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Scene(Scene::Scene3D)
+		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Scene(Scene::Scene2D)
 	{
 		if (m_Scene == Scene::Scene2D) {
 			/* Vertex Array (required for core OpenGL profile) */
@@ -339,7 +339,7 @@ public:
 			// Light Uniforms
 			// directional light
 			ge::DirLight::UploadUniforms(lightingShader, "dirLight", { -0.2f, -1.0f, -0.3f },								// shader, name, direction
-											{ 0.05f, 0.05f, 0.05f }, { 0.4f, 0.4f, 0.4f }, { 0.5f, 0.5f, 0.5f });			// ambient, diffuse, specular
+											{ 0.05f, 0.05f, 0.05f }, { 0.4f, 0.0f, 0.0f }, { 0.5f, 0.5f, 0.5f });			// ambient, diffuse, specular
 
 			// point light 1
 			ge::PointLight::UploadUniforms(lightingShader, "pointLights[0]", m_PointLightPositions[0],				// shader, name, position
@@ -377,7 +377,7 @@ public:
 				transform = glm::translate(transform, m_CubePositions[i]);
 				//m_CubeRotations[i] -= m_CubeRotationSpeed * dt;
 				transform = glm::rotate(transform, glm::radians(m_CubeRotations[i]), glm::vec3(1.0f, 0.3f, 0.5f));
-				ge::Renderer::Submit3D(lightingShader, m_CubeVA, transform, 36);
+				ge::Renderer::Submit(lightingShader, m_CubeVA, 36, transform);
 			}
 
 			//----Lamp rendering---//
@@ -390,7 +390,7 @@ public:
 				glm::mat4 lampTransform = glm::mat4(1.0f);
 				lampTransform = glm::translate(lampTransform, m_PointLightPositions[i]);
 				lampTransform = glm::scale(lampTransform, glm::vec3(0.2f));
-				ge::Renderer::Submit3D(lampShader, m_LightCubeVA, lampTransform, 36);
+				ge::Renderer::Submit(lampShader, m_LightCubeVA, 36, lampTransform);
 			}
 
 			ge::Renderer::EndScene();
