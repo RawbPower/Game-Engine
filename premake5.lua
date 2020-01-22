@@ -69,7 +69,7 @@ project "Game-Engine"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{prj.name}/vendor/assimp/include"
+		"%{prj.name}/vendor/assimp3/include"
 	}
 
 	links
@@ -126,13 +126,14 @@ project "Sandbox"
 		"Game-Engine/vendor/spdlog/include",
 		"Game-Engine/src",
 		"Game-Engine/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"Game-Engine/vendor/assimp3/include",
 	}
 
 	links
 	{
 		"Game-Engine",
-		"Game-Engine/vendor/assimp/lib/assimp-vc142-mtd.lib"
+		"Game-Engine/vendor/assimp3/lib/assimp.lib"
 	}
 
 	filter "system:windows"
@@ -148,12 +149,15 @@ project "Sandbox"
 		runtime "Debug"
 		symbols "on"
 
+
 	filter "configurations:Release"
 		defines "GE_Release"
 		runtime "Release"
 		optimize "on"
 
+
 	filter "configurations:Dist"
 		defines "GE_DIST"
 		runtime "Release"
 		optimize "on"
+

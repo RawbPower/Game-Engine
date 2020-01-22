@@ -32,6 +32,13 @@ namespace ge {
 		// Does nothing for now
 	}
 
+	void Renderer::SetProjection(const std::shared_ptr<Shader>& shader, const glm::mat4& transform = glm::mat4(1.0f))
+	{
+		//shader->Bind();
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_Transform", transform);
+	}
+
 	// The vertex array will be submitted into a RenderCommand queue to be evaluated later and get rendered
 	// For now it is much simpler
 	// Shader needs to be a parameter in submit because it can change for different objects in the scene

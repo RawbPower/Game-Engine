@@ -12,7 +12,7 @@
 class ExampleLayer : public ge::Layer {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Scene(Scene::Scene2D)
+		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Scene(Scene::Scene3D), m_Model("assets/nanosuit/nanosuit.obj")
 	{
 		if (m_Scene == Scene::Scene2D) {
 			/* Vertex Array (required for core OpenGL profile) */
@@ -165,109 +165,10 @@ public:
 			// Enable z-buffer for 3D rendering only
 			ge::RenderCommand::EnableZBuffer();
 
-			// Instatiate vertex arrays for object and light source
-			m_CubeVA.reset(ge::VertexArray::Create());
-			m_LightCubeVA.reset(ge::VertexArray::Create());
-
-			// Vertices for cube
-			float cubeVertices[] = {
-				// positions          // normals           // texture coords
-				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-				 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-				-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-
-				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-				 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-				-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-
-				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-				-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-				-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-				 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-				 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-				 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-				-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-
-				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-				 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-				-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
-			};
-
-			// world space positions of our cubes
-			m_CubePositions[0] = glm::vec3(0.0f, 0.0f, 0.0f);
-			m_CubePositions[1] = glm::vec3(2.0f, 5.0f, -15.0f);
-			m_CubePositions[2] = glm::vec3(-1.5f, -2.2f, -2.5f);
-			m_CubePositions[3] = glm::vec3(-3.8f, -2.0f, -12.3f);
-			m_CubePositions[4] = glm::vec3(2.4f, -0.4f, -3.5f);
-			m_CubePositions[5] = glm::vec3(-1.7f, 3.0f, -7.5f);
-			m_CubePositions[6] = glm::vec3(1.3f, -2.0f, -2.5f);
-			m_CubePositions[7] = glm::vec3(1.5f, 2.0f, -2.5f);
-			m_CubePositions[8] = glm::vec3(1.5f, 0.2f, -1.5f);
-			m_CubePositions[9] = glm::vec3(-1.3f, 1.0f, -1.5f);
-
-			m_PointLightPositions[0] = glm::vec3(0.7f, 0.2f, 2.0f);
-			m_PointLightPositions[1] = glm::vec3(2.3f, -3.3f, -4.0f);
-			m_PointLightPositions[2] = glm::vec3(-4.0f, 2.0f, -12.0f);
-			m_PointLightPositions[3] = glm::vec3(0.0f, 0.0f, -3.0f);
-
-			// Create a vertex buffer for the object
-			ge::Ref<ge::VertexBuffer> cubeVB;
-			cubeVB.reset(ge::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices)));
-
-			cubeVB->SetLayout({
-				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float3, "a_Normal" },
-				{ ge::ShaderDataType::Float2, "a_TexCoords" }
-			});
-
-			m_CubeVA->AddVertexBuffer(cubeVB);
-
-			// Even though the light is also a cube we want a different vertex buffer because it will change vertices in the future
-			ge::Ref<ge::VertexBuffer> lightCubeVB;
-			lightCubeVB.reset(ge::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices)));
-
-			lightCubeVB->SetLayout({
-				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float3, "a_Normal" },
-				{ ge::ShaderDataType::Float2, "a_TexCoords" }
-			});
-
-			m_LightCubeVA->AddVertexBuffer(lightCubeVB);
-
-
 			/* Shaders */
-			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/MultipleLights.glsl");
+			auto modelShader = m_ShaderLibrary.Load("assets/shaders/SimpleModel.glsl");
 
-			m_Texture = ge::Texture2D::Create("assets/textures/container2.png");
-			m_SpecularMap = ge::Texture2D::Create("assets/textures/container2_specular.png");
-
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformInt("material.diffuse", 0);		// 0 is the texure slot of m_Texture
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformInt("material.specular", 1);
-
-			auto lampShader = m_ShaderLibrary.Load("assets/shaders/Lamp.glsl");
+			//ge::RenderCommand::WireFrame();
 		}
 	}
 
@@ -318,80 +219,26 @@ public:
 
 			// Rendering
 			// Clear previous frame
-			ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+			ge::RenderCommand::SetClearColor({ 0.05f, 0.05f, 0.05f, 1 });
 			ge::RenderCommand::Clear();
 
 			// Begin the current scene
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
 			//----Object being lit rendering---//
-			auto lightingShader = m_ShaderLibrary.Get("MultipleLights");
-
-			// Add textures
-			m_Texture->Bind(0);
-			m_SpecularMap->Bind(1);
+			auto modelShader = m_ShaderLibrary.Get("SimpleModel");
 
 			// Set up uniforms
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat("material.shininess", 32.0f);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
 
-			// Light Uniforms
-			// directional light
-			ge::DirLight::UploadUniforms(lightingShader, "dirLight", { -0.2f, -1.0f, -0.3f },								// shader, name, direction
-											{ 0.05f, 0.05f, 0.05f }, { 0.4f, 0.0f, 0.0f }, { 0.5f, 0.5f, 0.5f });			// ambient, diffuse, specular
+			glm::mat4 transform = glm::mat4(1.0f);
+			transform = glm::translate(transform, glm::vec3(0.0f, -1.75f, 0.0f));
+			transform = glm::scale(transform, glm::vec3(0.2f, 0.2f, 0.2f));
 
-			// point light 1
-			ge::PointLight::UploadUniforms(lightingShader, "pointLights[0]", m_PointLightPositions[0],				// shader, name, position
-											{ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f },	// ambient, diffuse, specular
-											1.0f, 0.09, 0.032);														// constant, linear, quadratic	
+			ge::Renderer::SetProjection(modelShader, transform);
 
-			// point light 2
-			ge::PointLight::UploadUniforms(lightingShader, "pointLights[1]", m_PointLightPositions[1],				// shader, name, position
-											{ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f },	// ambient, diffuse, specular
-											1.0f, 0.09, 0.032);														// constant, linear, quadratic
-
-			// point light 3
-			ge::PointLight::UploadUniforms(lightingShader, "pointLights[2]", m_PointLightPositions[2],				// shader, name, position
-											{ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f },	// ambient, diffuse, specular
-											1.0f, 0.09, 0.032);														// constant, linear, quadratic
-
-			// point light 4
-			ge::PointLight::UploadUniforms(lightingShader, "pointLights[3]", m_PointLightPositions[3],				// shader, name, position
-											{ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f },	// ambient, diffuse, specular
-											1.0f, 0.09, 0.032);														// constant, linear, quadratic
-
-			// spotLight
-			ge::SpotLight::UploadUniforms(lightingShader, "spotLight",												// shader, name
-											m_PerspectiveCameraController.GetCameraPosition(),						// position
-											m_PerspectiveCameraController.GetCameraFront(),							// direction
-											{ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f },		// ambient, linear, specular
-											1.0f, 0.09, 0.032,														// constant, linear, quadratic
-											12.5f, 15.0f);															// cutOff, outerCutOff
-
-			// calculate the model matrix for ethr object and pass it to shader before drawing
-			for (unsigned int i = 0; i < 10; i++)
-			{
-				// calculate the model matrix for each object and pass it to shader before drawing
-				glm::mat4 transform = glm::mat4(1.0f);
-				transform = glm::translate(transform, m_CubePositions[i]);
-				//m_CubeRotations[i] -= m_CubeRotationSpeed * dt;
-				transform = glm::rotate(transform, glm::radians(m_CubeRotations[i]), glm::vec3(1.0f, 0.3f, 0.5f));
-				ge::Renderer::Submit(lightingShader, m_CubeVA, 36, transform);
-			}
-
-			//----Lamp rendering---//
-			auto lampShader = m_ShaderLibrary.Get("Lamp");
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lampShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lampShader)->UploadUniformFloat3("u_LightColor", { 1.0f, 1.0f, 1.0f });
-
-			for (unsigned int i = 0; i < 4; i++)
-			{
-				glm::mat4 lampTransform = glm::mat4(1.0f);
-				lampTransform = glm::translate(lampTransform, m_PointLightPositions[i]);
-				lampTransform = glm::scale(lampTransform, glm::vec3(0.2f));
-				ge::Renderer::Submit(lampShader, m_LightCubeVA, 36, lampTransform);
-			}
+			m_Model.Draw(modelShader);
 
 			ge::Renderer::EndScene();
 		}
@@ -460,6 +307,8 @@ private:
 	glm::vec3 m_CubePositions[10];
 	glm::vec3 m_PointLightPositions[4];
 	float m_CubeRotations[10] = { 0.0f, 20.0f, 40.0f, 60.0f, 80.0f, 100.0f, 120.0f, 140.0f, 160.0f, 180.0f };
+
+	ge::Model m_Model;
 
 	// Enumerator for switching between 2D and 3D rendering
 	enum class Scene : uint32_t

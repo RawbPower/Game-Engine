@@ -16,35 +16,39 @@
 
 namespace ge {
 
-	struct Vertex
+	struct MeshVertex
 	{
 		glm::vec3 Position;
 		glm::vec3 Normal;
 		glm::vec2 TexCoords;
 	};
 
-	struct Texture
+	struct MeshTexture
 	{
 		unsigned int id;
 		std::string type;
+		std::string path;
 	};
 
 	class Mesh {
 	public: 
 		/* Functions */
-		Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+		Mesh(std::vector<MeshVertex> vertices, std::vector<unsigned int> indices, std::vector<MeshTexture> textures);
 		~Mesh();
 
 		void Draw(const std::shared_ptr<Shader>& shader);
 	private:
 		/* Mesh Data */
-		std::vector<Vertex> m_Vertices;
+		std::vector<MeshVertex> m_Vertices;
 		std::vector<unsigned int> m_Indices;
-		std::vector<Texture> m_Textures;
+		std::vector<MeshTexture> m_Textures;
 
 		Ref<VertexArray> m_VertexArray;
 		Ref<VertexBuffer> m_VertexBuffer;
 		Ref<IndexBuffer> m_IndexBuffer;
+
+		unsigned int VAO;
+		unsigned int VBO, EBO;
 
 		void SetupMesh();
 	};
