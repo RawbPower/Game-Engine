@@ -171,7 +171,7 @@ public:
 			m_Model = ge::Model("assets/nanosuit/nanosuit.obj");
 
 			/* Shaders */
-			auto modelShader = m_ShaderLibrary.Load("assets/shaders/SimpleModel.glsl");
+			auto modelShader = m_ShaderLibrary.Load("assets/shaders/ModelPointLight.glsl");
 
 			// draw in wireframe
 			//ge::RenderCommand::WireFrame();
@@ -232,11 +232,23 @@ public:
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
 			//----Object being lit rendering---//
-			auto modelShader = m_ShaderLibrary.Get("SimpleModel");
+			auto modelShader = m_ShaderLibrary.Get("ModelPointLight");
 
 			// Set up uniforms
 			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->UploadUniformFloat("texture_shininess", 32.0f);
+
+			// point light 1
+			ge::PointLight::UploadUniforms(modelShader, "light[0]", glm::vec3(1.7f, 1.2f, 2.0f),				// shader, name, position
+				{ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f },	// ambient, diffuse, specular
+				1.0f, 0.09, 0.032);														// constant, linear, quadratic	
+
+			//point light 2
+			ge::PointLight::UploadUniforms(modelShader, "light[1]", glm::vec3(-1.0f, 0.5f, 0.0f),				// shader, name, position
+				{ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f },	// ambient, diffuse, specular
+				1.0f, 0.09, 0.032);
 
 			// Position the model
 			glm::mat4 transform = glm::mat4(1.0f);

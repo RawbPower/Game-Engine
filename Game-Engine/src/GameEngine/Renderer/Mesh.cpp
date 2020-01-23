@@ -43,7 +43,7 @@ namespace ge {
 				number = std::to_string(specularNr++);
 
 			// now set the sampler to the correct texture unit
-			std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformInt(("material." + name + number).c_str(), i);
+			std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformInt((name + number).c_str(), i);
 			// and finally bind the texture
 			m_Textures[i]->Bind(i);
 		}

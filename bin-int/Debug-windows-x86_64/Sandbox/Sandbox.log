@@ -1,2 +1,4 @@
 ﻿  SandboxApp.cpp
+D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(246,1): warning C4305: 'argument': truncation from 'double' to 'const float'
+D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(251,1): warning C4305: 'argument': truncation from 'double' to 'const float'
   Sandbox.vcxproj -> D:\GameEngine\Game-Engine\Sandbox\..\bin\Debug-windows-x86_64\Sandbox\Sandbox.exe
