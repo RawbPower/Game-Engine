@@ -12,7 +12,7 @@
 class ExampleLayer : public ge::Layer {
 public:
 	ExampleLayer()
-		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Scene(Scene::Scene3D), m_Model("assets/nanosuit/nanosuit.obj")
+		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Model(""), m_Scene(Scene::Scene3D)
 	{
 		if (m_Scene == Scene::Scene2D) {
 			/* Vertex Array (required for core OpenGL profile) */
@@ -154,9 +154,11 @@ public:
 
 			auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
+			// Create textures
 			m_Texture = ge::Texture2D::Create("assets/textures/Checkerboard.png");
 			m_BlendTexture = ge::Texture2D::Create("assets/textures/ChernoLogo.png");
 
+			// Bind shader and upload texture uniform
 			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);		// 0 is the texure slot of m_Texture
 		} 
@@ -165,13 +167,18 @@ public:
 			// Enable z-buffer for 3D rendering only
 			ge::RenderCommand::EnableZBuffer();
 
+			// Create model with relative path
+			m_Model = ge::Model("assets/nanosuit/nanosuit.obj");
+
 			/* Shaders */
 			auto modelShader = m_ShaderLibrary.Load("assets/shaders/SimpleModel.glsl");
 
+			// draw in wireframe
 			//ge::RenderCommand::WireFrame();
 		}
 	}
 
+	// Function called every frame
 	void OnUpdate(ge::DeltaTime dt) override
 	{
 		if (m_Scene == Scene::Scene2D) {
@@ -199,16 +206,15 @@ public:
 				}
 			}
 
+			// Get shader from library
 			auto textureShader = m_ShaderLibrary.Get("Texture");
 
+			// Bind texures and dray shapes
 			m_Texture->Bind(0);
 			ge::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
 			m_BlendTexture->Bind(0);
 			ge::Renderer::Submit(textureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
-
-			// Render triangle
-			//ge::Renderer::Submit(m_Shader, m_VertexArray);
 
 			ge::Renderer::EndScene();
 		}
@@ -232,12 +238,15 @@ public:
 			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
 
+			// Position the model
 			glm::mat4 transform = glm::mat4(1.0f);
 			transform = glm::translate(transform, glm::vec3(0.0f, -1.75f, 0.0f));
 			transform = glm::scale(transform, glm::vec3(0.2f, 0.2f, 0.2f));
 
+			// Setup up the prejection matrix for the camera
 			ge::Renderer::SetProjection(modelShader, transform);
 
+			// Draw model to screen
 			m_Model.Draw(modelShader);
 
 			ge::Renderer::EndScene();
@@ -288,27 +297,7 @@ private:
 	// 3D Scene Varaibles
 	ge::PerspectiveCameraController m_PerspectiveCameraController;	// Perspective Camera Controller
 
-	ge::Ref<ge::Shader> m_CubeShader;			// Shader for cube
-	ge::Ref<ge::VertexArray> m_CubeVA;			// Vertex array for cube
-
-	ge::Ref<ge::Shader> m_LightCubeShader;		// Shader for light source
-	ge::Ref<ge::VertexArray> m_LightCubeVA;		// Vertex array for light source
-
-	glm::vec3 m_ObjectColor = { 1.0f, 0.5f, 0.31f };	// Base colour of object being lit (in white light)
-	glm::vec3 m_LightColor = { 1.0f, 1.0f, 1.0f };		// Light colour
-
-	float m_CubeRotation = 0.0f;						// Initial roation of cube (Currently not used)
-	float m_CubeRotationSpeed = 50.0f;					// Rotation speed of cube (Currently not used)
-
-	glm::vec3 m_CubePosition = glm::vec3(1.0f);					// Position of cube
-	glm::vec3 m_LightPosition = glm::vec3(1.2f, 1.0f, 2.0f);	// Position of light source
-
-	// Used when multiple are on screen
-	glm::vec3 m_CubePositions[10];
-	glm::vec3 m_PointLightPositions[4];
-	float m_CubeRotations[10] = { 0.0f, 20.0f, 40.0f, 60.0f, 80.0f, 100.0f, 120.0f, 140.0f, 160.0f, 180.0f };
-
-	ge::Model m_Model;
+	ge::Model m_Model;								// Model to be rendered
 
 	// Enumerator for switching between 2D and 3D rendering
 	enum class Scene : uint32_t

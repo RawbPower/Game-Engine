@@ -43,6 +43,11 @@ namespace ge {
 			s_RendererAPI->DrawIndexed(vertexArray);
 		}
 
+		inline static void DrawIndexed(const std::vector<unsigned int> indices)
+		{
+			s_RendererAPI->DrawIndexed(indices);
+		}
+
 		inline static void DrawVertices(int vertices)
 		{
 			s_RendererAPI->DrawVertices(vertices);

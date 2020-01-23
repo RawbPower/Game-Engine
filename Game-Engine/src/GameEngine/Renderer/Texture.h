@@ -24,4 +24,17 @@ namespace ge {
 	public:
 		static Ref<Texture2D> Create(const std::string& path);
 	};
+
+
+	// 3D texture
+	class Texture3D : public Texture
+	{
+	public:
+		static Ref<Texture3D> Create(const std::string& path, const std::string& directory);
+
+		virtual const std::string& GetPath() const = 0;
+
+		virtual std::string GetType() const = 0;
+		virtual void SetType(const std::string& type) = 0;
+	};
 }

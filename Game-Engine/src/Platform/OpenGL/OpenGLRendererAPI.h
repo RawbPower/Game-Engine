@@ -15,6 +15,7 @@ namespace ge {
 		virtual void Clear() override;
 
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
+		virtual void DrawIndexed(const std::vector<unsigned int> indices) override;
 		virtual void DrawVertices(int vertices) override;
 	};
 }

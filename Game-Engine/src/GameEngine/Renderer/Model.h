@@ -31,19 +31,16 @@ namespace ge {
 		// processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
 		void ProcessNode(aiNode* node, const aiScene* scene);
 
-
+		// Process the vertices, indices and textures
 		Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
 
 		// checks all material textures of a given type and loads the textures if they're not loaded yet.
 		// the required info is returned as a Texture struct.	
-		std::vector<MeshTexture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
-
-		// connect this function bac k to the original texture file
-		unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma = false);
+		std::vector<Ref<Texture3D>> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 
 		/* Model Data */
 		std::vector<Mesh> m_Meshes;
 		std::string m_Directory;
-		std::vector<MeshTexture> m_TexturesLoaded;
+		std::vector<Ref<Texture3D>> m_TexturesLoaded;
 	};
 }

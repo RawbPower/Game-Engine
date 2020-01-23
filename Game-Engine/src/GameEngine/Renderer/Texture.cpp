@@ -18,4 +18,18 @@ namespace ge {
 		GE_CORE_ASSERT(false, "Unknown RendererAPI");
 		return nullptr;
 	}
+
+
+	Ref<Texture3D> Texture3D::Create(const std::string& path, const std::string& directory)
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:		GE_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+
+		case RendererAPI::API::OpenGL:	return std::make_shared<OpenGLTexture3D>(path, directory);
+		}
+
+		GE_CORE_ASSERT(false, "Unknown RendererAPI");
+		return nullptr;
+	}
 }

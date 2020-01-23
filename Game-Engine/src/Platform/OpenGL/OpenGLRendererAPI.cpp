@@ -41,6 +41,12 @@ namespace ge {
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
 
+	void OpenGLRendererAPI::DrawIndexed(const std::vector<unsigned int> indices)
+	{
+		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
+		glBindVertexArray(0);
+	}
+
 	void OpenGLRendererAPI::DrawVertices(int vertices)
 	{
 		glDrawArrays(GL_TRIANGLES, 0, vertices);
