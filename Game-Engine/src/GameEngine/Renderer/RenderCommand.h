@@ -23,6 +23,11 @@ namespace ge {
 			s_RendererAPI->DisableZBuffer();
 		}
 
+		inline static void DepthFunc(const std::string setting) 
+		{
+			s_RendererAPI->DepthFunc(setting);
+		}
+
 		inline static void WireFrame()
 		{
 			s_RendererAPI->WireFrame();

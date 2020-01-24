@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include "GameEngine/Core/Core.h"
 
@@ -37,4 +38,12 @@ namespace ge {
 		virtual std::string GetType() const = 0;
 		virtual void SetType(const std::string& type) = 0;
 	};
+
+	// Cubemap
+	class Cubemap : public Texture
+	{
+	public:
+		static Ref<Cubemap> Create(const std::vector<std::string> faces);
+	};
+
 }

@@ -20,11 +20,15 @@ namespace ge {
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
 		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		s_SceneData->ViewMatrix = camera.GetViewMatrix();
+		s_SceneData->ProjectionMatrix = camera.GetProjectionMatrix();
 	}
 
 	void Renderer::BeginScene(PerspectiveCamera& camera)
 	{
 		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		s_SceneData->ViewMatrix = camera.GetViewMatrix();
+		s_SceneData->ProjectionMatrix = camera.GetProjectionMatrix();
 	}
 
 	void Renderer::EndScene()
@@ -64,6 +68,16 @@ namespace ge {
 
 	void Renderer::SubmitFramebuffer(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, unsigned int vertices)
 	{
+		vertexArray->Bind();
+		RenderCommand::DrawVertices(vertices);
+	}
+
+	void Renderer::SubmitSkybox(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, unsigned int vertices)
+	{
+		shader->Bind();
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_View", glm::mat4(glm::mat3(s_SceneData->ViewMatrix)));  // remove translation from the view matrix
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_Projection", s_SceneData->ProjectionMatrix);
+
 		vertexArray->Bind();
 		RenderCommand::DrawVertices(vertices);
 	}

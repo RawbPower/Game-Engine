@@ -21,6 +21,22 @@ namespace ge {
 		glDisable(GL_DEPTH_TEST);
 	}
 
+	void OpenGLRendererAPI::DepthFunc(const std::string setting) 
+	{
+		if (setting == "EQUAL")
+			glDepthFunc(GL_EQUAL);
+		else if (setting == "LEQUAL")
+			glDepthFunc(GL_LEQUAL);
+		else if (setting == "GEQUAL")
+			glDepthFunc(GL_GEQUAL);
+		else if (setting == "LESS")
+			glDepthFunc(GL_LESS);
+		else if (setting == "GREATER")
+			glDepthFunc(GL_GREATER);
+		else
+			GE_CORE_ERROR("Invalid depth function value: " + setting);
+	}		
+
 	void OpenGLRendererAPI::WireFrame()
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

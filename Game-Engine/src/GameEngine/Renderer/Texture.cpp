@@ -32,4 +32,18 @@ namespace ge {
 		GE_CORE_ASSERT(false, "Unknown RendererAPI");
 		return nullptr;
 	}
+
+
+	Ref<Cubemap> Cubemap::Create(const std::vector<std::string> faces)
+	{
+		switch (Renderer::GetAPI())
+		{
+		case RendererAPI::API::None:		GE_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
+
+		case RendererAPI::API::OpenGL:	return std::make_shared<OpenGLCubemap>(faces);
+		}
+
+		GE_CORE_ASSERT(false, "Unknown RendererAPI");
+		return nullptr;
+	}
 }

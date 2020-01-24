@@ -70,6 +70,8 @@ namespace ge {
 
 		int width, height, nrComponents;
 		unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+		m_Width = width;
+		m_Height = height;
 		if (data)
 		{
 			GLenum format;
@@ -104,6 +106,51 @@ namespace ge {
 	}
 
 	void OpenGLTexture3D::Bind(uint32_t slot) const
+	{
+		glBindTextureUnit(slot, m_RendererID);
+	}
+
+
+
+	OpenGLCubemap::OpenGLCubemap(const std::vector<std::string> faces)
+		: m_FacePaths(faces)
+	{
+		glGenTextures(1, &m_RendererID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID);
+
+		// Load image
+		int width, height, channels;
+		stbi_set_flip_vertically_on_load(0);
+		for (unsigned int i = 0; i < faces.size(); i++)
+		{
+			stbi_uc* data = stbi_load(faces[i].c_str(), &width, &height, &channels, 0);
+			if (data)
+			{
+				m_Width = width;
+				m_Height = height;
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+				stbi_image_free(data);
+			}
+			else
+			{
+				GE_CORE_ASSERT(data, "Failed to load cubmap image!");
+			}
+		}
+
+		// Defining parameters (for scaling)
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	}
+
+	OpenGLCubemap::~OpenGLCubemap()
+	{
+		glDeleteTextures(1, &m_RendererID);
+	}
+
+	void OpenGLCubemap::Bind(uint32_t slot) const
 	{
 		glBindTextureUnit(slot, m_RendererID);
 	}
