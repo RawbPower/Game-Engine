@@ -62,4 +62,10 @@ namespace ge {
 		RenderCommand::DrawVertices(vertices);
 	}
 
+	void Renderer::SubmitFramebuffer(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, unsigned int vertices)
+	{
+		vertexArray->Bind();
+		RenderCommand::DrawVertices(vertices);
+	}
+
 }

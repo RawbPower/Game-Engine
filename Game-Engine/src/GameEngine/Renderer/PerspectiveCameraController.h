@@ -30,6 +30,9 @@ namespace ge {
 
 		glm::vec3 GetCameraUp() const { return m_CameraUp; }
 		void SetCameraUp(glm::vec3 level) { m_CameraUp = level; }
+
+		uint32_t GetScreenWidth() const { return m_ScreenWidth; }
+		uint32_t GetScreenHeight() const { return m_ScreenHeight; }
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnMouseMoved(MouseMovedEvent& e);
@@ -41,13 +44,15 @@ namespace ge {
 		PerspectiveCamera m_Camera;
 
 		//glm::vec3 m_CameraPosition = { -2.0f, -2.0f, 4.0f };
-		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 10.0f };
+		glm::vec3 m_CameraPosition = { 0.0f, 1.0f, 5.0f };
 		glm::vec3 m_CameraFront = { 0.0f, 0.0f, -1.0f };
 		glm::vec3 m_CameraUp = { 0.0f, 1.0f, 0.0f };
 		float m_Yaw = -90.0f;
 		float m_Pitch = 0.0f;
 		float m_CameraRotation = 0.0f;
 		float m_CameraTranslationSpeed = 2.5f, m_CameraRotationSpeed = 180.0f;
+
+		uint32_t m_ScreenWidth, m_ScreenHeight;
 
 		bool m_FirstMouse = true;
 		float m_LastX = 640.0f, m_LastY = 360.0f;

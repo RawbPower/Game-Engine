@@ -162,6 +162,7 @@
     <ClInclude Include="src\GameEngine\Events\MouseEvent.h" />
     <ClInclude Include="src\GameEngine\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\GameEngine\Renderer\Buffer.h" />
+    <ClInclude Include="src\GameEngine\Renderer\Framebuffer.h" />
     <ClInclude Include="src\GameEngine\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\GameEngine\Renderer\Lighting.h" />
     <ClInclude Include="src\GameEngine\Renderer\Mesh.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="src\GameEngine\Renderer\VertexArray.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h" />
@@ -563,6 +565,7 @@
     <ClCompile Include="src\GameEngine\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\GameEngine\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\GameEngine\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\GameEngine\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\GameEngine\Renderer\Lighting.cpp" />
     <ClCompile Include="src\GameEngine\Renderer\Mesh.cpp" />
     <ClCompile Include="src\GameEngine\Renderer\Model.cpp" />
@@ -578,6 +581,7 @@
     <ClCompile Include="src\GameEngine\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />

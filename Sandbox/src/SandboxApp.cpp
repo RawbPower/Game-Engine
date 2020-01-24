@@ -167,11 +167,130 @@ public:
 			// Enable z-buffer for 3D rendering only
 			ge::RenderCommand::EnableZBuffer();
 
-			// Create model with relative path
-			m_Model = ge::Model("assets/nanosuit/nanosuit.obj");
+			// Create VAOs for all the objects
+			m_CubeVA.reset(ge::VertexArray::Create());
+			m_PlaneVA.reset(ge::VertexArray::Create());
+			m_QuadVA.reset(ge::VertexArray::Create());
 
-			/* Shaders */
-			auto modelShader = m_ShaderLibrary.Load("assets/shaders/ModelPointLight.glsl");
+			// Set up vertices for the objects
+			float cubeVertices[] = {
+				// positions          // texture Coords
+				-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+				-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+				 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+				-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+			};
+			float planeVertices[] = {
+				// positions          // texture Coords 
+				 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+				-5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
+				-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+
+				 5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+				-5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+				 5.0f, -0.5f, -5.0f,  2.0f, 2.0f
+			};
+			float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+				// positions   // texCoords
+				-1.0f,  1.0f,  0.0f, 1.0f,
+				-1.0f, -1.0f,  0.0f, 0.0f,
+				 1.0f, -1.0f,  1.0f, 0.0f,
+
+				-1.0f,  1.0f,  0.0f, 1.0f,
+				 1.0f, -1.0f,  1.0f, 0.0f,
+				 1.0f,  1.0f,  1.0f, 1.0f
+			};
+
+			// Set buffer layout for cube
+			ge::Ref<ge::VertexBuffer> cubeVB;
+			cubeVB.reset(ge::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices)));
+
+			cubeVB->SetLayout({
+				{ ge::ShaderDataType::Float3, "a_Position" },
+				{ ge::ShaderDataType::Float2, "a_TexCoord" }
+				});
+
+			m_CubeVA->AddVertexBuffer(cubeVB);
+
+			// Set buffer layout for plane
+			ge::Ref<ge::VertexBuffer> planeVB;
+			planeVB.reset(ge::VertexBuffer::Create(planeVertices, sizeof(planeVertices)));
+
+			planeVB->SetLayout({
+				{ ge::ShaderDataType::Float3, "a_Position" },
+				{ ge::ShaderDataType::Float2, "a_TexCoord" }
+				});
+
+			m_PlaneVA->AddVertexBuffer(planeVB);
+
+			// Set buffer layout for quad
+			ge::Ref<ge::VertexBuffer> quadVB;
+			quadVB.reset(ge::VertexBuffer::Create(quadVertices, sizeof(quadVertices)));
+
+			quadVB->SetLayout({
+				{ ge::ShaderDataType::Float2, "a_Position" },
+				{ ge::ShaderDataType::Float2, "a_TexCoord" }
+			});
+
+			m_QuadVA->AddVertexBuffer(quadVB);
+
+			// Shaders
+			auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
+			auto screenShader = m_ShaderLibrary.Load("assets/shaders/Framebuffer.glsl");
+			auto inversionShader = m_ShaderLibrary.Load("assets/shaders/FramebufferInversion.glsl");
+			auto grayscaleShader = m_ShaderLibrary.Load("assets/shaders/FramebufferGrayscale.glsl");
+			auto sharpenShader = m_ShaderLibrary.Load("assets/shaders/FramebufferSharpen.glsl");
+			auto blurShader = m_ShaderLibrary.Load("assets/shaders/FramebufferBlur.glsl");
+			auto edgeShader = m_ShaderLibrary.Load("assets/shaders/FramebufferEdge.glsl");
+
+			m_CubeTexture = ge::Texture2D::Create("assets/textures/container.jpg");
+			m_FloorTexture = ge::Texture2D::Create("assets/textures/metal.png");
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);		// 0 is the texure slot of m_Texture
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(screenShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(screenShader)->UploadUniformInt("u_ScreenTexture", 0);
+
+			// Fix this on update
+			m_Framebuffer.reset(ge::Framebuffer::Create(1280, 720));
 
 			// draw in wireframe
 			//ge::RenderCommand::WireFrame();
@@ -223,43 +342,55 @@ public:
 			// Update Camera
 			m_PerspectiveCameraController.OnUpdate(dt);
 
+			// Bind framebuffer
+			m_Framebuffer->Bind();
+			ge::RenderCommand::EnableZBuffer();
+
 			// Rendering
 			// Clear previous frame
-			ge::RenderCommand::SetClearColor({ 0.05f, 0.05f, 0.05f, 1 });
+			ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 			ge::RenderCommand::Clear();
 
 			// Begin the current scene
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
 			//----Object being lit rendering---//
-			auto modelShader = m_ShaderLibrary.Get("ModelPointLight");
+			auto textureShader = m_ShaderLibrary.Get("Texture");
 
 			// Set up uniforms
-			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
+			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
 
-			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->UploadUniformFloat("texture_shininess", 32.0f);
-
-			// point light 1
-			ge::PointLight::UploadUniforms(modelShader, "light[0]", glm::vec3(1.7f, 1.2f, 2.0f),				// shader, name, position
-				{ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f },	// ambient, diffuse, specular
-				1.0f, 0.09, 0.032);														// constant, linear, quadratic	
-
-			//point light 2
-			ge::PointLight::UploadUniforms(modelShader, "light[1]", glm::vec3(-1.0f, 0.5f, 0.0f),				// shader, name, position
-				{ 0.05f, 0.05f, 0.05f }, { 0.8f, 0.8f, 0.8f }, { 1.0f, 1.0f, 1.0f },	// ambient, diffuse, specular
-				1.0f, 0.09, 0.032);
-
-			// Position the model
+			// Cubes	
+			m_CubeTexture->Bind(0);
 			glm::mat4 transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, glm::vec3(0.0f, -1.75f, 0.0f));
-			transform = glm::scale(transform, glm::vec3(0.2f, 0.2f, 0.2f));
+			transform = glm::translate(transform, glm::vec3(-1.0f, 0.0f, -1.0f));
+			ge::Renderer::Submit(textureShader, m_CubeVA, 36, transform);
+			transform = glm::mat4(1.0f);
+			transform = glm::translate(transform, glm::vec3(2.0f, 0.0f, 0.0f));
+			ge::Renderer::Submit(textureShader, m_CubeVA, 36, transform);
 
-			// Setup up the prejection matrix for the camera
-			ge::Renderer::SetProjection(modelShader, transform);
+			// Floor
+			m_FloorTexture->Bind(0);
+			transform = glm::mat4(1.0f);
+			ge::Renderer::Submit(textureShader, m_PlaneVA, 6, transform);
+			m_PlaneVA->Unbind();
 
-			// Draw model to screen
-			m_Model.Draw(modelShader);
+			// now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
+			m_Framebuffer->Unbind();
+			ge::RenderCommand::DisableZBuffer(); // disable depth test so screen-space quad isn't discarded due to depth test.
+			// clear all relevant buffers
+			ge::RenderCommand::SetClearColor({ 1.0f, 1.0f, 1.0f, 1 });
+			ge::RenderCommand::Clear();  // set clear color to white (not really necessery actually, since we won't be able to see behind the quad anyways)
+
+			auto screenShader = m_ShaderLibrary.Get("Framebuffer");
+
+			// Set up uniforms
+			std::dynamic_pointer_cast<ge::OpenGLShader>(screenShader)->Bind();
+
+			m_Framebuffer->BindTexture();	// use the color attachment texture as the texture of the quad plane
+
+			ge::Renderer::SubmitFramebuffer(screenShader, m_QuadVA, 6);
 
 			ge::Renderer::EndScene();
 		}
@@ -308,6 +439,18 @@ private:
 
 	// 3D Scene Varaibles
 	ge::PerspectiveCameraController m_PerspectiveCameraController;	// Perspective Camera Controller
+
+	ge::Ref<ge::Shader> m_CubeShader;
+	ge::Ref<ge::VertexArray> m_CubeVA;
+
+	ge::Ref<ge::Shader> m_PlaneShader;
+	ge::Ref<ge::VertexArray> m_PlaneVA;
+
+	ge::Ref<ge::VertexArray> m_QuadVA;
+
+	ge::Ref<ge::Texture2D> m_CubeTexture, m_FloorTexture;
+
+	ge::Ref<ge::Framebuffer> m_Framebuffer;
 
 	ge::Model m_Model;								// Model to be rendered
 

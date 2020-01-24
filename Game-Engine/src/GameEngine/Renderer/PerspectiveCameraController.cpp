@@ -86,6 +86,8 @@ namespace ge {
 
 	bool PerspectiveCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
+		m_ScreenHeight = e.GetHeight();
+		m_ScreenWidth = e.GetWidth();
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
 		m_Camera.SetProjection(m_Fov, m_AspectRatio, 0.1f, 1000.0f);
 		return false;

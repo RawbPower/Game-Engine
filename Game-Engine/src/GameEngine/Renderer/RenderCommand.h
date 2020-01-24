@@ -18,6 +18,11 @@ namespace ge {
 			s_RendererAPI->EnableZBuffer();
 		}
 
+		inline static void DisableZBuffer()
+		{
+			s_RendererAPI->DisableZBuffer();
+		}
+
 		inline static void WireFrame()
 		{
 			s_RendererAPI->WireFrame();

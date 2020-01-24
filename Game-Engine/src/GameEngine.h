@@ -14,6 +14,7 @@
 #include "GameEngine/Renderer/OrthographicCameraController.h"
 #include "GameEngine/Renderer/PerspectiveCameraController.h"
 #include "GameEngine/Renderer/Model.h"
+#include "GameEngine/Renderer/Framebuffer.h"
 
 #include "GameEngine/ImGui/ImGuiLayer.h"
 

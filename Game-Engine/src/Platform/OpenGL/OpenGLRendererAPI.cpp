@@ -16,6 +16,11 @@ namespace ge {
 		glEnable(GL_DEPTH_TEST);
 	}
 
+	void OpenGLRendererAPI::DisableZBuffer()
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
+
 	void OpenGLRendererAPI::WireFrame()
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
