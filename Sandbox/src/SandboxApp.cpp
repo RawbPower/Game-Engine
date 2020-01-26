@@ -10,6 +10,7 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 
 class ExampleLayer : public ge::Layer {
+
 public:
 	ExampleLayer()
 		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Model(""), m_Scene(Scene::Scene3D)
@@ -17,7 +18,6 @@ public:
 		if (m_Scene == Scene::Scene2D) {
 			/* Vertex Array (required for core OpenGL profile) */
 			m_VertexArray.reset(ge::VertexArray::Create());
-			//m_VertexArray->Bind();
 
 			/* Vertex Buffer */
 
@@ -66,7 +66,7 @@ public:
 
 			squareVB->SetLayout({
 				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float2, "a_TexCoord" }
+				{ ge::ShaderDataType::Float2, "a_TexCoords" }
 				});
 
 			m_SquareVA->AddVertexBuffer(squareVB);
@@ -168,149 +168,21 @@ public:
 			ge::RenderCommand::EnableZBuffer();
 
 			// Create VAOs for all the objects
-			m_CubeVA.reset(ge::VertexArray::Create());
-			m_SkyboxVA.reset(ge::VertexArray::Create());
+			m_QuadVA.reset(ge::VertexArray::Create());
 
-			// Set up vertices for the objects
-			float cubeVertices[] = {
-				// positions          // normals
-				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-				 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-				 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-				-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-
-				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-				 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-				 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-				-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-				-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-
-				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-				-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-				-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-				-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-				-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-
-				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-				 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-				 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-				 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-
-				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-				 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-				 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-				-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-
-				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-				 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-				 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-				-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-				-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-			};
-
-			float skyboxVertices[] = {
-				// positions          
-				-1.0f,  1.0f, -1.0f,
-				-1.0f, -1.0f, -1.0f,
-				 1.0f, -1.0f, -1.0f,
-				 1.0f, -1.0f, -1.0f,
-				 1.0f,  1.0f, -1.0f,
-				-1.0f,  1.0f, -1.0f,
-
-				-1.0f, -1.0f,  1.0f,
-				-1.0f, -1.0f, -1.0f,
-				-1.0f,  1.0f, -1.0f,
-				-1.0f,  1.0f, -1.0f,
-				-1.0f,  1.0f,  1.0f,
-				-1.0f, -1.0f,  1.0f,
-
-				 1.0f, -1.0f, -1.0f,
-				 1.0f, -1.0f,  1.0f,
-				 1.0f,  1.0f,  1.0f,
-				 1.0f,  1.0f,  1.0f,
-				 1.0f,  1.0f, -1.0f,
-				 1.0f, -1.0f, -1.0f,
-
-				-1.0f, -1.0f,  1.0f,
-				-1.0f,  1.0f,  1.0f,
-				 1.0f,  1.0f,  1.0f,
-				 1.0f,  1.0f,  1.0f,
-				 1.0f, -1.0f,  1.0f,
-				-1.0f, -1.0f,  1.0f,
-
-				-1.0f,  1.0f, -1.0f,
-				 1.0f,  1.0f, -1.0f,
-				 1.0f,  1.0f,  1.0f,
-				 1.0f,  1.0f,  1.0f,
-				-1.0f,  1.0f,  1.0f,
-				-1.0f,  1.0f, -1.0f,
-
-				-1.0f, -1.0f, -1.0f,
-				-1.0f, -1.0f,  1.0f,
-				 1.0f, -1.0f, -1.0f,
-				 1.0f, -1.0f, -1.0f,
-				-1.0f, -1.0f,  1.0f,
-				 1.0f, -1.0f,  1.0f
-			};
-
-			// Set buffer layout for cube
-			ge::Ref<ge::VertexBuffer> cubeVB;
-			cubeVB.reset(ge::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices)));
-
-			cubeVB->SetLayout({
-				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float3, "a_Normal" }
-				});
-
-			m_CubeVA->AddVertexBuffer(cubeVB);
-
-			// Set buffer layout for skybox
-			ge::Ref<ge::VertexBuffer> skyboxVB;
-			skyboxVB.reset(ge::VertexBuffer::Create(skyboxVertices, sizeof(skyboxVertices)));
-
-			skyboxVB->SetLayout({
-				{ ge::ShaderDataType::Float3, "a_Position" }
-			});
-
-			m_SkyboxVA->AddVertexBuffer(skyboxVB);
-
-			// Create model with relative path
-			m_Model = ge::Model("assets/nanosuit/nanosuit.obj");
-
+			renderQuad();
 
 			// Shaders
-			auto shader = m_ShaderLibrary.Load("assets/shaders/Reflection.glsl");
-			auto skyboxShader = m_ShaderLibrary.Load("assets/shaders/Skybox.glsl");
+			auto shader = m_ShaderLibrary.Load("assets/shaders/NormalMapping.glsl");
 
-
-			m_CubeTexture = ge::Texture2D::Create("assets/textures/container.jpg");
+			m_DiffuseMap = ge::Texture2D::Create("assets/textures/brickwall.jpg");
+			m_NormalMap = ge::Texture2D::Create("assets/textures/brickwall_normal.jpg");
 
 			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->UploadUniformInt("u_Skybox", 0);		// 0 is the texure slot of m_Texture
+			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->UploadUniformInt("u_DiffuseMap", 0);		// 0 is the texure slot of m_Texture
+			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->UploadUniformInt("u_NormalMap", 1);
 
-			std::vector<std::string> faces
-			{
-				"assets/textures/skybox/right.jpg",
-				"assets/textures/skybox/left.jpg",
-				"assets/textures/skybox/top.jpg",
-				"assets/textures/skybox/bottom.jpg",
-				"assets/textures/skybox/front.jpg",
-				"assets/textures/skybox/back.jpg"
-			};
-
-			m_SkyboxMap = ge::Cubemap::Create(faces);
-
-			std::dynamic_pointer_cast<ge::OpenGLShader>(skyboxShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(skyboxShader)->UploadUniformInt("u_Skybox", 0);
+			m_LightPosition = glm::vec3(0.5f, 1.0f, 0.3f);
 		}
 	}
 
@@ -359,9 +231,6 @@ public:
 			// Update Camera
 			m_PerspectiveCameraController.OnUpdate(dt);
 
-			// Bind framebuffer
-			ge::RenderCommand::EnableZBuffer();
-
 			// Rendering
 			// Clear previous frame
 			ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
@@ -371,41 +240,27 @@ public:
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
 			//----Object being lit rendering---//
-			auto textureShader = m_ShaderLibrary.Get("Reflection");
+			auto shader = m_ShaderLibrary.Get("NormalMapping");
 
 			// Set up uniforms
-			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
+			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
+			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->UploadUniformFloat3("u_LightPosition", m_LightPosition);
 
-			// Cubes	
-			/*m_CubeTexture->Bind(0);
+			m_DiffuseMap->Bind(0);
+			m_NormalMap->Bind(1);
+
 			glm::mat4 transform = glm::mat4(1.0f);
 			transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f));
-			ge::Renderer::Submit(textureShader, m_CubeVA, 36, transform);*/
+			m_TotalTime += dt;
+			transform = glm::rotate(transform, glm::radians(m_TotalTime * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0))); // rotate the quad to show normal mapping from multiple directions
+			ge::Renderer::Submit(shader, m_QuadVA, 6, transform);
 
-			// Position the model
-			glm::mat4 transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, glm::vec3(0.0f, -1.75f, 0.0f));
-			transform = glm::scale(transform, glm::vec3(0.2f, 0.2f, 0.2f));
-
-			// Setup up the prejection matrix for the camera
-			ge::Renderer::SetProjection(textureShader, transform);
-
-			// Draw model to screen
-			m_Model.Draw(textureShader);
-
-			// Skybox
-			ge::RenderCommand::DepthFunc("LEQUAL");	// change depth function so depth test passes when values are equal to depth buffer's content
-
-			auto skyboxShader = m_ShaderLibrary.Get("Skybox");
-
-			// Set up uniforms
-			std::dynamic_pointer_cast<ge::OpenGLShader>(skyboxShader)->Bind();
-
-			m_SkyboxMap->Bind(0);
-			ge::Renderer::SubmitSkybox(skyboxShader, m_SkyboxVA, 36);
-
-			ge::RenderCommand::DepthFunc("LESS"); // set depth function back to default
+			// render light source (simply re-renders a smaller plane at the light's position for debugging/visualization)
+			transform = glm::mat4(1.0f);
+			transform = glm::translate(transform, m_LightPosition);
+			transform = glm::scale(transform, glm::vec3(0.1f));
+			ge::Renderer::Submit(shader, m_QuadVA, 6, transform);
 
 			ge::Renderer::EndScene();
 		}
@@ -432,6 +287,90 @@ public:
 
 	}
 
+	void renderQuad()
+	{
+		// positions
+		glm::vec3 pos1(-1.0f, 1.0f, 0.0f);
+		glm::vec3 pos2(-1.0f, -1.0f, 0.0f);
+		glm::vec3 pos3(1.0f, -1.0f, 0.0f);
+		glm::vec3 pos4(1.0f, 1.0f, 0.0f);
+		// texture coordinates
+		glm::vec2 uv1(0.0f, 1.0f);
+		glm::vec2 uv2(0.0f, 0.0f);
+		glm::vec2 uv3(1.0f, 0.0f);
+		glm::vec2 uv4(1.0f, 1.0f);
+		// normal vector
+		glm::vec3 nm(0.0f, 0.0f, 1.0f);
+
+		// calculate tangent/bitangent vectors of both triangles
+		glm::vec3 tangent1, tangent2;
+		glm::vec3 bitangent1, bitangent2;
+		// triangle 1
+		// ----------
+		glm::vec3 edge1 = pos2 - pos1;
+		glm::vec3 edge2 = pos3 - pos1;
+		glm::vec2 deltaUV1 = uv2 - uv1;
+		glm::vec2 deltaUV2 = uv3 - uv1;
+
+		float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+		tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+		tangent1.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+		tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+		tangent1 = glm::normalize(tangent1);
+
+		bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+		bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+		bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+		bitangent1 = glm::normalize(bitangent1);
+
+		// triangle 2
+		// ----------
+		edge1 = pos3 - pos1;
+		edge2 = pos4 - pos1;
+		deltaUV1 = uv3 - uv1;
+		deltaUV2 = uv4 - uv1;
+
+		f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+		tangent2.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+		tangent2.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+		tangent2.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+		tangent2 = glm::normalize(tangent2);
+
+
+		bitangent2.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+		bitangent2.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+		bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+		bitangent2 = glm::normalize(bitangent2);
+
+		float quadVertices[] = {
+			// positions            // normal         // texcoords  // tangent                          // bitangent
+			pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+			pos2.x, pos2.y, pos2.z, nm.x, nm.y, nm.z, uv2.x, uv2.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+			pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
+
+			pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
+			pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
+			pos4.x, pos4.y, pos4.z, nm.x, nm.y, nm.z, uv4.x, uv4.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z
+		};
+
+		// Set buffer layout for cube
+		ge::Ref<ge::VertexBuffer> quadVB;
+		quadVB.reset(ge::VertexBuffer::Create(quadVertices, sizeof(quadVertices)));
+
+		quadVB->SetLayout({
+			{ ge::ShaderDataType::Float3, "a_Position" },
+			{ ge::ShaderDataType::Float3, "a_Normal" },
+			{ ge::ShaderDataType::Float2, "a_TexCoords" },
+			{ ge::ShaderDataType::Float3, "a_Tangent" },
+			{ ge::ShaderDataType::Float3, "a_Bitangent" }
+		});
+
+		m_QuadVA->AddVertexBuffer(quadVB);
+
+	}
+
 private:
 
 	// General Variables
@@ -455,15 +394,12 @@ private:
 	// 3D Scene Varaibles
 	ge::PerspectiveCameraController m_PerspectiveCameraController;	// Perspective Camera Controller
 
-	ge::Ref<ge::Shader> m_CubeShader;
-	ge::Ref<ge::VertexArray> m_CubeVA;
+	ge::Ref<ge::VertexArray> m_QuadVA;
 
-	ge::Ref<ge::Shader> m_SkyboxShader;
-	ge::Ref<ge::VertexArray> m_SkyboxVA;
+	ge::Ref<ge::Texture2D> m_DiffuseMap;
+	ge::Ref<ge::Texture2D> m_NormalMap;
 
-	ge::Ref<ge::Cubemap> m_SkyboxMap;
-
-	ge::Ref<ge::Texture2D> m_CubeTexture;
+	glm::vec3 m_LightPosition;
 
 	ge::Model m_Model;								// Model to be rendered
 

@@ -108,6 +108,9 @@
     <ClInclude Include="src\GameEngine\Renderer\Buffer.h">
       <Filter>src\GameEngine\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\GameEngine\Renderer\Framebuffer.h">
+      <Filter>src\GameEngine\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\GameEngine\Renderer\GraphicsContext.h">
       <Filter>src\GameEngine\Renderer</Filter>
     </ClInclude>
@@ -154,6 +157,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
@@ -1284,8 +1290,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameEngine\Renderer\Framebuffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\GameEngine\Core\Application.cpp">
@@ -1307,6 +1311,9 @@
       <Filter>src\GameEngine\ImGui</Filter>
     </ClCompile>
     <ClCompile Include="src\GameEngine\Renderer\Buffer.cpp">
+      <Filter>src\GameEngine\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameEngine\Renderer\Framebuffer.cpp">
       <Filter>src\GameEngine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\GameEngine\Renderer\Lighting.cpp">
@@ -1354,6 +1361,9 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1378,7 +1388,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\GameEngine\Renderer\Framebuffer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
   </ItemGroup>
 </Project>

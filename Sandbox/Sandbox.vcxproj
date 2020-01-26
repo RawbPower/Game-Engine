@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GE_PLATFORM_WINDOWS;GE_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Game-Engine\vendor\spdlog\include;..\Game-Engine\src;..\Game-Engine\vendor;..\Game-Engine\vendor\glm;..\Game-Engine\vendor\assimp3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Game-Engine\vendor\spdlog\include;..\Game-Engine\src;..\Game-Engine\vendor;..\Game-Engine\vendor\glm;..\Game-Engine\vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -90,7 +90,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>..\Game-Engine\vendor\assimp3\lib\assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Game-Engine\vendor\assimp\lib\assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -98,7 +98,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GE_PLATFORM_WINDOWS;GE_Release;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Game-Engine\vendor\spdlog\include;..\Game-Engine\src;..\Game-Engine\vendor;..\Game-Engine\vendor\glm;..\Game-Engine\vendor\assimp3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Game-Engine\vendor\spdlog\include;..\Game-Engine\src;..\Game-Engine\vendor;..\Game-Engine\vendor\glm;..\Game-Engine\vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -112,7 +112,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>..\Game-Engine\vendor\assimp3\lib\assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Game-Engine\vendor\assimp\lib\assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -120,7 +120,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>GE_PLATFORM_WINDOWS;GE_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Game-Engine\vendor\spdlog\include;..\Game-Engine\src;..\Game-Engine\vendor;..\Game-Engine\vendor\glm;..\Game-Engine\vendor\assimp3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Game-Engine\vendor\spdlog\include;..\Game-Engine\src;..\Game-Engine\vendor;..\Game-Engine\vendor\glm;..\Game-Engine\vendor\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -134,7 +134,7 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>..\Game-Engine\vendor\assimp3\lib\assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\Game-Engine\vendor\assimp\lib\assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

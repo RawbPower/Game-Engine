@@ -28,7 +28,7 @@ namespace ge {
 	{
 		// Read file via ASSIMP
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 		// Check for errors
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -95,6 +95,16 @@ namespace ge {
 			{
 				vertex.TexCoords = glm::vec2(0.0f, 0.0f);
 			}
+			// tangent
+			vector.x = mesh->mTangents[i].x;
+			vector.y = mesh->mTangents[i].y;
+			vector.z = mesh->mTangents[i].z;
+			vertex.Tangent = vector;
+			// bitangent
+			vector.x = mesh->mBitangents[i].x;
+			vector.y = mesh->mBitangents[i].y;
+			vector.z = mesh->mBitangents[i].z;
+			vertex.Bitangent = vector;
 			vertices.push_back(vertex);
 		}
 
@@ -116,6 +126,7 @@ namespace ge {
 		// Same applies to other texture as the following list summarizes:
 		// diffuse: texture_diffuseN
 		// specular: texture_specularN
+		// normal: texture_normalN
 
 		// 1. diffuse maps
 		std::vector<Ref<Texture3D>> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
@@ -123,6 +134,12 @@ namespace ge {
 		// 2. specular maps
 		std::vector<Ref<Texture3D>> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
 		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+		// 3. normal maps
+		std::vector<Ref<Texture3D>> normalMaps = LoadMaterialTextures(material, aiTextureType_HEIGHT, "texture_specular");
+		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+		// 4. height maps
+		std::vector<Ref<Texture3D>> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_specular");
+		textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
 		// return a mesh object created from the extracted mesh data
 		return Mesh(vertices, indices, textures);

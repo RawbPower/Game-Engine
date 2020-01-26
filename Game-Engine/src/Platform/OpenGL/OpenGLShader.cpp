@@ -92,7 +92,7 @@ namespace ge {
 
 				// Use the infoLog as you see fit.
 
-				GE_CORE_ERROR("{0}", infoLog.data());
+				GE_CORE_ERROR("Shader Error: {0}", infoLog.data());
 				GE_CORE_ASSERT(false, "Shader Compilation Failure!");
 
 				break;

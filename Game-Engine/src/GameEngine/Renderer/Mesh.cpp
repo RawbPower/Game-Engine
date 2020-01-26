@@ -32,6 +32,8 @@ namespace ge {
 		// bind appropriate textures
 		unsigned int diffuseNr = 1;
 		unsigned int specularNr = 1;
+		unsigned int normalNr = 1;
+		unsigned int heightNr = 1;
 		for (uint32_t i = 0; i < m_Textures.size(); i++)
 		{
 			// retrieve texture number (the N in diffuse_textureN)
@@ -41,6 +43,10 @@ namespace ge {
 				number = std::to_string(diffuseNr++);
 			else if (name == "texture_specular")
 				number = std::to_string(specularNr++);
+			else if (name == "texture_normal")
+				number = std::to_string(normalNr++);
+			else if (name == "texture_height")
+				number = std::to_string(heightNr++);
 
 			// now set the sampler to the correct texture unit
 			std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformInt((name + number).c_str(), i);
@@ -65,7 +71,9 @@ namespace ge {
 		m_VertexBuffer->SetLayout({
 			{ ge::ShaderDataType::Float3, "a_Position" },
 			{ ge::ShaderDataType::Float3, "a_Normal" },
-			{ ge::ShaderDataType::Float2, "a_TexCoords" }
+			{ ge::ShaderDataType::Float2, "a_TexCoords" },
+			{ ge::ShaderDataType::Float3, "a_Tangent" },
+			{ ge::ShaderDataType::Float3, "a_Bitangent" }
 		});
 
 		// Add the vertex buffer to the vertex array
