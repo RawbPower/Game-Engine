@@ -1,2 +1,36 @@
-﻿  OpenGLShader.cpp
+﻿  gepch.cpp
+  Application.cpp
+  Layer.cpp
+  LayerStack.cpp
+  Log.cpp
+  ImGuiBuild.cpp
+  ImGuiLayer.cpp
+  Buffer.cpp
+  Framebuffer.cpp
+  Lighting.cpp
+  Mesh.cpp
+  Model.cpp
+  OrthographicCamera.cpp
+  OrthographicCameraController.cpp
+  PerspectiveCamera.cpp
+  PerspectiveCameraController.cpp
+D:\GameEngine\Game-Engine\Game-Engine\src\GameEngine\Renderer\Mesh.cpp(69,103): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+D:\GameEngine\Game-Engine\Game-Engine\src\GameEngine\Renderer\Mesh.cpp(84,81): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+  RenderCommand.cpp
+  Renderer.cpp
+  RendererAPI.cpp
+  Shader.cpp
+  Texture.cpp
+  VertexArray.cpp
+  OpenGLBuffer.cpp
+  OpenGLContext.cpp
+  OpenGLFramebuffer.cpp
+  OpenGLRendererAPI.cpp
+  OpenGLShader.cpp
+  OpenGLTexture.cpp
+  OpenGLVertexArray.cpp
+  WindowsInput.cpp
+D:\GameEngine\Game-Engine\Game-Engine\src\Platform\OpenGL\OpenGLRendererAPI.cpp(67,72): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  WindowsWindow.cpp
+  stb_image.cpp
   Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib

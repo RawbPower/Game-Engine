@@ -1,5 +1,6 @@
 #include "gepch.h"
 #include "Mesh.h"
+#include "GameEngine/Core/Log.h"
 
 #include <glm/glm.hpp>
 
@@ -47,7 +48,7 @@ namespace ge {
 				number = std::to_string(normalNr++);
 			else if (name == "texture_height")
 				number = std::to_string(heightNr++);
-
+			GE_CORE_INFO("{0}, {1}, {2}, {3}", diffuseNr, specularNr, normalNr, heightNr);
 			// now set the sampler to the correct texture unit
 			std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformInt((name + number).c_str(), i);
 			// and finally bind the texture

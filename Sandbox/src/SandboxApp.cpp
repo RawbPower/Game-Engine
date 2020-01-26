@@ -10,7 +10,6 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 
 class ExampleLayer : public ge::Layer {
-
 public:
 	ExampleLayer()
 		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Model(""), m_Scene(Scene::Scene3D)
@@ -18,6 +17,7 @@ public:
 		if (m_Scene == Scene::Scene2D) {
 			/* Vertex Array (required for core OpenGL profile) */
 			m_VertexArray.reset(ge::VertexArray::Create());
+			//m_VertexArray->Bind();
 
 			/* Vertex Buffer */
 
@@ -66,7 +66,7 @@ public:
 
 			squareVB->SetLayout({
 				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float2, "a_TexCoords" }
+				{ ge::ShaderDataType::Float2, "a_TexCoord" }
 				});
 
 			m_SquareVA->AddVertexBuffer(squareVB);
@@ -82,16 +82,12 @@ public:
 			// R prefix allows multiple line strings
 			std::string vertexSrc = R"(
 			#version 330 core
-
 			layout(location = 0) in vec3 a_Position;
 			layout(location = 1) in vec4 a_Color;
-
 			uniform mat4 u_ViewProjection;
 			uniform mat4 u_Transform;
-
 			out vec3 v_Position;
 			out vec4 v_Color;
-
 			void main() {
 				v_Position = a_Position;
 				v_Color = a_Color;
@@ -102,12 +98,9 @@ public:
 
 			std::string pixelSrc = R"(
 			#version 330 core
-
 			layout(location = 0) out vec4 color;
-
 			in vec3 v_Position;
 			in vec4 v_Color;
-
 			void main() {
 				color = vec4(v_Position * 0.5 + 0.5, 1.0);
 				color = v_Color;
@@ -120,14 +113,10 @@ public:
 
 			std::string flatColorShaderVertexSrc = R"(
 			#version 330 core
-
 			layout(location = 0) in vec3 a_Position;
-
 			uniform mat4 u_ViewProjection;
 			uniform mat4 u_Transform;
-
 			out vec3 v_Position;
-
 			void main() {
 				v_Position = a_Position;
 				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
@@ -137,13 +126,9 @@ public:
 
 			std::string flatColorShaderPixelSrc = R"(
 			#version 330 core
-
 			layout(location = 0) out vec4 color;
-
 			in vec3 v_Position;
-
 			uniform vec3 u_Color;
-
 			void main() {
 				color = vec4(u_Color, 1.0);
 			}
@@ -161,28 +146,20 @@ public:
 			// Bind shader and upload texture uniform
 			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);		// 0 is the texure slot of m_Texture
-		} 
+		}
 		else if (m_Scene == Scene::Scene3D)
 		{
 			// Enable z-buffer for 3D rendering only
 			ge::RenderCommand::EnableZBuffer();
 
-			// Create VAOs for all the objects
-			m_QuadVA.reset(ge::VertexArray::Create());
+			// Create model with relative path
+			m_Model = ge::Model("assets/cyborg/cyborg.obj");
 
-			renderQuad();
+			/* Shaders */
+			auto modelShader = m_ShaderLibrary.Load("assets/shaders/NormalMapping.glsl");
 
-			// Shaders
-			auto shader = m_ShaderLibrary.Load("assets/shaders/NormalMapping.glsl");
-
-			m_DiffuseMap = ge::Texture2D::Create("assets/textures/brickwall.jpg");
-			m_NormalMap = ge::Texture2D::Create("assets/textures/brickwall_normal.jpg");
-
-			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->UploadUniformInt("u_DiffuseMap", 0);		// 0 is the texure slot of m_Texture
-			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->UploadUniformInt("u_NormalMap", 1);
-
-			m_LightPosition = glm::vec3(0.5f, 1.0f, 0.3f);
+			// draw in wireframe
+			//ge::RenderCommand::WireFrame();
 		}
 	}
 
@@ -240,27 +217,24 @@ public:
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
 			//----Object being lit rendering---//
-			auto shader = m_ShaderLibrary.Get("NormalMapping");
+			auto modelShader = m_ShaderLibrary.Get("NormalMapping");
 
 			// Set up uniforms
-			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
-			std::dynamic_pointer_cast<ge::OpenGLShader>(shader)->UploadUniformFloat3("u_LightPosition", m_LightPosition);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
+			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->UploadUniformFloat3("u_LightPosition", glm::vec3(1.7f, 1.2f, 2.0f));
 
-			m_DiffuseMap->Bind(0);
-			m_NormalMap->Bind(1);
 
+			// Position the model
 			glm::mat4 transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f));
-			m_TotalTime += dt;
-			transform = glm::rotate(transform, glm::radians(m_TotalTime * -10.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0))); // rotate the quad to show normal mapping from multiple directions
-			ge::Renderer::Submit(shader, m_QuadVA, 6, transform);
+			transform = glm::translate(transform, glm::vec3(0.0f, -1.75f, 0.0f));
+			transform = glm::scale(transform, glm::vec3(0.2f, 0.2f, 0.2f));
 
-			// render light source (simply re-renders a smaller plane at the light's position for debugging/visualization)
-			transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, m_LightPosition);
-			transform = glm::scale(transform, glm::vec3(0.1f));
-			ge::Renderer::Submit(shader, m_QuadVA, 6, transform);
+			// Setup up the prejection matrix for the camera
+			ge::Renderer::SetProjection(modelShader, transform);
+
+			// Draw model to screen
+			m_Model.Draw(modelShader);
 
 			ge::Renderer::EndScene();
 		}
@@ -282,92 +256,8 @@ public:
 			m_PerspectiveCameraController.OnEvent(e);
 	}
 
-	bool OnKeyPressedEvent(ge::KeyPressedEvent& event) 
+	bool OnKeyPressedEvent(ge::KeyPressedEvent& event)
 	{
-
-	}
-
-	void renderQuad()
-	{
-		// positions
-		glm::vec3 pos1(-1.0f, 1.0f, 0.0f);
-		glm::vec3 pos2(-1.0f, -1.0f, 0.0f);
-		glm::vec3 pos3(1.0f, -1.0f, 0.0f);
-		glm::vec3 pos4(1.0f, 1.0f, 0.0f);
-		// texture coordinates
-		glm::vec2 uv1(0.0f, 1.0f);
-		glm::vec2 uv2(0.0f, 0.0f);
-		glm::vec2 uv3(1.0f, 0.0f);
-		glm::vec2 uv4(1.0f, 1.0f);
-		// normal vector
-		glm::vec3 nm(0.0f, 0.0f, 1.0f);
-
-		// calculate tangent/bitangent vectors of both triangles
-		glm::vec3 tangent1, tangent2;
-		glm::vec3 bitangent1, bitangent2;
-		// triangle 1
-		// ----------
-		glm::vec3 edge1 = pos2 - pos1;
-		glm::vec3 edge2 = pos3 - pos1;
-		glm::vec2 deltaUV1 = uv2 - uv1;
-		glm::vec2 deltaUV2 = uv3 - uv1;
-
-		float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-
-		tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
-		tangent1.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
-		tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
-		tangent1 = glm::normalize(tangent1);
-
-		bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-		bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-		bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-		bitangent1 = glm::normalize(bitangent1);
-
-		// triangle 2
-		// ----------
-		edge1 = pos3 - pos1;
-		edge2 = pos4 - pos1;
-		deltaUV1 = uv3 - uv1;
-		deltaUV2 = uv4 - uv1;
-
-		f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-
-		tangent2.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
-		tangent2.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
-		tangent2.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
-		tangent2 = glm::normalize(tangent2);
-
-
-		bitangent2.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-		bitangent2.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-		bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-		bitangent2 = glm::normalize(bitangent2);
-
-		float quadVertices[] = {
-			// positions            // normal         // texcoords  // tangent                          // bitangent
-			pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
-			pos2.x, pos2.y, pos2.z, nm.x, nm.y, nm.z, uv2.x, uv2.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
-			pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent1.x, tangent1.y, tangent1.z, bitangent1.x, bitangent1.y, bitangent1.z,
-
-			pos1.x, pos1.y, pos1.z, nm.x, nm.y, nm.z, uv1.x, uv1.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
-			pos3.x, pos3.y, pos3.z, nm.x, nm.y, nm.z, uv3.x, uv3.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z,
-			pos4.x, pos4.y, pos4.z, nm.x, nm.y, nm.z, uv4.x, uv4.y, tangent2.x, tangent2.y, tangent2.z, bitangent2.x, bitangent2.y, bitangent2.z
-		};
-
-		// Set buffer layout for cube
-		ge::Ref<ge::VertexBuffer> quadVB;
-		quadVB.reset(ge::VertexBuffer::Create(quadVertices, sizeof(quadVertices)));
-
-		quadVB->SetLayout({
-			{ ge::ShaderDataType::Float3, "a_Position" },
-			{ ge::ShaderDataType::Float3, "a_Normal" },
-			{ ge::ShaderDataType::Float2, "a_TexCoords" },
-			{ ge::ShaderDataType::Float3, "a_Tangent" },
-			{ ge::ShaderDataType::Float3, "a_Bitangent" }
-		});
-
-		m_QuadVA->AddVertexBuffer(quadVB);
 
 	}
 
@@ -393,13 +283,6 @@ private:
 
 	// 3D Scene Varaibles
 	ge::PerspectiveCameraController m_PerspectiveCameraController;	// Perspective Camera Controller
-
-	ge::Ref<ge::VertexArray> m_QuadVA;
-
-	ge::Ref<ge::Texture2D> m_DiffuseMap;
-	ge::Ref<ge::Texture2D> m_NormalMap;
-
-	glm::vec3 m_LightPosition;
 
 	ge::Model m_Model;								// Model to be rendered
 
