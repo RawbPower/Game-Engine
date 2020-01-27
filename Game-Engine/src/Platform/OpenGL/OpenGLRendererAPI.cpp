@@ -72,4 +72,9 @@ namespace ge {
 	{
 		glDrawArrays(GL_TRIANGLES, 0, vertices);
 	}
+
+	void OpenGLRendererAPI::DrawVerticesStrip(int vertices)
+	{
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, vertices);
+	}
 }

@@ -62,6 +62,11 @@ namespace ge {
 		{
 			s_RendererAPI->DrawVertices(vertices);
 		}
+
+		inline static void DrawVerticesStrip(int vertices)
+		{
+			s_RendererAPI->DrawVerticesStrip(vertices);
+		}
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

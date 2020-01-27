@@ -10,6 +10,7 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 
 class ExampleLayer : public ge::Layer {
+
 public:
 	ExampleLayer()
 		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Model(""), m_Scene(Scene::Scene3D)
@@ -17,7 +18,6 @@ public:
 		if (m_Scene == Scene::Scene2D) {
 			/* Vertex Array (required for core OpenGL profile) */
 			m_VertexArray.reset(ge::VertexArray::Create());
-			//m_VertexArray->Bind();
 
 			/* Vertex Buffer */
 
@@ -66,7 +66,7 @@ public:
 
 			squareVB->SetLayout({
 				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float2, "a_TexCoord" }
+				{ ge::ShaderDataType::Float2, "a_TexCoords" }
 				});
 
 			m_SquareVA->AddVertexBuffer(squareVB);
@@ -152,13 +152,97 @@ public:
 			// Enable z-buffer for 3D rendering only
 			ge::RenderCommand::EnableZBuffer();
 
-			// Create model with relative path
-			m_Model = ge::Model("assets/cyborg/cyborg.obj");
+			// Create VAOs for all the objects
+			m_CubeVA.reset(ge::VertexArray::Create());
+			m_QuadVA.reset(ge::VertexArray::Create());
 
-			/* Shaders */
-			auto modelShader = m_ShaderLibrary.Load("assets/shaders/NormalMapping.glsl");
+			float vertices[] = {
+				// back face
+				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+				 1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
+				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+				-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
+				// front face
+				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+				 1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
+				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+				-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
+				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+				// left face
+				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+				-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
+				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+				-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+				// right face
+				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+				 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
+				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+				 1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
+				// bottom face
+				-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+				 1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
+				 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+				 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+				-1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+				-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+				// top face
+				-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+				 1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+				 1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
+				 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+				-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+				-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
+			};
 
-			// draw in wireframe
+			// Set buffer layout for cube
+			ge::Ref<ge::VertexBuffer> cubeVB;
+			cubeVB.reset(ge::VertexBuffer::Create(vertices, sizeof(vertices)));
+
+			cubeVB->SetLayout({
+				{ ge::ShaderDataType::Float3, "a_Position" },
+				{ ge::ShaderDataType::Float3, "a_Normal" },
+				{ ge::ShaderDataType::Float2, "a_TexCoords" }
+				});
+
+			m_CubeVA->AddVertexBuffer(cubeVB);	
+
+			renderQuad();
+
+			// Shaders
+			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/hdrLighting.glsl");
+			auto hdrShader = m_ShaderLibrary.Load("assets/shaders/HDR.glsl");
+
+			m_WoodTexture = ge::Texture2D::Create("assets/textures/wood.png", true);
+
+			// Fix this on update
+			m_Framebuffer.reset(ge::Framebuffer::Create(1280, 720));
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformInt("u_DiffuseTexture", 0);
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(hdrShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(hdrShader)->UploadUniformInt("u_hdrBuffer", 0);
+
+			// lighting info
+			// -------------
+			// positions
+			m_LightPositions.push_back(glm::vec3(0.0f, 0.0f, 49.5f)); // back light
+			m_LightPositions.push_back(glm::vec3(-1.4f, -1.9f, 9.0f));
+			m_LightPositions.push_back(glm::vec3(0.0f, -1.8f, 4.0f));
+			m_LightPositions.push_back(glm::vec3(0.8f, -1.7f, 6.0f));
+			// colors
+			m_LightColors.push_back(glm::vec3(200.0f, 200.0f, 200.0f));
+			m_LightColors.push_back(glm::vec3(0.1f, 0.0f, 0.0f));
+			m_LightColors.push_back(glm::vec3(0.0f, 0.0f, 0.2f));
+			m_LightColors.push_back(glm::vec3(0.0f, 0.1f, 0.0f));
+
 			//ge::RenderCommand::WireFrame();
 		}
 	}
@@ -216,25 +300,51 @@ public:
 			// Begin the current scene
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
-			//----Object being lit rendering---//
-			auto modelShader = m_ShaderLibrary.Get("NormalMapping");
+			// 1. render scene into floating point framebuffer
+			// -----------------------------------------------
+
+			// Bind framebuffer
+			m_Framebuffer->Bind();
+			ge::RenderCommand::Clear();
+
+			auto lightingShader = m_ShaderLibrary.Get("hdrLighting");
+
+			m_WoodTexture->Bind(0);
 
 			// Set up uniforms
-			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
-			std::dynamic_pointer_cast<ge::OpenGLShader>(modelShader)->UploadUniformFloat3("u_LightPosition", glm::vec3(1.7f, 1.2f, 2.0f));
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
 
+			// set lighting uniforms
+			for (unsigned int i = 0; i < m_LightPositions.size(); i++)
+			{
+				std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("lights[" + std::to_string(i) + "].Position", m_LightPositions[i]);
+				std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("lights[" + std::to_string(i) + "].Color", m_LightColors[i]);
+			}
 
-			// Position the model
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformInt("u_InverseNormals", true);
+
 			glm::mat4 transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, glm::vec3(0.0f, -1.75f, 0.0f));
-			transform = glm::scale(transform, glm::vec3(0.2f, 0.2f, 0.2f));
+			transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 25.0));
+			transform = glm::scale(transform, glm::vec3(2.5f, 2.5f, 27.5f));
+			ge::Renderer::Submit(lightingShader, m_CubeVA, 36, transform);
 
-			// Setup up the prejection matrix for the camera
-			ge::Renderer::SetProjection(modelShader, transform);
+			m_Framebuffer->Unbind();
 
-			// Draw model to screen
-			m_Model.Draw(modelShader);
+			ge::RenderCommand::Clear(); // disable depth test so screen-space quad isn't discarded due to depth test.
+			
+			auto hdrShader = m_ShaderLibrary.Get("HDR");
+
+			// Set up uniforms
+			std::dynamic_pointer_cast<ge::OpenGLShader>(hdrShader)->Bind();
+
+			m_Framebuffer->BindTexture();	// use the color attachment texture as the texture of the quad plane
+										
+			std::dynamic_pointer_cast<ge::OpenGLShader>(hdrShader)->UploadUniformInt("u_HDR", true);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(hdrShader)->UploadUniformFloat("u_Exposure", 1.0f);
+
+			ge::Renderer::SubmitFramebuffer(hdrShader, m_QuadVA, 4);
 
 			ge::Renderer::EndScene();
 		}
@@ -261,6 +371,30 @@ public:
 
 	}
 
+
+	void renderQuad()
+	{
+		float quadVertices[] = {
+			// positions        // texture Coords
+			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+			 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		};
+
+		// Set buffer layout for cube
+		ge::Ref<ge::VertexBuffer> quadVB;
+		quadVB.reset(ge::VertexBuffer::Create(quadVertices, sizeof(quadVertices)));
+
+		quadVB->SetLayout({
+			{ ge::ShaderDataType::Float3, "a_Position" },
+			{ ge::ShaderDataType::Float2, "a_TexCoords" }
+			});
+
+		m_QuadVA->AddVertexBuffer(quadVB);
+
+	}
+
 private:
 
 	// General Variables
@@ -283,6 +417,15 @@ private:
 
 	// 3D Scene Varaibles
 	ge::PerspectiveCameraController m_PerspectiveCameraController;	// Perspective Camera Controller
+
+	ge::Ref<ge::VertexArray> m_CubeVA, m_QuadVA;
+
+	ge::Ref<ge::Texture2D> m_WoodTexture;
+
+	std::vector<glm::vec3> m_LightPositions;
+	std::vector<glm::vec3> m_LightColors;
+
+	ge::Ref<ge::Framebuffer> m_Framebuffer;
 
 	ge::Model m_Model;								// Model to be rendered
 

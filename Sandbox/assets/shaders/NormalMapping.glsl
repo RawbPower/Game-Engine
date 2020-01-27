@@ -59,20 +59,20 @@ in VS_OUT {
 	vec3 v_TangentFragmentPosition;
 } fs_in;
 
-uniform sampler2D texture_diffuse1;
-uniform sampler2D texture_normal1;
+uniform sampler2D u_DiffuseMap;
+uniform sampler2D u_NormalMap;
 
 uniform vec3 u_LightPosition;
 uniform vec3 u_ViewPosition;
 
 void main() {
 	// obtain normal from normal map in range [0,1]
-	vec3 normal = texture(texture_normal1, fs_in.v_TexCoords).rgb;
+	vec3 normal = texture(u_NormalMap, fs_in.v_TexCoords).rgb;
 	// transform normal vector range to [-1, 1]
 	normal = normalize(normal*2.0 - 1.0);		// this normal is in tangent space
 
 	// get diff color
-	vec3 col = texture(texture_diffuse1, fs_in.v_TexCoords).rgb;
+	vec3 col = texture(u_DiffuseMap, fs_in.v_TexCoords).rgb;
 	//ambient
 	vec3 ambient = 0.1 * col;
 	// diffuse

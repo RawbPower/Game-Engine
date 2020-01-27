@@ -6,45 +6,48 @@
 
 namespace ge {
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, bool gammaCorrection)
 		: m_Path(path)
 	{
-		// Load image
-		int width, height, channels;
-		stbi_set_flip_vertically_on_load(1);		// Flip into correct format for OpenGL
-		stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-		GE_CORE_ASSERT(data, "Failed to load image!");
-		// stbi_load returns signed integers so we need to reassign everything
-		m_Width = width;
-		m_Height = height;
+		glGenTextures(1, &m_RendererID);
 
-		GLenum internalFormat = 0, dataFormat = 0;
-		if (channels == 4)
+		int width, height, nrComponents;
+		unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
+		if (data)
 		{
-			internalFormat = GL_RGBA8;
-			dataFormat = GL_RGBA;
+			GLenum internalFormat;
+			GLenum dataFormat;
+			if (nrComponents == 1)
+			{
+				internalFormat = dataFormat = GL_RED;
+			}
+			else if (nrComponents == 3)
+			{
+				internalFormat = gammaCorrection ? GL_SRGB : GL_RGB;
+				dataFormat = GL_RGB;
+			}
+			else if (nrComponents == 4)
+			{
+				internalFormat = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
+				dataFormat = GL_RGBA;
+			}
+
+			glBindTexture(GL_TEXTURE_2D, m_RendererID);
+			glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+			glGenerateMipmap(GL_TEXTURE_2D);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			stbi_image_free(data);
 		}
-		else if (channels == 3)
+		else
 		{
-			internalFormat = GL_RGB8;
-			dataFormat = GL_RGB;
+			std::cout << "Texture failed to load at path: " << path << std::endl;
+			stbi_image_free(data);
 		}
-
-		GE_CORE_ASSERT(internalFormat & dataFormat, "Format not supported!");
-
-		// Upload to OpenGL
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
-
-		// Defining parameters (for scaling)
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		// Upload Texture
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
-
-		// Deallocate memory
-		stbi_image_free(data);
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()

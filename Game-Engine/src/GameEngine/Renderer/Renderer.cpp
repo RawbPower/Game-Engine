@@ -69,7 +69,7 @@ namespace ge {
 	void Renderer::SubmitFramebuffer(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, unsigned int vertices)
 	{
 		vertexArray->Bind();
-		RenderCommand::DrawVertices(vertices);
+		RenderCommand::DrawVerticesStrip(vertices);
 	}
 
 	void Renderer::SubmitSkybox(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, unsigned int vertices)

@@ -9,27 +9,25 @@ namespace ge {
 	{
 		// Create the actual framebuffer
 		glGenFramebuffers(1, &m_RendererID);
-		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+		//glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		// generate texture
 		glGenTextures(1, &m_TexColorBuffer);
 		glBindTexture(GL_TEXTURE_2D, m_TexColorBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		//glBindTexture(GL_TEXTURE_2D, 0);
-
-		// attach currently bound framebuffer object
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TexColorBuffer, 0);
 
 		// Create Renderbuffer
 		glGenRenderbuffers(1, &m_RenderBuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, m_RenderBuffer);
 		// We want a depth and a stencil buffer
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-		//glBindRenderbuffer(GL_RENDERBUFFER, 0);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
 		// Attach renderbuffer to framebuffer
-		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_RenderBuffer);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_TexColorBuffer, 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_RenderBuffer);
 
 		// Check if framebuffer is complete
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -53,6 +51,7 @@ namespace ge {
 
 	void OpenGLFramebuffer::BindTexture() const
 	{
+		glActiveTexture(0);
 		glBindTexture(GL_TEXTURE_2D, m_TexColorBuffer);
 	}
 
