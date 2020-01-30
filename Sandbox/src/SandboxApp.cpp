@@ -153,95 +153,113 @@ public:
 			ge::RenderCommand::EnableZBuffer();
 
 			// Create VAOs for all the objects
-			m_CubeVA.reset(ge::VertexArray::Create());
-			m_QuadVA.reset(ge::VertexArray::Create());
+			m_PbrVA.reset(ge::VertexArray::Create());
 
-			float vertices[] = {
-				// back face
-				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-				 1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
-				 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-				-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-				-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
-				// front face
-				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-				 1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
-				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-				 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-				-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
-				-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-				// left face
-				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-				-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
-				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-				-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-				-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-				-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-				// right face
-				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-				 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
-				 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-				 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-				 1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
-				// bottom face
-				-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-				 1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
-				 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-				 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-				-1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-				-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-				// top face
-				-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-				 1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-				 1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
-				 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-				-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-				-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
-			};
+			std::vector<glm::vec3> positions;
+			std::vector<glm::vec2> uv;
+			std::vector<glm::vec3> normals;
+			std::vector<uint32_t> indices;
+
+			const unsigned int X_SEGMENTS = 64;
+			const unsigned int Y_SEGMENTS = 64;
+			const float PI = 3.14159265359;
+			for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
+			{
+				for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+				{
+					float xSegment = (float)x / (float)X_SEGMENTS;
+					float ySegment = (float)y / (float)Y_SEGMENTS;
+					float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+					float yPos = std::cos(ySegment * PI);
+					float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+
+					positions.push_back(glm::vec3(xPos, yPos, zPos));
+					uv.push_back(glm::vec2(xSegment, ySegment));
+					normals.push_back(glm::vec3(xPos, yPos, zPos));
+				}
+			}
+
+			bool oddRow = false;
+			for (int y = 0; y < Y_SEGMENTS; ++y)
+			{
+				if (!oddRow) // even rows: y == 0, y == 2; and so on
+				{
+					for (int x = 0; x <= X_SEGMENTS; ++x)
+					{
+						indices.push_back(y * (X_SEGMENTS + 1) + x);
+						indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+					}
+				}
+				else
+				{
+					for (int x = X_SEGMENTS; x >= 0; --x)
+					{
+						indices.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+						indices.push_back(y * (X_SEGMENTS + 1) + x);
+					}
+				}
+				oddRow = !oddRow;
+			}
+
+			m_IndexCount = indices.size();
+
+			std::vector<float> data;
+			for (int i = 0; i < positions.size(); ++i)
+			{
+				data.push_back(positions[i].x);
+				data.push_back(positions[i].y);
+				data.push_back(positions[i].z);
+				if (uv.size() > 0)
+				{
+					data.push_back(uv[i].x);
+					data.push_back(uv[i].y);
+				}
+				if (normals.size() > 0)
+				{
+					data.push_back(normals[i].x);
+					data.push_back(normals[i].y);
+					data.push_back(normals[i].z);
+				}
+			}
 
 			// Set buffer layout for cube
-			ge::Ref<ge::VertexBuffer> cubeVB;
-			cubeVB.reset(ge::VertexBuffer::Create(vertices, sizeof(vertices)));
+			ge::Ref<ge::VertexBuffer> pbrVB;
+			pbrVB.reset(ge::VertexBuffer::Create(&data[0], data.size() * sizeof(float)));
 
-			cubeVB->SetLayout({
+			pbrVB->SetLayout({
 				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float3, "a_Normal" },
-				{ ge::ShaderDataType::Float2, "a_TexCoords" }
+				{ ge::ShaderDataType::Float2, "a_TexCoords" },
+				{ ge::ShaderDataType::Float3, "a_Normal" }
 				});
 
-			m_CubeVA->AddVertexBuffer(cubeVB);	
+			m_PbrVA->AddVertexBuffer(pbrVB);	
 
-			renderQuad();
+			ge::Ref<ge::IndexBuffer> pbrIB;
+			pbrIB.reset(ge::IndexBuffer::Create(&indices[0], indices.size()));
+			m_PbrVA->SetIndexBuffer(pbrIB);
 
 			// Shaders
-			auto lightingShader = m_ShaderLibrary.Load("assets/shaders/hdrLighting.glsl");
-			auto hdrShader = m_ShaderLibrary.Load("assets/shaders/HDR.glsl");
-
-			m_WoodTexture = ge::Texture2D::Create("assets/textures/wood.png", true);
+			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR1.glsl");
 
 			// Fix this on update
-			m_Framebuffer.reset(ge::Framebuffer::Create(1280, 720));
+			//m_Framebuffer.reset(ge::Framebuffer::Create(1280, 720));
 
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformInt("u_DiffuseTexture", 0);
-
-			std::dynamic_pointer_cast<ge::OpenGLShader>(hdrShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(hdrShader)->UploadUniformInt("u_hdrBuffer", 0);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", { 0.5f, 0.0f, 0.0f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Ao", 1.0f);
 
 			// lighting info
 			// -------------
 			// positions
-			m_LightPositions.push_back(glm::vec3(0.0f, 0.0f, 49.5f)); // back light
-			m_LightPositions.push_back(glm::vec3(-1.4f, -1.9f, 9.0f));
-			m_LightPositions.push_back(glm::vec3(0.0f, -1.8f, 4.0f));
-			m_LightPositions.push_back(glm::vec3(0.8f, -1.7f, 6.0f));
+			m_LightPositions.push_back(glm::vec3(-10.0f, 10.0f, 10.0f)); // back light
+			m_LightPositions.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
+			m_LightPositions.push_back(glm::vec3(-10.0f, -10.0f, 10.0f));
+			m_LightPositions.push_back(glm::vec3(10.0f, -10.0f, 10.0f));
 			// colors
-			m_LightColors.push_back(glm::vec3(200.0f, 200.0f, 200.0f));
-			m_LightColors.push_back(glm::vec3(0.1f, 0.0f, 0.0f));
-			m_LightColors.push_back(glm::vec3(0.0f, 0.0f, 0.2f));
-			m_LightColors.push_back(glm::vec3(0.0f, 0.1f, 0.0f));
+			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
+			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
+			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
+			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
 
 			//ge::RenderCommand::WireFrame();
 		}
@@ -300,51 +318,45 @@ public:
 			// Begin the current scene
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
-			// 1. render scene into floating point framebuffer
-			// -----------------------------------------------
-
-			// Bind framebuffer
-			m_Framebuffer->Bind();
-			ge::RenderCommand::Clear();
-
-			auto lightingShader = m_ShaderLibrary.Get("hdrLighting");
-
-			m_WoodTexture->Bind(0);
+			auto pbrShader = m_ShaderLibrary.Get("PBR1");
 
 			// Set up uniforms
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
 
-			// set lighting uniforms
-			for (unsigned int i = 0; i < m_LightPositions.size(); i++)
+			// render rows*columns number of spheres with varying metallic/roughness values scaled by rows/columns respectively
+			glm::mat4 transform = glm::mat4(1.0f);
+			for (int row = 0; row < m_Rows; ++row)
 			{
-				std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("lights[" + std::to_string(i) + "].Position", m_LightPositions[i]);
-				std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("lights[" + std::to_string(i) + "].Color", m_LightColors[i]);
+				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Metallic", (float)row / (float)m_Rows);
+				for (int col = 0; col < m_Columns; ++col)
+				{
+					// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look
+					// a bit off on direct lighting
+					std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Roughness", glm::clamp((float)col / (float)m_Columns, 0.05f, 1.0f));
+
+					transform = glm::mat4(1.0f);
+					transform = glm::translate(transform, glm::vec3((col - (m_Columns / 2)) * m_Spacing, (row - (m_Rows / 2)) * m_Spacing, 0.0f));
+					ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
+				}
 			}
 
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
+			m_TotalTime += dt;
+			// render light source (simply re-render sphere at light positions)
+			// this looks a bit off as we use the same shader, but it'll make their positions obvious and 
+			// keeps the codeprint small.
+			for (unsigned int i = 0; i < m_LightPositions.size(); ++i)
+			{
+				glm::vec3 newPos = m_LightPositions[i] + glm::vec3(sin(m_TotalTime * 5.0) * 5.0, 0.0, 0.0);
+				newPos = m_LightPositions[i];
+				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightPositions[" + std::to_string(i) + "]", newPos);
+				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightColors[" + std::to_string(i) + "]", m_LightColors[i]);
 
-			std::dynamic_pointer_cast<ge::OpenGLShader>(lightingShader)->UploadUniformInt("u_InverseNormals", true);
-
-			glm::mat4 transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 25.0));
-			transform = glm::scale(transform, glm::vec3(2.5f, 2.5f, 27.5f));
-			ge::Renderer::Submit(lightingShader, m_CubeVA, 36, transform);
-
-			m_Framebuffer->Unbind();
-
-			ge::RenderCommand::Clear(); // disable depth test so screen-space quad isn't discarded due to depth test.
-			
-			auto hdrShader = m_ShaderLibrary.Get("HDR");
-
-			// Set up uniforms
-			std::dynamic_pointer_cast<ge::OpenGLShader>(hdrShader)->Bind();
-
-			m_Framebuffer->BindTexture();	// use the color attachment texture as the texture of the quad plane
-										
-			std::dynamic_pointer_cast<ge::OpenGLShader>(hdrShader)->UploadUniformInt("u_HDR", true);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(hdrShader)->UploadUniformFloat("u_Exposure", 1.0f);
-
-			ge::Renderer::SubmitFramebuffer(hdrShader, m_QuadVA, 4);
+				transform = glm::mat4(1.0f);
+				transform = glm::translate(transform, newPos);
+				transform = glm::scale(transform, glm::vec3(0.5f));
+				ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
+			}
 
 			ge::Renderer::EndScene();
 		}
@@ -372,29 +384,6 @@ public:
 	}
 
 
-	void renderQuad()
-	{
-		float quadVertices[] = {
-			// positions        // texture Coords
-			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-			 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-			 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-		};
-
-		// Set buffer layout for cube
-		ge::Ref<ge::VertexBuffer> quadVB;
-		quadVB.reset(ge::VertexBuffer::Create(quadVertices, sizeof(quadVertices)));
-
-		quadVB->SetLayout({
-			{ ge::ShaderDataType::Float3, "a_Position" },
-			{ ge::ShaderDataType::Float2, "a_TexCoords" }
-			});
-
-		m_QuadVA->AddVertexBuffer(quadVB);
-
-	}
-
 private:
 
 	// General Variables
@@ -418,7 +407,7 @@ private:
 	// 3D Scene Varaibles
 	ge::PerspectiveCameraController m_PerspectiveCameraController;	// Perspective Camera Controller
 
-	ge::Ref<ge::VertexArray> m_CubeVA, m_QuadVA;
+	ge::Ref<ge::VertexArray> m_PbrVA;
 
 	ge::Ref<ge::Texture2D> m_WoodTexture;
 
@@ -428,6 +417,11 @@ private:
 	ge::Ref<ge::Framebuffer> m_Framebuffer;
 
 	ge::Model m_Model;								// Model to be rendered
+
+	unsigned int m_IndexCount;
+	int m_Rows = 7;
+	int m_Columns = 7;
+	float m_Spacing = 2.5;
 
 	// Enumerator for switching between 2D and 3D rendering
 	enum class Scene : uint32_t
