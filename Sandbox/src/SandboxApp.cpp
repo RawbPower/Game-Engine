@@ -239,27 +239,43 @@ public:
 			m_PbrVA->SetIndexBuffer(pbrIB);
 
 			// Shaders
-			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR1.glsl");
+			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR2.glsl");
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
+
+			m_Albedo = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/albedo.png");
+			m_Normal = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/normal.png");
+			m_Metallic = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/metallic.png");
+			m_Roughness = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/roughness.png");
+			m_Ao = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/ao.png");
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_AlbedoMap", 0);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_NormalMap", 1);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_MetallicMap", 2);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_RoughnessMap", 3);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_AoMap", 4);
 
 			// Fix this on update
 			//m_Framebuffer.reset(ge::Framebuffer::Create(1280, 720));
 
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", { 0.5f, 0.0f, 0.0f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Ao", 1.0f);
+			//std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", { 0.5f, 0.0f, 0.0f });
+			//std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Ao", 1.0f);
 
 			// lighting info
 			// -------------
 			// positions
-			m_LightPositions.push_back(glm::vec3(-10.0f, 10.0f, 10.0f)); // back light
-			m_LightPositions.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
-			m_LightPositions.push_back(glm::vec3(-10.0f, -10.0f, 10.0f));
-			m_LightPositions.push_back(glm::vec3(10.0f, -10.0f, 10.0f));
+			//m_LightPositions.push_back(glm::vec3(-10.0f, 10.0f, 10.0f)); // back light
+			//m_LightPositions.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
+			//m_LightPositions.push_back(glm::vec3(-10.0f, -10.0f, 10.0f));
+			//m_LightPositions.push_back(glm::vec3(10.0f, -10.0f, 10.0f));
 			// colors
-			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
-			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
-			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
-			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
+			//m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
+			//m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
+			//m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
+			//m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
+
+			m_LightPositions.push_back(glm::vec3(0.0f, 0.0f, 15.0f));
+			m_LightColors.push_back(glm::vec3(150.0f, 150.0f, 150.0f));
 
 			//ge::RenderCommand::WireFrame();
 		}
@@ -318,22 +334,30 @@ public:
 			// Begin the current scene
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
-			auto pbrShader = m_ShaderLibrary.Get("PBR1");
+			auto pbrShader = m_ShaderLibrary.Get("PBR2");
 
 			// Set up uniforms
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
 
+			// Bind texures
+			m_Albedo->Bind(0);
+			m_Normal->Bind(1);
+			m_Metallic->Bind(2);
+			m_Roughness->Bind(3);
+			m_Ao->Bind(4);
+
+
 			// render rows*columns number of spheres with varying metallic/roughness values scaled by rows/columns respectively
 			glm::mat4 transform = glm::mat4(1.0f);
 			for (int row = 0; row < m_Rows; ++row)
 			{
-				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Metallic", (float)row / (float)m_Rows);
+				//std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Metallic", (float)row / (float)m_Rows);
 				for (int col = 0; col < m_Columns; ++col)
 				{
 					// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look
 					// a bit off on direct lighting
-					std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Roughness", glm::clamp((float)col / (float)m_Columns, 0.05f, 1.0f));
+					//std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Roughness", glm::clamp((float)col / (float)m_Columns, 0.05f, 1.0f));
 
 					transform = glm::mat4(1.0f);
 					transform = glm::translate(transform, glm::vec3((col - (m_Columns / 2)) * m_Spacing, (row - (m_Rows / 2)) * m_Spacing, 0.0f));
@@ -409,7 +433,7 @@ private:
 
 	ge::Ref<ge::VertexArray> m_PbrVA;
 
-	ge::Ref<ge::Texture2D> m_WoodTexture;
+	ge::Ref<ge::Texture2D> m_Albedo, m_Normal, m_Metallic, m_Roughness, m_Ao;
 
 	std::vector<glm::vec3> m_LightPositions;
 	std::vector<glm::vec3> m_LightColors;
