@@ -1,3 +1,9 @@
+/*
+	Renderer API
+
+	Abstract class for the renderer API inherited by classes for each Renderering API
+*/
+
 #pragma once
 
 #include <glm/glm.hpp>

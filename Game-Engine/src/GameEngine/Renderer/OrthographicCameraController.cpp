@@ -1,3 +1,9 @@
+/*
+	Orthographic Camera Controller
+
+	Class used to control a orthographic camera
+*/
+
 #include "gepch.h"
 #include "OrthographicCameraController.h"
 

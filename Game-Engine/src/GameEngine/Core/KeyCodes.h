@@ -1,3 +1,10 @@
+/*
+	Key Codes
+
+	Defines codes for keyboard keys used thorughout the engine
+*/
+
+
 #pragma once
 
 // From glfw3.h

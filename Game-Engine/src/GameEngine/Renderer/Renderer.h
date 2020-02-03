@@ -1,3 +1,9 @@
+/*
+	Renderer
+
+	Class for the Renderer of the application
+*/
+
 #pragma once
 
 #include "RenderCommand.h"

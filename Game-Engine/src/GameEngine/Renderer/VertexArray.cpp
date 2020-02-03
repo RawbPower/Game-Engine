@@ -1,3 +1,9 @@
+/*
+	Vertex Array
+
+	Abstract class for vertex array inherited by classes for each Renderering API
+*/
+
 #include "gepch.h"
 #include "VertexArray.h"
 

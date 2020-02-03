@@ -1,3 +1,9 @@
+/*
+	Key Event
+
+	Class for defining the events happening due to key inputs
+*/
+
 #pragma once
 
 #include "Event.h"

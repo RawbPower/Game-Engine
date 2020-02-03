@@ -1,3 +1,9 @@
+/*
+	Log
+
+	Class for logging system
+*/
+
 #include "gepch.h"
 #include "GameEngine/Core/Log.h"
 

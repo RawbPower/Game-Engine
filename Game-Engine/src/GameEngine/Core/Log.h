@@ -1,3 +1,9 @@
+/*
+	Log
+
+	Class for logging system
+*/
+
 #pragma once
 
 #include "Core.h"

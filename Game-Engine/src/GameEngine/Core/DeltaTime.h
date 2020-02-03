@@ -1,3 +1,9 @@
+/*
+	Delta Time
+
+	A class that holds the time varaible
+*/
+
 #pragma once
 
 namespace ge {

@@ -1,3 +1,9 @@
+/*
+	OpenGL Buffer
+
+	Class for the vertex buffer and the index buffer in OpenGL
+*/
+
 #include "gepch.h"
 #include "OpenGLBuffer.h"
 

@@ -1,3 +1,10 @@
+/*
+	Application
+
+	Class inherited by any client applications using this library.
+	Contains a game loop that updates each layer.
+*/
+
 #pragma once
 
 #include "Core.h"

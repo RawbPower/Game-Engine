@@ -1,3 +1,9 @@
+/*
+	Render Command
+
+	Class for the commands for the renderer. Needs to be put into a render queue.
+*/
+
 #include "gepch.h"
 #include "RenderCommand.h"
 

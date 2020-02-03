@@ -1,3 +1,9 @@
+/*
+	Core
+
+	File with definitions and templates used throughout the engine
+*/
+
 #pragma once
 
 #include <memory>

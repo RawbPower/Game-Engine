@@ -1,3 +1,9 @@
+/*
+	Framebuffer
+
+	Abstract class for framebuffer inherited by classes for each Renderering API
+*/
+
 #pragma once
 
 namespace ge {

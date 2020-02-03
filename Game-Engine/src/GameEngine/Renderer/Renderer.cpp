@@ -1,3 +1,9 @@
+/*
+	Renderer
+
+	Class for the Renderer of the application
+*/
+
 #include "gepch.h"
 #include "Renderer.h"
 
@@ -17,6 +23,7 @@ namespace ge {
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
 
+	// Set up an Orthogonal Camera for the scene
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
 		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
@@ -24,6 +31,7 @@ namespace ge {
 		s_SceneData->ProjectionMatrix = camera.GetProjectionMatrix();
 	}
 
+	// Set up an Perspective Camera for the scene
 	void Renderer::BeginScene(PerspectiveCamera& camera)
 	{
 		s_SceneData->ViewProjectionMatrix = camera.GetViewProjectionMatrix();
@@ -56,6 +64,7 @@ namespace ge {
 		RenderCommand::DrawIndexed(vertexArray);
 	}
 
+	// Use this function when there is no index buffer
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, unsigned int vertices, const glm::mat4& transform)
 	{
 		shader->Bind();
@@ -66,12 +75,14 @@ namespace ge {
 		RenderCommand::DrawVertices(vertices);
 	}
 
+	// Render framebuffer
 	void Renderer::SubmitFramebuffer(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, unsigned int vertices)
 	{
 		vertexArray->Bind();
 		RenderCommand::DrawVerticesStrip(vertices);
 	}
 
+	// Render Skybox
 	void Renderer::SubmitSkybox(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, unsigned int vertices)
 	{
 		shader->Bind();

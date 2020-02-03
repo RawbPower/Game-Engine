@@ -1,3 +1,9 @@
+/*
+	Mouse Button Codes
+
+	Defines codes for mouse buttons used thorughout the engine
+*/
+
 #pragma once
 
 // From glfw3.h

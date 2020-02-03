@@ -1,3 +1,10 @@
+/*
+	Layer Stack
+
+	Class for defining the data structure of 
+	the collection of layers in the application
+*/
+
 #pragma once
 
 #include "GameEngine/Core/Core.h"

@@ -1,3 +1,9 @@
+/*
+	ImGui Layer
+
+	Class for defining the ImGui layer
+*/
+
 #pragma once
 
 #include "GameEngine/Core/Layer.h"

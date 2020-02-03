@@ -1,3 +1,9 @@
+/*
+	Orthographic Camera
+
+	Class used to set the projection of an orthographic camera
+*/
+
 #include "gepch.h"
 #include "OrthographicCamera.h"
 

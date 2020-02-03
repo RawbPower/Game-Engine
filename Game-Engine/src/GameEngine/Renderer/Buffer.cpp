@@ -1,3 +1,9 @@
+/*
+	Buffer
+
+	Abstract class for vetex and index buffers inherited by classes for each Renderering API
+*/
+
 #include "gepch.h"
 #include "Buffer.h"
 #include "Renderer.h"

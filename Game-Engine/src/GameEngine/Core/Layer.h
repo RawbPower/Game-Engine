@@ -1,3 +1,9 @@
+/*
+	Layer
+
+	Abstract class for layers used in the application
+*/
+
 #pragma once
 
 #include "GameEngine/Core/Core.h"

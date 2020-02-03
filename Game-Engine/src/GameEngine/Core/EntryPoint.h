@@ -1,3 +1,9 @@
+/*
+	Entry Point
+
+	Defines the entry point (main funtion) of the program
+*/
+
 #pragma once
 
 #ifdef GE_PLATFORM_WINDOWS

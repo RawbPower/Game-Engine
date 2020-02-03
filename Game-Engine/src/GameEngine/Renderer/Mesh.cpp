@@ -1,3 +1,9 @@
+/*
+	Mesh
+
+	Class used to to draw the mesh of a 3D model
+*/
+
 #include "gepch.h"
 #include "Mesh.h"
 #include "GameEngine/Core/Log.h"

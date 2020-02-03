@@ -1,3 +1,9 @@
+/*
+	Texture
+
+	Abstract class for texture inherited by classes for each Renderering API
+*/
+
 #include "gepch.h"
 #include "Texture.h"
 

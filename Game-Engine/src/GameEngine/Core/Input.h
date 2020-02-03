@@ -1,3 +1,9 @@
+/*
+	Input
+
+	Abstract class for external input methods
+*/
+
 #pragma once
 
 #include "GameEngine/Core/Core.h"

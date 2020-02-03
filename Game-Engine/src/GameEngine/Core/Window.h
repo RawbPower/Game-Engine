@@ -1,3 +1,10 @@
+/*
+	Window
+
+	Abstract class used for the window. This is 
+	inherited by different classes for different platforms
+*/
+
 #pragma once
 
 #include "gepch.h"

@@ -1,3 +1,9 @@
+/*
+	OpenGL Texture
+
+	Class for texture in OpenGL API
+*/
+
 #pragma once
 
 #include "GameEngine/Renderer/Texture.h"

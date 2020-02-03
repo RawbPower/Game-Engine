@@ -1,3 +1,9 @@
+/*
+	OpenGL Framebuffer
+
+	Framebuffer class in OpenGL
+*/
+
 #pragma once
 
 #include "GameEngine/Renderer/Framebuffer.h"

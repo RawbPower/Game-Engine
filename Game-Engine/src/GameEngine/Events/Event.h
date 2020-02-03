@@ -1,3 +1,9 @@
+/*
+	Event
+
+	Class for defining the event system in the engine
+*/
+
 #pragma once
 
 #include "gepch.h"

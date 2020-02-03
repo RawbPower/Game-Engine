@@ -1,3 +1,9 @@
+/*
+	Perspective Camera
+
+	Class used to set the projection of an perspective camera
+*/
+
 #pragma once
 
 #include <glm/glm.hpp>

@@ -1,3 +1,10 @@
+/*
+	Application Event
+
+	Class for defining the events happening due to things 
+	that happen to the application itself
+*/
+
 #pragma once
 
 #include "Event.h"

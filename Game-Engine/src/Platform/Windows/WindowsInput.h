@@ -1,3 +1,9 @@
+/*
+	Window Input
+
+	Class used to inherit from Input for inputs used in the application windows
+*/
+
 #pragma once
 
 #include "GameEngine/Core/Input.h"

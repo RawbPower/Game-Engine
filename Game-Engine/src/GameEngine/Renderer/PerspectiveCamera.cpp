@@ -1,3 +1,9 @@
+/*
+	Perspective Camera
+
+	Class used to set the projection of an perspective camera
+*/
+
 #include "gepch.h"
 #include "PerspectiveCamera.h"
 

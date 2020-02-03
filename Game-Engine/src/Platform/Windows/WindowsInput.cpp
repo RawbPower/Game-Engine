@@ -1,3 +1,10 @@
+/*
+	Window Input
+
+	Class used to inherit from Input for inputs used in the application windows.
+	Uses glfw to recognise inputs
+*/
+
 #include "gepch.h"
 #include "WindowsInput.h"
 
@@ -10,6 +17,7 @@ namespace ge
 
 	Input* Input::s_Instance = new WindowsInput();
 
+	// Check if certain key is pressed
 	bool  WindowsInput::IsKeyPressedImpl(int keycode)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
@@ -18,6 +26,7 @@ namespace ge
 		return state == GLFW_PRESS || state == GLFW_REPEAT;
 	}
 
+	// Check if mouse button is pressed
 	bool WindowsInput::IsMouseButtonPressedImpl(int button)
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
@@ -26,6 +35,7 @@ namespace ge
 		return state == GLFW_PRESS;
 	}
 
+	// Get the position of the cursor in the window
 	std::pair<float, float> WindowsInput::GetMousePositionImpl()
 	{
 		auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
@@ -35,6 +45,7 @@ namespace ge
 		return { (float)xpos, (float)ypos };
 	}
 
+	// Get the X position of the cursor in the window
 	float WindowsInput::GetMouseXImpl()
 	{
 		auto[x, y] = GetMousePositionImpl();
@@ -42,6 +53,7 @@ namespace ge
 		return x;
 	}
 
+	// Get the Y position of the cursor in the window
 	float WindowsInput::GetMouseYImpl()
 	{
 		auto[x, y] = GetMousePositionImpl();

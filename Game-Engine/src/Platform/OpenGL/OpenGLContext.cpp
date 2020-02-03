@@ -1,3 +1,9 @@
+/*
+	OpenGL Context
+
+	Class for setting up the renderering context.
+*/
+
 #include "gepch.h"
 #include "OpenGLContext.h"
 
@@ -13,6 +19,7 @@ namespace ge {
 		GE_CORE_ASSERT(m_WindowHandle, "Window handle is null!");
 	}
 
+	// Initializing the rendering context
 	void OpenGLContext::Init() 
 	{
 		glfwMakeContextCurrent(m_WindowHandle);

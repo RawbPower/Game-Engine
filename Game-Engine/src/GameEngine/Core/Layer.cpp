@@ -1,3 +1,9 @@
+/*
+	Layer
+
+	C++ file
+*/
+
 #include "gepch.h"
 #include "GameEngine/Core/Layer.h"
 

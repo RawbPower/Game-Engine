@@ -1,4 +1,10 @@
-// Will probably have a different imgui layer for wach platform
+/*
+	ImGui Layer
+
+	Class for defining the ImGui layer
+*/
+
+// Will probably have a different imgui layer for each platform
 
 #include "gepch.h"
 #include "ImGuiLayer.h"

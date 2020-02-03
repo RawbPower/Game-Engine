@@ -1,3 +1,9 @@
+/*
+	OpenGL Framebuffer
+
+	Framebuffer class in OpenGL
+*/
+
 #include "gepch.h"
 #include "OpenGLFramebuffer.h"
 

@@ -1,3 +1,9 @@
+/*
+	OpenGL Buffer
+
+	Class for the vertex buffer and the index buffer in OpenGL
+*/
+
 #pragma once
 
 #include "GameEngine/Renderer/Buffer.h"

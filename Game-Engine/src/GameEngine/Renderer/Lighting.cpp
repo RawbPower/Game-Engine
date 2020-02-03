@@ -1,3 +1,13 @@
+/*
+	Light
+
+	Class used to set up different type of lighting.
+
+	- Point Light
+	- Directional Light
+	- Spot Light
+*/
+
 #include "gepch.h"
 #include "Lighting.h"
 

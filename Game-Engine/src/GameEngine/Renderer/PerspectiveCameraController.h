@@ -1,3 +1,9 @@
+/*
+	Perspective Camera Controller
+
+	Class used to control a perspective camera
+*/
+
 #pragma once
 
 #include "GameEngine/Renderer/PerspectiveCamera.h"

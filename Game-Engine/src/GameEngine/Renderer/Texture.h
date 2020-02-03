@@ -1,3 +1,9 @@
+/*
+	Texture
+
+	Abstract class for texture inherited by classes for each Renderering API
+*/
+
 #pragma once
 
 #include <string>

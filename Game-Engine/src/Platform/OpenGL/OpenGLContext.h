@@ -1,3 +1,9 @@
+/*
+	OpenGL Context
+
+	Class for setting up the renderering context.
+*/
+
 #pragma once
 
 #include "GameEngine/Renderer/GraphicsContext.h"

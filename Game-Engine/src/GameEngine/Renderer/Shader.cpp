@@ -1,3 +1,9 @@
+/*
+	Shader
+
+	Abstract class for shader inherited by classes for each Renderering API
+*/
+
 #include "gepch.h"
 #include "Shader.h"
 

@@ -1,3 +1,9 @@
+/*
+	Mouse Event
+
+	Class for defining the events happening due to mouse inputs
+*/
+
 #pragma once
 
 #include "Event.h"

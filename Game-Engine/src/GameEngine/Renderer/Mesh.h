@@ -1,3 +1,9 @@
+/*
+	Mesh
+
+	Class used to to draw the mesh of a 3D model
+*/
+
 #pragma once
 
 #include <GameEngine/Renderer/Buffer.h>
@@ -12,8 +18,6 @@
 
 #include <string>
 #include <vector>
-
-// Needs to be abstracted after I test that it works
 
 namespace ge {
 

@@ -1,3 +1,9 @@
+/*
+	OpenGL Renderer API
+
+	Class for the functions use to set up the Renderer API
+*/
+
 #include "gepch.h"
 #include "OpenGLRendererAPI.h"
 

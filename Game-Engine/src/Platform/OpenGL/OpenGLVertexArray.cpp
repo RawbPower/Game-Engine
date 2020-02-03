@@ -1,3 +1,9 @@
+/*
+	OpenGL Vertex Array
+
+	Class to define the vertex arrays of the renderer for OpenGL
+*/
+
 #include "gepch.h"
 #include "OpenGLVertexArray.h"
 
@@ -46,6 +52,7 @@ namespace ge {
 		glBindVertexArray(0);
 	}
 
+	// Add vertex buffers to the vertex array
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
 	{
 		GE_CORE_ASSERT(vertexBuffer->GetLayout().GetElements.size(), "Vertex Buffer has no layout!")
@@ -69,6 +76,7 @@ namespace ge {
 		m_VertexBuffers.push_back(vertexBuffer);
 	}
 
+	// Add index buffer to vertex array
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
 	{
 		glBindVertexArray(m_RendererID);

@@ -1,3 +1,9 @@
+/*
+	OpenGL Shader
+
+	Class for reading and implementing the shader files using OpenGL
+*/
+
 #pragma once
 
 #include "GameEngine/Renderer/Shader.h"

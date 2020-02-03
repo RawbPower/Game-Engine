@@ -1,3 +1,9 @@
+/*
+	Model
+
+	Class used to load and process a 3D model using ASSIMP
+*/
+
 #include <gepch.h>
 #include "Model.h"
 

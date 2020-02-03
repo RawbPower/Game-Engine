@@ -1,3 +1,9 @@
+/*
+	Windows window
+
+	Implementation of a window for the Windows OS
+*/
+
 #pragma once
 
 #include "GameEngine/Core/Window.h"

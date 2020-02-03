@@ -1,3 +1,9 @@
+/*
+	OpenGL Vertex Array
+
+	Class to define the vertex arrays of the renderer for OpenGL
+*/
+
 #pragma once
 
 #include "GameEngine/Renderer/VertexArray.h"

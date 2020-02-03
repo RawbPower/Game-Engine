@@ -1,3 +1,9 @@
+/*
+	Orthographic Camera Controller
+
+	Class used to control a orthographic camera
+*/
+
 #pragma once
 
 #include "GameEngine/Renderer/OrthographicCamera.h"

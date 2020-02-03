@@ -1,3 +1,9 @@
+/*
+	OpenGL Texture
+
+	Class for texture in OpenGL API
+*/
+
 #include "gepch.h"
 #include "OpenGLTexture.h"
 
@@ -6,6 +12,7 @@
 
 namespace ge {
 
+	// Load textures from file
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, bool gammaCorrection)
 		: m_Path(path)
 	{
@@ -61,7 +68,7 @@ namespace ge {
 	}
 
 
-
+	// Load 3D texture for a model
 	OpenGLTexture3D::OpenGLTexture3D(const std::string& path, const std::string& directory)
 		: m_Path(path)
 	{
@@ -115,6 +122,7 @@ namespace ge {
 
 
 
+	// Load cubemap texture
 	OpenGLCubemap::OpenGLCubemap(const std::vector<std::string> faces)
 		: m_FacePaths(faces)
 	{

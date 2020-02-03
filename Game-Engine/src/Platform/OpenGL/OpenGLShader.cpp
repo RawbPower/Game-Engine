@@ -1,3 +1,9 @@
+/*
+	OpenGL Shader
+
+	Class for reading and implementing the shader files using OpenGL
+*/
+
 #include "gepch.h"
 #include "OpenGLShader.h"
 
@@ -18,6 +24,7 @@ namespace ge {
 		return 0;
 	}
 
+	// Load shader
 	OpenGLShader::OpenGLShader(const std::string & filepath)
 	{
 		// Read filepath
@@ -145,6 +152,7 @@ namespace ge {
 		m_RendererID = program;
 	}
 
+	// Read shader file to a string
 	std::string OpenGLShader::ReadFile(const std::string& filepath)
 	{
 		std::string result;
@@ -165,6 +173,7 @@ namespace ge {
 		return result;
 	}
 
+	// Process the shader string
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
 	{
 		std::unordered_map <GLenum, std::string> shaderSources;
@@ -197,6 +206,9 @@ namespace ge {
 	{
 		glUseProgram(0);
 	}
+
+	// Upload data for uniforms
+	// -------------------------------
 
 	void OpenGLShader::UploadUniformInt(const std::string& name, int value)
 	{

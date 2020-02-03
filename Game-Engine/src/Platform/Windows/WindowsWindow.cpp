@@ -1,3 +1,9 @@
+/*
+	Windows window
+
+	Implementation of a window for the Windows OS
+*/
+
 #include "gepch.h"
 #include "WindowsWindow.h"
 
@@ -31,6 +37,7 @@ namespace ge {
 		Shutdown();
 	}
 
+	// Initialize the window using GLFW
 	void WindowsWindow::Init(const WindowProps& props)
 	{
 		m_Data.Title = props.Title;
@@ -74,6 +81,7 @@ namespace ge {
 			data.EventCallback(event);
 		});
 
+		// Check what inputs are active and call appropriate events
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
 		{
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
