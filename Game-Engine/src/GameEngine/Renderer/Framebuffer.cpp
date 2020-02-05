@@ -12,13 +12,13 @@
 
 namespace ge {
 
-	Framebuffer* Framebuffer::Create(uint32_t width, uint32_t height)
+	Framebuffer* Framebuffer::Create(uint32_t width, uint32_t height, bool isEnvironment)
 	{
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::None:		GE_CORE_ASSERT(false, "RendererAPI::None is currently not supported"); return nullptr;
 
-		case RendererAPI::API::OpenGL:		return new OpenGLFramebuffer(width, height);
+		case RendererAPI::API::OpenGL:		return new OpenGLFramebuffer(width, height, isEnvironment);
 		}
 
 		GE_CORE_ASSERT(false, "Unknown RendererAPI");

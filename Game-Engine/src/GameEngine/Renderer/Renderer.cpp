@@ -76,7 +76,7 @@ namespace ge {
 	}
 
 	// Render framebuffer
-	void Renderer::SubmitFramebuffer(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, unsigned int vertices)
+	void Renderer::SubmitFramebuffer(const Ref<VertexArray>& vertexArray, unsigned int vertices)
 	{
 		vertexArray->Bind();
 		RenderCommand::DrawVerticesStrip(vertices);

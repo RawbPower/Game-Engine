@@ -15,142 +15,12 @@ public:
 	ExampleLayer()
 		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Model(""), m_Scene(Scene::Scene3D)
 	{
-		if (m_Scene == Scene::Scene2D) {
-			/* Vertex Array (required for core OpenGL profile) */
-			m_VertexArray.reset(ge::VertexArray::Create());
-
-			/* Vertex Buffer */
-
-			// 3D coordinates and there are 3 of them
-			// OpenGl default clip space is -1 to 1 x, y, z
-			float vertices[3 * 7] = {
-				-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,				// vertex coordinate on each row
-				0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
-				0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
-			};
-
-			ge::Ref<ge::VertexBuffer> vertexBuffer;
-			vertexBuffer.reset(ge::VertexBuffer::Create(vertices, sizeof(vertices)));
-
-			ge::BufferLayout layout = {
-				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float4, "a_Color" },
-			};
-
-			vertexBuffer->SetLayout(layout);
-
-			// Tell OpenGL what the layout of the buffer is
-			m_VertexArray->AddVertexBuffer(vertexBuffer);
-
-
-			/* Index Buffer (gives index to vertices, describes what order to draw vertices) */
-
-			uint32_t indices[3] = { 0, 1, 2 };		// 3 points in the triangle
-			ge::Ref<ge::IndexBuffer> indexBuffer;
-			indexBuffer.reset(ge::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-			m_VertexArray->SetIndexBuffer(indexBuffer);
-
-			// Square vertex array test
-
-			m_SquareVA.reset(ge::VertexArray::Create());
-
-			float squareVertices[5 * 4] = {
-				-0.5f, -0.5f, 0.0f,	0.0f, 0.0f,		// 3 vertex coordinate on each row and 2 texture coords
-				0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-				0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-				-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
-			};
-
-			ge::Ref<ge::VertexBuffer> squareVB;
-			squareVB.reset(ge::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
-
-			squareVB->SetLayout({
-				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float2, "a_TexCoords" }
-				});
-
-			m_SquareVA->AddVertexBuffer(squareVB);
-
-			uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
-			ge::Ref<ge::IndexBuffer> squareIB;
-			squareIB.reset(ge::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
-			m_SquareVA->SetIndexBuffer(squareIB);
-
-			/* Shader (If we do nothing GPU drivers will make a default one) */
-
-			// Shader source code
-			// R prefix allows multiple line strings
-			std::string vertexSrc = R"(
-			#version 330 core
-			layout(location = 0) in vec3 a_Position;
-			layout(location = 1) in vec4 a_Color;
-			uniform mat4 u_ViewProjection;
-			uniform mat4 u_Transform;
-			out vec3 v_Position;
-			out vec4 v_Color;
-			void main() {
-				v_Position = a_Position;
-				v_Color = a_Color;
-				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
-			}
-		
-			)";
-
-			std::string pixelSrc = R"(
-			#version 330 core
-			layout(location = 0) out vec4 color;
-			in vec3 v_Position;
-			in vec4 v_Color;
-			void main() {
-				color = vec4(v_Position * 0.5 + 0.5, 1.0);
-				color = v_Color;
-			}
-		
-			)";
-
-			m_Shader = ge::Shader::Create("VertexPosColor", vertexSrc, pixelSrc);
-
-
-			std::string flatColorShaderVertexSrc = R"(
-			#version 330 core
-			layout(location = 0) in vec3 a_Position;
-			uniform mat4 u_ViewProjection;
-			uniform mat4 u_Transform;
-			out vec3 v_Position;
-			void main() {
-				v_Position = a_Position;
-				gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
-			}
-		
-			)";
-
-			std::string flatColorShaderPixelSrc = R"(
-			#version 330 core
-			layout(location = 0) out vec4 color;
-			in vec3 v_Position;
-			uniform vec3 u_Color;
-			void main() {
-				color = vec4(u_Color, 1.0);
-			}
-		
-			)";
-
-			m_FlatColorShader = ge::Shader::Create("FlatColor", flatColorShaderVertexSrc, flatColorShaderPixelSrc);
-
-			auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
-
-			// Create textures
-			m_Texture = ge::Texture2D::Create("assets/textures/Checkerboard.png");
-			m_BlendTexture = ge::Texture2D::Create("assets/textures/ChernoLogo.png");
-
-			// Bind shader and upload texture uniform
-			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);		// 0 is the texure slot of m_Texture
-		}
-		else if (m_Scene == Scene::Scene3D)
+		// Code for 3D Scene
+		if (m_Scene == Scene::Scene3D)
 		{
 			// Enable z-buffer for 3D rendering only
 			ge::RenderCommand::EnableZBuffer();
+			ge::RenderCommand::DepthFunc("LEQUAL");
 
 			// Create VAOs for all the objects
 			m_PbrVA.reset(ge::VertexArray::Create());
@@ -239,27 +109,18 @@ public:
 			m_PbrVA->SetIndexBuffer(pbrIB);
 
 			// Shaders
-			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR1.glsl");
+			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR3.glsl");
+			auto equirectangularToCubemapShader = m_ShaderLibrary.Load("assets/shaders/EquirectangularToCubemap.glsl");
+			auto irradianceShader = m_ShaderLibrary.Load("assets/shaders/IBLIrradiance.glsl");
+			auto backgroundShader = m_ShaderLibrary.Load("assets/shaders/Background.glsl");
 
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
-
-			//m_Albedo = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/albedo.png");
-			//m_Normal = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/normal.png");
-			//m_Metallic = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/metallic.png");
-			//m_Roughness = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/roughness.png");
-			//m_Ao = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/ao.png");
-
-			//std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_AlbedoMap", 0);
-			//std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_NormalMap", 1);
-			//std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_MetallicMap", 2);
-			//std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_RoughnessMap", 3);
-			//std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_AoMap", 4);
-
-			// Fix this on update
-			//m_Framebuffer.reset(ge::Framebuffer::Create(1280, 720));
-
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_IrradianceMap", 0);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", { 0.5f, 0.0f, 0.0f });
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Ao", 1.0f);
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(backgroundShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(backgroundShader)->UploadUniformInt("u_EnvironmentMap", 0);
 
 			// lighting info
 			// -------------
@@ -274,17 +135,300 @@ public:
 			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
 			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
 
-			//m_LightPositions.push_back(glm::vec3(0.0f, 0.0f, 15.0f));
-			//m_LightColors.push_back(glm::vec3(150.0f, 150.0f, 150.0f));
+			// pbr: setup framebuffer (Framebuffer Environment)
+			// ----------------------
+			m_Framebuffer.reset(ge::Framebuffer::Create(512, 512, true));
+
+			// pbr: load the HDR environment map (New texture type)
+			// ---------------------------------
+
+			m_HDREnvironmentMap = ge::HDREnvironmentMap::Create("assets/textures/hdr/newport_loft.hdr");
+
+			// pbr: setup cubemap to render to and attach to framebuffer (Put in textures)
+			// ---------------------------------------------------------
+
+			m_HDREnvironmentMap->SetupCubemap(512, 512);
+
+			// pbr: set up projection and view matrices for capturing data onto the 6 cubemap face directions
+			// ----------------------------------------------------------------------------------------------
+
+			glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+			glm::mat4 captureViews[] =
+			{
+				glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+				glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+				glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+				glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+				glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+				glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+			};
+
+			// pbr: convert HDR equirectangular environment map to cubemap equivalent (texture)
+			// ----------------------------------------------------------------------
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(equirectangularToCubemapShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(equirectangularToCubemapShader)->UploadUniformInt("u_EquirectangularMap", 0);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(equirectangularToCubemapShader)->UploadUniformMat4("u_Projection", captureProjection);
+
+			m_HDREnvironmentMap->Bind(0);
+
+			ge::RenderCommand::SetViewport(0, 0, 512, 512);
+
+			setupCube();
+
+			m_Framebuffer->Bind();
+			for (unsigned int i = 0; i < 6; ++i) 
+			{
+				std::dynamic_pointer_cast<ge::OpenGLShader>(equirectangularToCubemapShader)->UploadUniformMat4("u_View", captureViews[i]);
+				m_Framebuffer->AttachCubemapTexture(m_HDREnvironmentMap->GetCubemapID(), i);
+
+				ge::Renderer::SubmitFramebuffer(m_CubeVA, 36);
+			}
+
+			m_Framebuffer->Unbind();
+
+			// pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
+			// -------------------------------------------------------------------------------
+
+			m_HDREnvironmentMap->SetupIrradianceMap(32, 32);
+
+			m_Framebuffer->Rescale(32, 32);
+
+			// pbr: solve diffuse integral by convolution to create an irradiance (cube)map.
+			// -----------------------------------------------------------------------------
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(irradianceShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(irradianceShader)->UploadUniformInt("u_EnvironmentMap", 0);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(irradianceShader)->UploadUniformMat4("u_Projection", captureProjection);
+
+			m_HDREnvironmentMap->BindCubemap(0);
+
+			ge::RenderCommand::SetViewport(0, 0, 32, 32);
+
+			m_Framebuffer->Bind();
+			for (unsigned int i = 0; i < 6; ++i)
+			{
+				std::dynamic_pointer_cast<ge::OpenGLShader>(irradianceShader)->UploadUniformMat4("u_View", captureViews[i]);
+				m_Framebuffer->AttachCubemapTexture(m_HDREnvironmentMap->GetIrradianceID(), i);
+
+				ge::Renderer::SubmitFramebuffer(m_CubeVA, 36);
+			}
+
+			m_Framebuffer->Unbind();
+
+			
+			// then before rendering, configure the viewport to the original framebuffer's screen dimensions
+			ge::RenderCommand::SetViewport(0, 0, 1280, 720);
 
 			//ge::RenderCommand::WireFrame();
+		}
+
+		// Code for 2D scene
+		else if (m_Scene == Scene::Scene2D) 
+		{
+			/* Vertex Array (required for core OpenGL profile) */
+			m_VertexArray.reset(ge::VertexArray::Create());
+
+			/* Vertex Buffer */
+
+			// 3D coordinates and there are 3 of them
+			// OpenGl default clip space is -1 to 1 x, y, z
+			float vertices[3 * 7] = {
+				-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,				// vertex coordinate on each row
+				0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
+				0.0f, 0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
+			};
+
+			ge::Ref<ge::VertexBuffer> vertexBuffer;
+			vertexBuffer.reset(ge::VertexBuffer::Create(vertices, sizeof(vertices)));
+
+			ge::BufferLayout layout = {
+				{ ge::ShaderDataType::Float3, "a_Position" },
+				{ ge::ShaderDataType::Float4, "a_Color" },
+			};
+
+			vertexBuffer->SetLayout(layout);
+
+			// Tell OpenGL what the layout of the buffer is
+			m_VertexArray->AddVertexBuffer(vertexBuffer);
+
+
+			/* Index Buffer (gives index to vertices, describes what order to draw vertices) */
+
+			uint32_t indices[3] = { 0, 1, 2 };		// 3 points in the triangle
+			ge::Ref<ge::IndexBuffer> indexBuffer;
+			indexBuffer.reset(ge::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+			m_VertexArray->SetIndexBuffer(indexBuffer);
+
+			// Square vertex array test
+
+			m_SquareVA.reset(ge::VertexArray::Create());
+
+			float squareVertices[5 * 4] = {
+				-0.5f, -0.5f, 0.0f,	0.0f, 0.0f,		// 3 vertex coordinate on each row and 2 texture coords
+				0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+				0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+				-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
+			};
+
+			ge::Ref<ge::VertexBuffer> squareVB;
+			squareVB.reset(ge::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
+
+			squareVB->SetLayout({
+				{ ge::ShaderDataType::Float3, "a_Position" },
+				{ ge::ShaderDataType::Float2, "a_TexCoords" }
+				});
+
+			m_SquareVA->AddVertexBuffer(squareVB);
+
+			uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
+			ge::Ref<ge::IndexBuffer> squareIB;
+			squareIB.reset(ge::IndexBuffer::Create(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+			m_SquareVA->SetIndexBuffer(squareIB);
+
+			/* Shader (If we do nothing GPU drivers will make a default one) */
+
+			// Shader source code
+			// R prefix allows multiple line strings
+			std::string vertexSrc = R"(
+				#version 330 core
+				layout(location = 0) in vec3 a_Position;
+				layout(location = 1) in vec4 a_Color;
+				uniform mat4 u_ViewProjection;
+				uniform mat4 u_Transform;
+				out vec3 v_Position;
+				out vec4 v_Color;
+				void main() {
+					v_Position = a_Position;
+					v_Color = a_Color;
+					gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+				}
+		
+				)";
+
+			std::string pixelSrc = R"(
+				#version 330 core
+				layout(location = 0) out vec4 color;
+				in vec3 v_Position;
+				in vec4 v_Color;
+				void main() {
+					color = vec4(v_Position * 0.5 + 0.5, 1.0);
+					color = v_Color;
+				}
+		
+				)";
+
+			m_Shader = ge::Shader::Create("VertexPosColor", vertexSrc, pixelSrc);
+
+
+			std::string flatColorShaderVertexSrc = R"(
+				#version 330 core
+				layout(location = 0) in vec3 a_Position;
+				uniform mat4 u_ViewProjection;
+				uniform mat4 u_Transform;
+				out vec3 v_Position;
+				void main() {
+					v_Position = a_Position;
+					gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+				}
+		
+				)";
+
+			std::string flatColorShaderPixelSrc = R"(
+				#version 330 core
+				layout(location = 0) out vec4 color;
+				in vec3 v_Position;
+				uniform vec3 u_Color;
+				void main() {
+					color = vec4(u_Color, 1.0);
+				}
+		
+				)";
+
+			m_FlatColorShader = ge::Shader::Create("FlatColor", flatColorShaderVertexSrc, flatColorShaderPixelSrc);
+
+			auto textureShader = m_ShaderLibrary.Load("assets/shaders/Texture.glsl");
+
+			// Create textures
+			m_Texture = ge::Texture2D::Create("assets/textures/Checkerboard.png");
+			m_BlendTexture = ge::Texture2D::Create("assets/textures/ChernoLogo.png");
+
+			// Bind shader and upload texture uniform
+			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);		// 0 is the texure slot of m_Texture
 		}
 	}
 
 	// Function called every frame
 	void OnUpdate(ge::DeltaTime dt) override
 	{
-		if (m_Scene == Scene::Scene2D) {
+		// Code for 3D scene
+		if (m_Scene == Scene::Scene3D)
+		{
+			// Update Camera
+			m_PerspectiveCameraController.OnUpdate(dt);
+
+			// Rendering
+			// Clear previous frame
+			ge::RenderCommand::SetClearColor({ 0.2f, 0.3f, 0.3f, 1 });
+			ge::RenderCommand::Clear();
+
+			// Begin the current scene
+			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
+
+			auto pbrShader = m_ShaderLibrary.Get("PBR3");
+
+			// Set up uniforms
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
+
+			m_HDREnvironmentMap->BindIrradianceMap();
+
+			// render rows*columns number of spheres with varying metallic/roughness values scaled by rows/columns respectively
+			glm::mat4 transform = glm::mat4(1.0f);
+			for (int row = 0; row < m_Rows; ++row)
+			{
+				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Metallic", (float)row / (float)m_Rows);
+				for (int col = 0; col < m_Columns; ++col)
+				{
+					// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look
+					// a bit off on direct lighting
+					std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Roughness", glm::clamp((float)col / (float)m_Columns, 0.05f, 1.0f));
+
+					transform = glm::mat4(1.0f);
+					transform = glm::translate(transform, glm::vec3((col - (m_Columns / 2)) * m_Spacing, (row - (m_Rows / 2)) * m_Spacing, 0.0f));
+					ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
+				}
+			}
+
+			m_TotalTime += dt;
+			// render light source (simply re-render sphere at light positions)
+			// this looks a bit off as we use the same shader, but it'll make their positions obvious and 
+			// keeps the codeprint small.
+			for (unsigned int i = 0; i < m_LightPositions.size(); ++i)
+			{
+				glm::vec3 newPos = m_LightPositions[i] + glm::vec3(sin(m_TotalTime * 5.0) * 5.0, 0.0, 0.0);
+				newPos = m_LightPositions[i];
+				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightPositions[" + std::to_string(i) + "]", newPos);
+				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightColors[" + std::to_string(i) + "]", m_LightColors[i]);
+
+				transform = glm::mat4(1.0f);
+				transform = glm::translate(transform, newPos);
+				transform = glm::scale(transform, glm::vec3(0.5f));
+				ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
+			}
+
+			// render skybox(render as last to prevent overdraw)
+			auto backgroundShader = m_ShaderLibrary.Get("Background");
+			m_HDREnvironmentMap->BindCubemap(0);
+			ge::Renderer::SubmitSkybox(backgroundShader, m_CubeVA, 36);
+
+			ge::Renderer::EndScene();
+		}
+
+		// Code for 2D scene
+		else if (m_Scene == Scene::Scene2D) 
+		{
 			// Update
 			m_OrthographicCameraController.OnUpdate(dt);
 
@@ -321,69 +465,6 @@ public:
 
 			ge::Renderer::EndScene();
 		}
-		else if (m_Scene == Scene::Scene3D)
-		{
-			// Update Camera
-			m_PerspectiveCameraController.OnUpdate(dt);
-
-			// Rendering
-			// Clear previous frame
-			ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
-			ge::RenderCommand::Clear();
-
-			// Begin the current scene
-			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
-
-			auto pbrShader = m_ShaderLibrary.Get("PBR1");
-
-			// Set up uniforms
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
-
-			// Bind texures
-			//m_Albedo->Bind(0);
-			//m_Normal->Bind(1);
-			//m_Metallic->Bind(2);
-			//m_Roughness->Bind(3);
-			//m_Ao->Bind(4);
-
-
-			// render rows*columns number of spheres with varying metallic/roughness values scaled by rows/columns respectively
-			glm::mat4 transform = glm::mat4(1.0f);
-			for (int row = 0; row < m_Rows; ++row)
-			{
-				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Metallic", (float)row / (float)m_Rows);
-				for (int col = 0; col < m_Columns; ++col)
-				{
-					// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look
-					// a bit off on direct lighting
-					std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Roughness", glm::clamp((float)col / (float)m_Columns, 0.05f, 1.0f));
-
-					transform = glm::mat4(1.0f);
-					transform = glm::translate(transform, glm::vec3((col - (m_Columns / 2)) * m_Spacing, (row - (m_Rows / 2)) * m_Spacing, 0.0f));
-					ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
-				}
-			}
-
-			m_TotalTime += dt;
-			// render light source (simply re-render sphere at light positions)
-			// this looks a bit off as we use the same shader, but it'll make their positions obvious and 
-			// keeps the codeprint small.
-			for (unsigned int i = 0; i < m_LightPositions.size(); ++i)
-			{
-				glm::vec3 newPos = m_LightPositions[i] + glm::vec3(sin(m_TotalTime * 5.0) * 5.0, 0.0, 0.0);
-				newPos = m_LightPositions[i];
-				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightPositions[" + std::to_string(i) + "]", newPos);
-				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightColors[" + std::to_string(i) + "]", m_LightColors[i]);
-
-				transform = glm::mat4(1.0f);
-				transform = glm::translate(transform, newPos);
-				transform = glm::scale(transform, glm::vec3(0.5f));
-				ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
-			}
-
-			ge::Renderer::EndScene();
-		}
 	}
 
 	// Adding GUI rendering 
@@ -405,6 +486,67 @@ public:
 	bool OnKeyPressedEvent(ge::KeyPressedEvent& event)
 	{
 
+	}
+
+	void setupCube()
+	{
+		m_CubeVA.reset(ge::VertexArray::Create());
+		float vertices[] = {
+			// back face
+			-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+			 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+			 1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
+			 1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
+			-1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
+			-1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
+			// front face
+			-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+			 1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
+			 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+			 1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
+			-1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
+			-1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
+			// left face
+			-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+			-1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
+			-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+			-1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
+			-1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+			-1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
+			// right face
+			 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+			 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+			 1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
+			 1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
+			 1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
+			 1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
+			// bottom face
+			-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+			 1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
+			 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+			 1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
+			-1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
+			-1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
+			// top face
+			-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+			 1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+			 1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
+			 1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
+			-1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
+			-1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
+		};
+
+		// Set buffer layout for cube
+		ge::Ref<ge::VertexBuffer> cubeVB;
+		cubeVB.reset(ge::VertexBuffer::Create(vertices, sizeof(vertices)));
+
+		cubeVB->SetLayout({
+			{ ge::ShaderDataType::Float3, "a_Position" },
+			{ ge::ShaderDataType::Float3, "a_Normal" },
+			{ ge::ShaderDataType::Float2, "a_TexCoord" }
+			});
+
+		m_CubeVA->AddVertexBuffer(cubeVB);
 	}
 
 
@@ -431,7 +573,7 @@ private:
 	// 3D Scene Varaibles
 	ge::PerspectiveCameraController m_PerspectiveCameraController;	// Perspective Camera Controller
 
-	ge::Ref<ge::VertexArray> m_PbrVA;
+	ge::Ref<ge::VertexArray> m_PbrVA, m_CubeVA;
 
 	ge::Ref<ge::Texture2D> m_Albedo, m_Normal, m_Metallic, m_Roughness, m_Ao;
 
@@ -439,6 +581,8 @@ private:
 	std::vector<glm::vec3> m_LightColors;
 
 	ge::Ref<ge::Framebuffer> m_Framebuffer;
+
+	ge::Ref<ge::HDREnvironmentMap> m_HDREnvironmentMap;
 
 	ge::Model m_Model;								// Model to be rendered
 

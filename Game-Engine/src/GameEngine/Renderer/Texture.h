@@ -52,4 +52,23 @@ namespace ge {
 		static Ref<Cubemap> Create(const std::vector<std::string> faces);
 	};
 
+	// HDR Environment Map
+	class HDREnvironmentMap : public Texture
+	{
+	public:
+		static Ref<HDREnvironmentMap> Create(const std::string& path);
+
+		virtual void SetupCubemap(uint32_t width, uint32_t height) = 0;
+		virtual void SetupIrradianceMap(uint32_t width, uint32_t height) = 0;
+
+		virtual void BindCubemap(uint32_t slot = 0) const = 0;
+		virtual void BindIrradianceMap(uint32_t slot = 0) const = 0;
+
+		virtual uint32_t GetRendererID() const = 0;
+		virtual uint32_t GetCubemapID() const = 0;
+		virtual uint32_t GetIrradianceID() const = 0;
+	private:
+		virtual void SetMapTextures(uint32_t width, uint32_t height) = 0;
+	};
+
 }

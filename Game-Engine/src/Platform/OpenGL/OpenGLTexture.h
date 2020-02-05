@@ -66,4 +66,36 @@ namespace ge {
 		uint32_t m_RendererID;
 	};
 
+
+	class OpenGLHDREnvironmentMap : public HDREnvironmentMap
+	{
+	public:
+		OpenGLHDREnvironmentMap(const std::string& path);
+		virtual ~OpenGLHDREnvironmentMap();
+
+		virtual uint32_t GetWidth() const override { return m_Width; }
+		virtual uint32_t GetHeight() const override { return m_Height; }
+
+		virtual void Bind(uint32_t slot = 0) const override;
+
+		virtual void SetupCubemap(uint32_t width, uint32_t height) override;
+		virtual void SetupIrradianceMap(uint32_t width, uint32_t height) override;
+
+		virtual void BindCubemap(uint32_t slot = 0) const override;
+		virtual void BindIrradianceMap(uint32_t slot = 0) const override;
+
+		virtual uint32_t GetRendererID() const override { return m_RendererID; }
+		virtual uint32_t GetCubemapID() const override { return m_CubemapID; }
+		virtual uint32_t GetIrradianceID() const override { return m_IrradianceID; }
+	private:
+		virtual void SetMapTextures(uint32_t width, uint32_t height) override;
+
+		std::string m_Path;
+		uint32_t m_Width, m_Height;
+
+		uint32_t m_RendererID;
+		uint32_t m_CubemapID;
+		uint32_t m_IrradianceID;
+	};
+
 }
