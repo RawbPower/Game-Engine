@@ -111,7 +111,7 @@ public:
 			m_PbrVA->SetIndexBuffer(pbrIB);
 
 			// Shaders
-			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR4.glsl");
+			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR5.glsl");
 			auto equirectangularToCubemapShader = m_ShaderLibrary.Load("assets/shaders/EquirectangularToCubemap.glsl");
 			auto irradianceShader = m_ShaderLibrary.Load("assets/shaders/IBLIrradiance.glsl");
 			auto prefilterShader = m_ShaderLibrary.Load("assets/shaders/Prefilter.glsl");
@@ -122,11 +122,50 @@ public:
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_IrradianceMap", 0);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_PrefilterMap", 1);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_BrdfLUT", 2);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", { 0.5f, 0.0f, 0.0f });
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Ao", 1.0f);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_AlbedoMap", 3);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_NormalMap", 4);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_MetallicMap", 5);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_RoughnessMap", 6);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_AoMap", 7);
 
 			std::dynamic_pointer_cast<ge::OpenGLShader>(backgroundShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(backgroundShader)->UploadUniformInt("u_EnvironmentMap", 0);
+
+			// Add textures
+			// rusted iron
+			m_IronAlbedo = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/albedo.png");
+			m_IronNormal = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/normal.png");
+			m_IronMetallic = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/metallic.png");
+			m_IronRoughness = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/roughness.png");
+			m_IronAo = ge::Texture2D::Create("assets/textures/pbr/rusted_iron/ao.png");
+
+			// gold
+			m_GoldAlbedo = ge::Texture2D::Create("assets/textures/pbr/gold/albedo.png");
+			m_GoldNormal = ge::Texture2D::Create("assets/textures/pbr/gold/normal.png");
+			m_GoldMetallic = ge::Texture2D::Create("assets/textures/pbr/gold/metallic.png");
+			m_GoldRoughness = ge::Texture2D::Create("assets/textures/pbr/gold/roughness.png");
+			m_GoldAo = ge::Texture2D::Create("assets/textures/pbr/gold/ao.png");
+
+			// grass
+			m_GrassAlbedo = ge::Texture2D::Create("assets/textures/pbr/grass/albedo.png");
+			m_GrassNormal = ge::Texture2D::Create("assets/textures/pbr/grass/normal.png");
+			m_GrassMetallic = ge::Texture2D::Create("assets/textures/pbr/grass/metallic.png");
+			m_GrassRoughness = ge::Texture2D::Create("assets/textures/pbr/grass/roughness.png");
+			m_GrassAo = ge::Texture2D::Create("assets/textures/pbr/grass/ao.png");
+
+			// plastic
+			m_PlasticAlbedo = ge::Texture2D::Create("assets/textures/pbr/plastic/albedo.png");
+			m_PlasticNormal = ge::Texture2D::Create("assets/textures/pbr/plastic/normal.png");
+			m_PlasticMetallic = ge::Texture2D::Create("assets/textures/pbr/plastic/metallic.png");
+			m_PlasticRoughness = ge::Texture2D::Create("assets/textures/pbr/plastic/roughness.png");
+			m_PlasticAo = ge::Texture2D::Create("assets/textures/pbr/plastic/ao.png");
+
+			// wall
+			m_WallAlbedo = ge::Texture2D::Create("assets/textures/pbr/wall/albedo.png");
+			m_WallNormal = ge::Texture2D::Create("assets/textures/pbr/wall/normal.png");
+			m_WallMetallic = ge::Texture2D::Create("assets/textures/pbr/wall/metallic.png");
+			m_WallRoughness = ge::Texture2D::Create("assets/textures/pbr/wall/roughness.png");
+			m_WallAo = ge::Texture2D::Create("assets/textures/pbr/wall/ao.png");
 
 			// lighting info
 			// -------------
@@ -438,32 +477,73 @@ public:
 			// Begin the current scene
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
-			auto pbrShader = m_ShaderLibrary.Get("PBR4");
+			auto pbrShader = m_ShaderLibrary.Get("PBR5");
 
 			// Set up uniforms
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
 
+			
 			m_HDREnvironmentMap->BindIrradianceMap(0);
 			m_HDREnvironmentMap->BindPrefilterMap(1);
 			m_HDREnvironmentMap->BindBrdfLUTTexture(2);
 
-			// render rows*columns number of spheres with varying metallic/roughness values scaled by rows/columns respectively
 			glm::mat4 transform = glm::mat4(1.0f);
-			for (int row = 0; row < m_Rows; ++row)
-			{
-				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Metallic", (float)row / (float)m_Rows);
-				for (int col = 0; col < m_Columns; ++col)
-				{
-					// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look
-					// a bit off on direct lighting
-					std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Roughness", glm::clamp((float)col / (float)m_Columns, 0.05f, 1.0f));
 
-					transform = glm::mat4(1.0f);
-					transform = glm::translate(transform, glm::vec3((col - (m_Columns / 2)) * m_Spacing, (row - (m_Rows / 2)) * m_Spacing, 0.0f));
-					ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
-				}
-			}
+			// rusted iron
+			m_IronAlbedo->Bind(3);
+			m_IronNormal->Bind(4);
+			m_IronMetallic->Bind(5);
+			m_IronRoughness->Bind(6);
+			m_IronAo->Bind(7);
+
+			transform = glm::mat4(1.0f);
+			transform = glm::translate(transform, glm::vec3(-7.0, 0.0, 2.0));
+			ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
+
+			// gold
+			m_GoldAlbedo->Bind(3);
+			m_GoldNormal->Bind(4);
+			m_GoldMetallic->Bind(5);
+			m_GoldRoughness->Bind(6);
+			m_GoldAo->Bind(7);
+
+			transform = glm::mat4(1.0f);
+			transform = glm::translate(transform, glm::vec3(-4.0, 0.0, 2.0));
+			ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
+
+			// grass
+			m_GrassAlbedo->Bind(3);
+			m_GrassNormal->Bind(4);
+			m_GrassMetallic->Bind(5);
+			m_GrassRoughness->Bind(6);
+			m_GrassAo->Bind(7);
+
+			transform = glm::mat4(1.0f);
+			transform = glm::translate(transform, glm::vec3(-1.0, 0.0, 2.0));
+			ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
+
+			// plastic
+			m_PlasticAlbedo->Bind(3);
+			m_PlasticNormal->Bind(4);
+			m_PlasticMetallic->Bind(5);
+			m_PlasticRoughness->Bind(6);
+			m_PlasticAo->Bind(7);
+
+			transform = glm::mat4(1.0f);
+			transform = glm::translate(transform, glm::vec3(2.0, 0.0, 2.0));
+			ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
+
+			// wall
+			m_WallAlbedo->Bind(3);
+			m_WallNormal->Bind(4);
+			m_WallMetallic->Bind(5);
+			m_WallRoughness->Bind(6);
+			m_WallAo->Bind(7);
+
+			transform = glm::mat4(1.0f);
+			transform = glm::translate(transform, glm::vec3(5.0, 0.0, 2.0));
+			ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
 
 			m_TotalTime += dt;
 			// render light source (simply re-render sphere at light positions)
@@ -475,7 +555,7 @@ public:
 				newPos = m_LightPositions[i];
 				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightPositions[" + std::to_string(i) + "]", newPos);
 				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightColors[" + std::to_string(i) + "]", m_LightColors[i]);
-
+				
 				transform = glm::mat4(1.0f);
 				transform = glm::translate(transform, newPos);
 				transform = glm::scale(transform, glm::vec3(0.5f));
@@ -662,7 +742,11 @@ private:
 
 	ge::Ref<ge::VertexArray> m_PbrVA, m_CubeVA, m_QuadVA;
 
-	ge::Ref<ge::Texture2D> m_Albedo, m_Normal, m_Metallic, m_Roughness, m_Ao;
+	ge::Ref<ge::Texture2D> m_IronAlbedo, m_IronNormal, m_IronMetallic, m_IronRoughness, m_IronAo;
+	ge::Ref<ge::Texture2D> m_GoldAlbedo, m_GoldNormal, m_GoldMetallic, m_GoldRoughness, m_GoldAo;
+	ge::Ref<ge::Texture2D> m_GrassAlbedo, m_GrassNormal, m_GrassMetallic, m_GrassRoughness, m_GrassAo;
+	ge::Ref<ge::Texture2D> m_PlasticAlbedo, m_PlasticNormal, m_PlasticMetallic, m_PlasticRoughness, m_PlasticAo;
+	ge::Ref<ge::Texture2D> m_WallAlbedo, m_WallNormal, m_WallMetallic, m_WallRoughness, m_WallAo;
 
 	std::vector<glm::vec3> m_LightPositions;
 	std::vector<glm::vec3> m_LightColors;

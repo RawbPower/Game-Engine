@@ -49,6 +49,7 @@ namespace ge {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 			stbi_image_free(data);
+			GE_CORE_INFO(path + " loaded");
 		}
 		else
 		{
@@ -64,7 +65,39 @@ namespace ge {
 
 	void OpenGLTexture2D::Bind(uint32_t slot) const
 	{
-		glBindTextureUnit(slot, m_RendererID);
+		if (slot == 0)
+		{
+			glActiveTexture(GL_TEXTURE0);
+		}
+		else if (slot == 1)
+		{
+			glActiveTexture(GL_TEXTURE1);
+		}
+		else if (slot == 2)
+		{
+			glActiveTexture(GL_TEXTURE2);
+		}
+		else if (slot == 3)
+		{
+			glActiveTexture(GL_TEXTURE3);
+		}
+		else if (slot == 4)
+		{
+			glActiveTexture(GL_TEXTURE4);
+		}
+		else if (slot == 5)
+		{
+			glActiveTexture(GL_TEXTURE5);
+		}
+		else if (slot == 6)
+		{
+			glActiveTexture(GL_TEXTURE6);
+		}
+		else if (slot == 7)
+		{
+			glActiveTexture(GL_TEXTURE7);
+		}
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
 	}
 
 
@@ -102,6 +135,7 @@ namespace ge {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 			stbi_image_free(data);
+			GE_CORE_INFO(path + " loaded");
 		}
 		else
 		{
@@ -202,6 +236,8 @@ namespace ge {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 			stbi_image_free(data);
+
+			GE_CORE_INFO(path + " loaded");
 		}
 		else
 		{
@@ -216,7 +252,8 @@ namespace ge {
 
 	void OpenGLHDREnvironmentMap::Bind(uint32_t slot) const
 	{
-		glBindTextureUnit(slot, m_RendererID);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
 	}
 
 	void OpenGLHDREnvironmentMap::BindCubemap(uint32_t slot) const
