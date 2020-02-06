@@ -1,2 +1,5 @@
-﻿  OpenGLTexture.cpp
+﻿  Mesh.cpp
+  Model.cpp
+D:\GameEngine\Game-Engine\Game-Engine\src\GameEngine\Renderer\Mesh.cpp(75,103): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+D:\GameEngine\Game-Engine\Game-Engine\src\GameEngine\Renderer\Mesh.cpp(90,81): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
   Game-Engine.vcxproj -> D:\GameEngine\Game-Engine\Game-Engine\..\bin\Debug-windows-x86_64\Game-Engine\Game-Engine.lib

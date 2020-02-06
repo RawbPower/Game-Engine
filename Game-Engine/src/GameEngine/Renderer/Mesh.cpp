@@ -37,7 +37,7 @@ namespace ge {
 	void Mesh::Draw(const std::shared_ptr<Shader>& shader)
 	{
 		// bind appropriate textures
-		unsigned int diffuseNr = 1;
+		/*unsigned int diffuseNr = 1;
 		unsigned int specularNr = 1;
 		unsigned int normalNr = 1;
 		unsigned int heightNr = 1;
@@ -59,7 +59,7 @@ namespace ge {
 			std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformInt((name + number).c_str(), i);
 			// and finally bind the texture
 			m_Textures[i]->Bind(i);
-		}
+		}*/
 		// draw mesh
 		m_VertexArray->Bind();
 		RenderCommand::DrawIndexed(m_Indices);	

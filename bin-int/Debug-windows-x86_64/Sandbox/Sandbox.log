@@ -3,6 +3,6 @@ D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(37,1): warning C4305: 'init
 D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(76,1): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
 D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(99,1): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
 D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(110,1): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
-D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(287,27): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
-D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(288,28): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(262,27): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
+D:\GameEngine\Game-Engine\Sandbox\src\SandboxApp.cpp(263,28): warning C4244: 'initializing': conversion from 'double' to 'unsigned int', possible loss of data
   Sandbox.vcxproj -> D:\GameEngine\Game-Engine\Sandbox\..\bin\Debug-windows-x86_64\Sandbox\Sandbox.exe
