@@ -80,13 +80,20 @@ namespace ge {
 
 		virtual void SetupCubemap(uint32_t width, uint32_t height) override;
 		virtual void SetupIrradianceMap(uint32_t width, uint32_t height) override;
+		virtual void SetupPrefilterMap(uint32_t width, uint32_t height) override;
+		virtual void SetupBrdfLUTTexture(uint32_t width, uint32_t height) override;
 
 		virtual void BindCubemap(uint32_t slot = 0) const override;
 		virtual void BindIrradianceMap(uint32_t slot = 0) const override;
+		virtual void BindPrefilterMap(uint32_t slot = 0) const override;
+		virtual void BindBrdfLUTTexture(uint32_t slot = 0) const override;
+		virtual void GenerateMipmap() const override;
 
 		virtual uint32_t GetRendererID() const override { return m_RendererID; }
 		virtual uint32_t GetCubemapID() const override { return m_CubemapID; }
 		virtual uint32_t GetIrradianceID() const override { return m_IrradianceID; }
+		virtual uint32_t GetPrefilterID() const override { return m_PrefilterID; }
+		virtual uint32_t GetBrdfLUTTextureID() const override { return m_BrdfLUTTextureID; }
 	private:
 		virtual void SetMapTextures(uint32_t width, uint32_t height) override;
 
@@ -96,6 +103,8 @@ namespace ge {
 		uint32_t m_RendererID;
 		uint32_t m_CubemapID;
 		uint32_t m_IrradianceID;
+		uint32_t m_PrefilterID;
+		uint32_t m_BrdfLUTTextureID;
 	};
 
 }

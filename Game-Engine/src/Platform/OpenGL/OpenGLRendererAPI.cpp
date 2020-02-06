@@ -43,6 +43,11 @@ namespace ge {
 			GE_CORE_ERROR("Invalid depth function value: " + setting);
 	}		
 
+	void OpenGLRendererAPI::EnableSeamlessCubemap()
+	{
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	}
+
 	void OpenGLRendererAPI::WireFrame()
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

@@ -77,16 +77,26 @@ namespace ge {
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
 	}
 
+	void OpenGLFramebuffer::ResizeRenderBuffer(const uint32_t width, const uint32_t height) const
+	{
+		glBindRenderbuffer(GL_RENDERBUFFER, m_RenderBuffer);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+	}
+
 	void OpenGLFramebuffer::BindTexture() const
 	{
 		glActiveTexture(0);
 		glBindTexture(GL_TEXTURE_2D, m_TexColorBuffer);
 	}
 
-	void OpenGLFramebuffer::AttachCubemapTexture(uint32_t id, uint32_t face) const
+	void OpenGLFramebuffer::Attach2DTexture(uint32_t id, uint32_t level) const
 	{
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, id, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id, level);
+	}
+
+	void OpenGLFramebuffer::AttachCubemapTexture(uint32_t id, uint32_t face, uint32_t level) const
+	{
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, id, level);
 	}
 
 }

@@ -20,8 +20,10 @@ namespace ge {
 		virtual void Unbind() const;
 
 		virtual void Rescale(const uint32_t width, const uint32_t height) const;
+		virtual void ResizeRenderBuffer(const uint32_t width, const uint32_t height) const;
 		virtual void BindTexture() const;
-		virtual void AttachCubemapTexture(uint32_t id, uint32_t face) const;
+		virtual void Attach2DTexture(uint32_t id, uint32_t level) const;
+		virtual void AttachCubemapTexture(uint32_t id, uint32_t face, uint32_t level) const;
 
 	private:
 		uint32_t m_RendererID;

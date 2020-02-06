@@ -23,6 +23,7 @@ namespace ge {
 		virtual void EnableZBuffer() = 0;
 		virtual void DisableZBuffer() = 0;
 		virtual void DepthFunc(const std::string setting) = 0;
+		virtual void EnableSeamlessCubemap() = 0;
 		virtual void WireFrame() = 0;
 		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) = 0;
 

@@ -34,6 +34,11 @@ namespace ge {
 			s_RendererAPI->DepthFunc(setting);
 		}
 
+		inline static void EnableSeamlessCubemap()
+		{
+			s_RendererAPI->EnableSeamlessCubemap();
+		}
+
 		inline static void WireFrame()
 		{
 			s_RendererAPI->WireFrame();

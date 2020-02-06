@@ -21,6 +21,8 @@ public:
 			// Enable z-buffer for 3D rendering only
 			ge::RenderCommand::EnableZBuffer();
 			ge::RenderCommand::DepthFunc("LEQUAL");
+			// enable seamless cubemap sampling for lower mip levels in the pre-filter map.
+			ge::RenderCommand::EnableSeamlessCubemap();
 
 			// Create VAOs for all the objects
 			m_PbrVA.reset(ge::VertexArray::Create());
@@ -109,13 +111,17 @@ public:
 			m_PbrVA->SetIndexBuffer(pbrIB);
 
 			// Shaders
-			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR3.glsl");
+			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR4.glsl");
 			auto equirectangularToCubemapShader = m_ShaderLibrary.Load("assets/shaders/EquirectangularToCubemap.glsl");
 			auto irradianceShader = m_ShaderLibrary.Load("assets/shaders/IBLIrradiance.glsl");
+			auto prefilterShader = m_ShaderLibrary.Load("assets/shaders/Prefilter.glsl");
+			auto brdfShader = m_ShaderLibrary.Load("assets/shaders/BRDF.glsl");
 			auto backgroundShader = m_ShaderLibrary.Load("assets/shaders/Background.glsl");
 
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_IrradianceMap", 0);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_PrefilterMap", 1);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_BrdfLUT", 2);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", { 0.5f, 0.0f, 0.0f });
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Ao", 1.0f);
 
@@ -181,11 +187,15 @@ public:
 			{
 				std::dynamic_pointer_cast<ge::OpenGLShader>(equirectangularToCubemapShader)->UploadUniformMat4("u_View", captureViews[i]);
 				m_Framebuffer->AttachCubemapTexture(m_HDREnvironmentMap->GetCubemapID(), i);
+				ge::RenderCommand::Clear();
 
 				ge::Renderer::SubmitFramebuffer(m_CubeVA, 36);
 			}
 
 			m_Framebuffer->Unbind();
+
+			// then let OpenGL generate mipmaps from first mip face (combatting visible dots artifact)
+			m_HDREnvironmentMap->GenerateMipmap();
 
 			// pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
 			// -------------------------------------------------------------------------------
@@ -210,12 +220,64 @@ public:
 			{
 				std::dynamic_pointer_cast<ge::OpenGLShader>(irradianceShader)->UploadUniformMat4("u_View", captureViews[i]);
 				m_Framebuffer->AttachCubemapTexture(m_HDREnvironmentMap->GetIrradianceID(), i);
+				ge::RenderCommand::Clear();
 
 				ge::Renderer::SubmitFramebuffer(m_CubeVA, 36);
 			}
 
 			m_Framebuffer->Unbind();
 
+			// pbr: create a pre-filter cubemap, and re-scale capture FBO to pre-filter scale.
+			// --------------------------------------------------------------------------------
+			m_HDREnvironmentMap->SetupPrefilterMap(128, 128);
+
+			// pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
+			// ----------------------------------------------------------------------------------------------------
+
+			std::dynamic_pointer_cast<ge::OpenGLShader>(prefilterShader)->Bind();
+			std::dynamic_pointer_cast<ge::OpenGLShader>(prefilterShader)->UploadUniformInt("u_EnvironmentMap", 0);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(prefilterShader)->UploadUniformMat4("u_Projection", captureProjection);
+
+			m_HDREnvironmentMap->BindCubemap(0);
+
+			m_Framebuffer->Bind();
+			unsigned int maxMipLevels = 5;
+			for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
+			{
+				// resize framebuffer according to mip-level size
+				unsigned int mipWidth = 128 * std::pow(0.5, mip);
+				unsigned int mipHeight = 128 * std::pow(0.5, mip);
+				m_Framebuffer->ResizeRenderBuffer(mipWidth, mipHeight);
+				ge::RenderCommand::SetViewport(0, 0, mipWidth, mipHeight);
+
+				float roughness = (float)mip / (float)(maxMipLevels - 1);
+				std::dynamic_pointer_cast<ge::OpenGLShader>(prefilterShader)->UploadUniformFloat("u_Roughness", roughness);
+				for (unsigned int i = 0; i < 6; ++i)
+				{
+					std::dynamic_pointer_cast<ge::OpenGLShader>(prefilterShader)->UploadUniformMat4("u_View", captureViews[i]);
+					m_Framebuffer->AttachCubemapTexture(m_HDREnvironmentMap->GetPrefilterID(), i, mip);
+					ge::RenderCommand::Clear();
+
+					ge::Renderer::SubmitFramebuffer(m_CubeVA, 36);
+				}
+			}
+
+			m_Framebuffer->Unbind();
+	
+			// pbr: generate a 2D LUT from the BRDF equations used.
+			// ----------------------------------------------------
+
+			m_HDREnvironmentMap->SetupBrdfLUTTexture(512, 512);
+
+			m_Framebuffer->Rescale(512, 512);
+			m_Framebuffer->Attach2DTexture(m_HDREnvironmentMap->GetBrdfLUTTextureID());
+
+			ge::RenderCommand::SetViewport(0, 0, 512, 512);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(brdfShader)->Bind();
+			ge::RenderCommand::Clear();
+			setupQuad();
+			ge::Renderer::SubmitFramebuffer(m_QuadVA, 4);
+			m_Framebuffer->Unbind();
 			
 			// then before rendering, configure the viewport to the original framebuffer's screen dimensions
 			ge::RenderCommand::SetViewport(0, 0, 1280, 720);
@@ -376,13 +438,15 @@ public:
 			// Begin the current scene
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
-			auto pbrShader = m_ShaderLibrary.Get("PBR3");
+			auto pbrShader = m_ShaderLibrary.Get("PBR4");
 
 			// Set up uniforms
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
 
-			m_HDREnvironmentMap->BindIrradianceMap();
+			m_HDREnvironmentMap->BindIrradianceMap(0);
+			m_HDREnvironmentMap->BindPrefilterMap(1);
+			m_HDREnvironmentMap->BindBrdfLUTTexture(2);
 
 			// render rows*columns number of spheres with varying metallic/roughness values scaled by rows/columns respectively
 			glm::mat4 transform = glm::mat4(1.0f);
@@ -549,6 +613,29 @@ public:
 		m_CubeVA->AddVertexBuffer(cubeVB);
 	}
 
+	void setupQuad()
+	{
+		m_QuadVA.reset(ge::VertexArray::Create());
+		float quadVertices[] = {
+			// positions        // texture Coords
+			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+		};
+		// setup plane VAO
+		// Set buffer layout for quad
+		ge::Ref<ge::VertexBuffer> quadVB;
+		quadVB.reset(ge::VertexBuffer::Create(quadVertices, sizeof(quadVertices)));
+
+		quadVB->SetLayout({
+			{ ge::ShaderDataType::Float3, "a_Position" },
+			{ ge::ShaderDataType::Float2, "a_TexCoord" }
+		});
+
+		m_QuadVA->AddVertexBuffer(quadVB);
+	}
+
 
 private:
 
@@ -573,7 +660,7 @@ private:
 	// 3D Scene Varaibles
 	ge::PerspectiveCameraController m_PerspectiveCameraController;	// Perspective Camera Controller
 
-	ge::Ref<ge::VertexArray> m_PbrVA, m_CubeVA;
+	ge::Ref<ge::VertexArray> m_PbrVA, m_CubeVA, m_QuadVA;
 
 	ge::Ref<ge::Texture2D> m_Albedo, m_Normal, m_Metallic, m_Roughness, m_Ao;
 

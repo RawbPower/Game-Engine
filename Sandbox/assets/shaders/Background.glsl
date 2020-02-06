@@ -1,4 +1,4 @@
-// HDR Background Shader
+// PBR and HDR Background Shader
 
 #type vertex
 #version 330 core
@@ -29,7 +29,7 @@ in vec3 v_WorldPos;
 uniform samplerCube u_EnvironmentMap;
 
 void main() {
-	vec3 envColor = texture(u_EnvironmentMap, v_WorldPos).rgb;
+	vec3 envColor = textureLod(u_EnvironmentMap, v_WorldPos, 0.0).rgb;
 
 	// HDR tonemap and gamma correct
 	envColor = envColor / (envColor + vec3(1.0));

@@ -1,4 +1,4 @@
-// PBR Shader
+// PBR Shader (with IBL Diffuse Irradiance)
 
 #type vertex
 #version 330 core

@@ -117,7 +117,19 @@ namespace ge {
 
 	void OpenGLTexture3D::Bind(uint32_t slot) const
 	{
-		glBindTextureUnit(slot, m_RendererID);
+		if (slot == 0)
+		{
+			glActiveTexture(GL_TEXTURE0);
+		}
+		else if (slot == 1)
+		{
+			glActiveTexture(GL_TEXTURE1);
+		}
+		else if (slot == 2)
+		{
+			glActiveTexture(GL_TEXTURE2);
+		}
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
 	}
 
 
@@ -209,14 +221,76 @@ namespace ge {
 
 	void OpenGLHDREnvironmentMap::BindCubemap(uint32_t slot) const
 	{
-		glActiveTexture(0);
+		if (slot == 0)
+		{
+			glActiveTexture(GL_TEXTURE0);
+		}
+		else if (slot == 1)
+		{
+			glActiveTexture(GL_TEXTURE1);
+		}
+		else if (slot == 2)
+		{
+			glActiveTexture(GL_TEXTURE2);
+		}
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubemapID);
 	}
 
 	void OpenGLHDREnvironmentMap::BindIrradianceMap(uint32_t slot) const
 	{
-		glActiveTexture(0);
+		if (slot == 0)
+		{
+			glActiveTexture(GL_TEXTURE0);
+		}
+		else if (slot == 1)
+		{
+			glActiveTexture(GL_TEXTURE1);
+		}
+		else if (slot == 2)
+		{
+			glActiveTexture(GL_TEXTURE2);
+		}
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_IrradianceID);
+	}
+
+	void OpenGLHDREnvironmentMap::BindPrefilterMap(uint32_t slot) const
+	{
+		if (slot == 0)
+		{
+			glActiveTexture(GL_TEXTURE0);
+		}
+		else if (slot == 1)
+		{
+			glActiveTexture(GL_TEXTURE1);
+		}
+		else if (slot == 2)
+		{
+			glActiveTexture(GL_TEXTURE2);
+		}
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_PrefilterID);
+	}
+
+	void OpenGLHDREnvironmentMap::BindBrdfLUTTexture(uint32_t slot) const
+	{
+		if (slot == 0)
+		{
+			glActiveTexture(GL_TEXTURE0);
+		}
+		else if (slot == 1)
+		{
+			glActiveTexture(GL_TEXTURE1);
+		}
+		else if (slot == 2)
+		{
+			glActiveTexture(GL_TEXTURE2);
+		}
+		glBindTexture(GL_TEXTURE_2D, m_BrdfLUTTextureID);
+	}
+
+	void OpenGLHDREnvironmentMap::GenerateMipmap() const
+	{
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubemapID);
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	}
 
 
@@ -225,7 +299,15 @@ namespace ge {
 		glGenTextures(1, &m_CubemapID);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_CubemapID);
 
-		SetMapTextures(width, height);
+		for (unsigned int i = 0; i < 6; ++i)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, nullptr);
+		}
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);  // enable pre-filter mipmap sampling (combatting visible dots artifact)
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 
 	void OpenGLHDREnvironmentMap::SetupIrradianceMap(uint32_t width, uint32_t height)
@@ -234,6 +316,39 @@ namespace ge {
 		glBindTexture(GL_TEXTURE_CUBE_MAP, m_IrradianceID);
 
 		SetMapTextures(width, height);
+	}
+
+	void OpenGLHDREnvironmentMap::SetupPrefilterMap(uint32_t width, uint32_t height)
+	{
+		glGenTextures(1, &m_PrefilterID);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_PrefilterID);
+
+		for (unsigned int i = 0; i < 6; ++i)
+		{
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, nullptr);
+		}
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);  // set minifcation filter to mip_linear
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		// generate mipmaps for the cubemap so OpenGL automatically allocates the required memory.
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	}
+
+	void OpenGLHDREnvironmentMap::SetupBrdfLUTTexture(uint32_t width, uint32_t height)
+	{
+		glGenTextures(1, &m_BrdfLUTTextureID);
+		glBindTexture(GL_TEXTURE_2D, m_BrdfLUTTextureID);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, width, height, 0, GL_RG, GL_FLOAT, 0);
+
+		// be sure to set wrapping mode to GL_CLAMP_TO_EDGE
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 
 	void OpenGLHDREnvironmentMap::SetMapTextures(uint32_t width, uint32_t height)

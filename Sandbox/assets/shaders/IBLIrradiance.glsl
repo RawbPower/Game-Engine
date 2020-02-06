@@ -1,4 +1,4 @@
-// Converts hdr equirectangular map to cube map
+// Calcualte the IBL Diffuse Irradiance map
 
 #type vertex
 #version 330 core
@@ -42,7 +42,7 @@ void main() {
 	up = cross(N, right);
 
 	float sampleDelta = 0.025;
-	float nrSamples = 0.0;
+	float nrSamples = 0.0f;
 	for (float phi = 0.0; phi < 2.0 * PI; phi += sampleDelta)
 	{
 		for (float theta = 0.0; theta < 0.5 * PI; theta += sampleDelta)
