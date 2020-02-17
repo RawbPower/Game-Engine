@@ -102,7 +102,7 @@ public:
 				{ ge::ShaderDataType::Float3, "a_Position" },
 				{ ge::ShaderDataType::Float3, "a_Normal" },
 				{ ge::ShaderDataType::Float2, "a_TexCoords" }
-			});
+				});
 
 			m_PbrVA->AddVertexBuffer(pbrVB);
 
@@ -197,7 +197,7 @@ public:
 			setupCube();
 
 			m_Framebuffer->Bind();
-			for (unsigned int i = 0; i < 6; ++i) 
+			for (unsigned int i = 0; i < 6; ++i)
 			{
 				std::dynamic_pointer_cast<ge::OpenGLShader>(equirectangularToCubemapShader)->UploadUniformMat4("u_View", captureViews[i]);
 				m_Framebuffer->AttachCubemapTexture(m_HDREnvironmentMap->GetCubemapID(), i);
@@ -277,7 +277,7 @@ public:
 			}
 
 			m_Framebuffer->Unbind();
-	
+
 			// pbr: generate a 2D LUT from the BRDF equations used.
 			// ----------------------------------------------------
 
@@ -292,7 +292,7 @@ public:
 			setupQuad();
 			ge::Renderer::SubmitFramebuffer(m_QuadVA, 4);
 			m_Framebuffer->Unbind();
-			
+
 			// then before rendering, configure the viewport to the original framebuffer's screen dimensions
 			ge::RenderCommand::SetViewport(0, 0, 1280, 720);
 
@@ -300,7 +300,7 @@ public:
 		}
 
 		// Code for 2D scene
-		else if (m_Scene == Scene::Scene2D) 
+		else if (m_Scene == Scene::Scene2D)
 		{
 			/* Vertex Array (required for core OpenGL profile) */
 			m_VertexArray.reset(ge::VertexArray::Create());
@@ -458,7 +458,7 @@ public:
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
 
-			
+
 			m_HDREnvironmentMap->BindIrradianceMap(0);
 			m_HDREnvironmentMap->BindPrefilterMap(1);
 			m_HDREnvironmentMap->BindBrdfLUTTexture(2);
@@ -477,7 +477,7 @@ public:
 			transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 			transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			transform = glm::scale(transform, glm::vec3(0.1f));
-			
+
 			// Setup up the prejection matrix for the camera
 			ge::Renderer::SetProjection(pbrShader, transform);
 
@@ -494,7 +494,7 @@ public:
 				newPos = m_LightPositions[i];
 				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightPositions[" + std::to_string(i) + "]", newPos);
 				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightColors[" + std::to_string(i) + "]", m_LightColors[i]);
-				
+
 				transform = glm::mat4(1.0f);
 				transform = glm::translate(transform, newPos);
 				transform = glm::scale(transform, glm::vec3(0.5f));
@@ -510,7 +510,7 @@ public:
 		}
 
 		// Code for 2D scene
-		else if (m_Scene == Scene::Scene2D) 
+		else if (m_Scene == Scene::Scene2D)
 		{
 			// Update
 			m_OrthographicCameraController.OnUpdate(dt);
@@ -650,7 +650,7 @@ public:
 		quadVB->SetLayout({
 			{ ge::ShaderDataType::Float3, "a_Position" },
 			{ ge::ShaderDataType::Float2, "a_TexCoord" }
-		});
+			});
 
 		m_QuadVA->AddVertexBuffer(quadVB);
 	}
