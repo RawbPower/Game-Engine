@@ -123,15 +123,19 @@ public:
 			// lighting info
 			// -------------
 			// positions
-			m_LightPositions.push_back(glm::vec3(-10.0f, 10.0f, 10.0f)); // back light
-			m_LightPositions.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
-			m_LightPositions.push_back(glm::vec3(-10.0f, -10.0f, 10.0f));
-			m_LightPositions.push_back(glm::vec3(10.0f, -10.0f, 10.0f));
+			m_LightPositions.push_back(glm::vec3(-20.0f, 0.0f, 0.0f)); // back light
+			m_LightPositions.push_back(glm::vec3(20.0f, 0.0f, 0.0f));
+			m_LightPositions.push_back(glm::vec3(0.0f, 20.0f, 0.0f));
+			m_LightPositions.push_back(glm::vec3(0.0f, -20.0f, 0.0f));
+			m_LightPositions.push_back(glm::vec3(0.0f, 0.0f, 20.0f)); // back light
+			m_LightPositions.push_back(glm::vec3(0.0f, 0.0f, -20.0f));
 			// colors
-			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
-			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
-			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
-			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
+			m_LightColors.push_back(glm::vec3(500.0f, 500.0f, 500.0f));
+			m_LightColors.push_back(glm::vec3(500.0f, 500.0f, 500.0f));
+			m_LightColors.push_back(glm::vec3(500.0f, 500.0f, 500.0f));
+			m_LightColors.push_back(glm::vec3(500.0f, 500.0f, 500.0f));
+			m_LightColors.push_back(glm::vec3(500.0f, 500.0f, 500.0f));
+			m_LightColors.push_back(glm::vec3(500.0f, 500.0f, 500.0f));
 
 			//ge::RenderCommand::WireFrame();
 		}
@@ -317,11 +321,10 @@ public:
 				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightPositions[" + std::to_string(i) + "]", newPos);
 				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightColors[" + std::to_string(i) + "]", m_LightColors[i]);
 
-				transform = glm::mat4(1.0f);
-				transform = glm::translate(transform, newPos);
-				transform = glm::scale(transform, glm::vec3(0.5f));
-				m_Texture->Bind(0);
-				ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
+				//transform = glm::mat4(1.0f);
+				//transform = glm::translate(transform, newPos);
+				//transform = glm::scale(transform, glm::vec3(0.5f));
+				//ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
 			}
 
 			ge::Renderer::EndScene();
@@ -496,7 +499,7 @@ private:
 
 	glm::vec3 m_Color = { 0.9f, 0.2f, 0.0f };	// Color
 	float m_Metallic = 0.0f;
-	float m_Roughness = 0.5f;
+	float m_Roughness = 0.6f;
 
 	// 3D Scene Varaibles
 	ge::PerspectiveCameraController m_PerspectiveCameraController;	// Perspective Camera Controller

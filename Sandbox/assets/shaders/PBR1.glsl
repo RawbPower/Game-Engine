@@ -37,8 +37,8 @@ uniform float u_Roughness;
 uniform float u_Ao;
 
 // light
-uniform vec3 u_LightPositions[4];
-uniform vec3 u_LightColors[4];
+uniform vec3 u_LightPositions[6];
+uniform vec3 u_LightColors[6];
 
 uniform vec3 u_ViewPosition;
 
@@ -104,7 +104,7 @@ void main()
 
     // reflection equation
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < 4; ++i)
+    for(int i = 0; i < 6; ++i)
     {
         // calculate per-light radiance
         vec3 L = normalize(u_LightPositions[i] - v_WorldPosition);         // Light direction
