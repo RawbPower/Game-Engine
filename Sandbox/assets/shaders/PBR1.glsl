@@ -32,13 +32,14 @@ in vec3 v_Normal;
 
 // material parameters
 uniform vec3 u_Albedo;
+uniform vec3 u_AlbedoB;
 uniform float u_Metallic;
 uniform float u_Roughness;
 uniform float u_Ao;
 
 // light
-uniform vec3 u_LightPositions[6];
-uniform vec3 u_LightColors[6];
+uniform vec3 u_LightPositions[1];
+uniform vec3 u_LightColors[1];
 
 uniform vec3 u_ViewPosition;
 
@@ -104,7 +105,7 @@ void main()
 
     // reflection equation
     vec3 Lo = vec3(0.0);
-    for(int i = 0; i < 6; ++i)
+    for(int i = 0; i < 1; ++i)
     {
         // calculate per-light radiance
         vec3 L = normalize(u_LightPositions[i] - v_WorldPosition);         // Light direction
@@ -131,10 +132,19 @@ void main()
         Lo += (kD * u_Albedo / PI + specular) * radiance * NdotL;
     }
 
-    vec3 ambient = vec3(0.03) * u_Albedo * u_Ao;
+    vec3 ambient = u_Albedo * u_Ao;
 
     vec4 textureColor = texture(u_Texture, v_TexCoords);
-    vec3 color = textureColor.rgb * (ambient + Lo);
+    if (textureColor.r > 0.5f)
+    {
+        ambient = vec3(0.5) * u_Albedo * u_Ao;
+    }
+    else
+    {
+        ambient = vec3(0.5) * u_AlbedoB * u_Ao;
+    }
+
+    vec3 color = (ambient + Lo);
 
     color = color / (color + vec3(1.0));                        // Reinhard tone mapping
     color = pow(color, vec3(1.0/2.2));                          // Gamme correction

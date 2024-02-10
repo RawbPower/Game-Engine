@@ -109,13 +109,14 @@ public:
 
 			// Shaders
 			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR1.glsl");
+			auto lampShader = m_ShaderLibrary.Load("assets/shaders/Lamp.glsl");
 
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", { 0.5f, 0.0f, 0.0f });
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Ao", 1.0f);
 
 			// Create textures
-			m_Texture = ge::Texture2D::Create("assets/textures/Checkerboard.png");
+			m_Texture = ge::Texture2D::Create("assets/textures/Chessboard.png");
 
 			// Bind shader and upload texture uniform
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_Texture", 0);		// 0 is the texure slot of m_Texture
@@ -123,19 +124,9 @@ public:
 			// lighting info
 			// -------------
 			// positions
-			m_LightPositions.push_back(glm::vec3(-20.0f, 0.0f, 0.0f)); // back light
-			m_LightPositions.push_back(glm::vec3(20.0f, 0.0f, 0.0f));
-			m_LightPositions.push_back(glm::vec3(0.0f, 20.0f, 0.0f));
-			m_LightPositions.push_back(glm::vec3(0.0f, -20.0f, 0.0f));
-			m_LightPositions.push_back(glm::vec3(0.0f, 0.0f, 20.0f)); // back light
-			m_LightPositions.push_back(glm::vec3(0.0f, 0.0f, -20.0f));
+			m_LightPositions.push_back(glm::vec3(-12.0f, 18.0f, 8.0f)); // back light
 			// colors
-			m_LightColors.push_back(glm::vec3(500.0f, 500.0f, 500.0f));
-			m_LightColors.push_back(glm::vec3(500.0f, 500.0f, 500.0f));
-			m_LightColors.push_back(glm::vec3(500.0f, 500.0f, 500.0f));
-			m_LightColors.push_back(glm::vec3(500.0f, 500.0f, 500.0f));
-			m_LightColors.push_back(glm::vec3(500.0f, 500.0f, 500.0f));
-			m_LightColors.push_back(glm::vec3(500.0f, 500.0f, 500.0f));
+			m_LightColors.push_back(glm::vec3(200.0f, 200.0f, 200.0f));
 
 			//ge::RenderCommand::WireFrame();
 		}
@@ -299,7 +290,8 @@ public:
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
 
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", m_Color);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", m_ColorA);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_AlbedoB", m_ColorB);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Metallic", m_Metallic);
 			// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look
 			// a bit off on direct lighting
@@ -314,17 +306,26 @@ public:
 			// render light source (simply re-render sphere at light positions)
 			// this looks a bit off as we use the same shader, but it'll make their positions obvious and 
 			// keeps the codeprint small.
+
+			auto lampShader = m_ShaderLibrary.Get("Lamp");
+
 			for (unsigned int i = 0; i < m_LightPositions.size(); ++i)
 			{
 				glm::vec3 newPos = m_LightPositions[i] + glm::vec3(sin(m_TotalTime * 5.0) * 5.0, 0.0, 0.0);
 				newPos = m_LightPositions[i];
+				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
 				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightPositions[" + std::to_string(i) + "]", newPos);
 				std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_LightColors[" + std::to_string(i) + "]", m_LightColors[i]);
 
-				//transform = glm::mat4(1.0f);
-				//transform = glm::translate(transform, newPos);
-				//transform = glm::scale(transform, glm::vec3(0.5f));
-				//ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
+				// Set up uniforms
+				std::dynamic_pointer_cast<ge::OpenGLShader>(lampShader)->Bind();
+				std::dynamic_pointer_cast<ge::OpenGLShader>(lampShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
+				std::dynamic_pointer_cast<ge::OpenGLShader>(lampShader)->UploadUniformFloat3("u_LightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+
+				transform = glm::mat4(1.0f);
+				transform = glm::translate(transform, newPos);
+				transform = glm::scale(transform, glm::vec3(0.5f));
+				ge::Renderer::Submit(lampShader, m_PbrVA, transform);
 			}
 
 			ge::Renderer::EndScene();
@@ -346,7 +347,7 @@ public:
 
 			// Set up uniform
 			std::dynamic_pointer_cast<ge::OpenGLShader>(m_FlatColorShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_Color);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_ColorA);
 
 			// Render grid of blue squares
 			for (int x = -10; x < 11; x++) {
@@ -375,7 +376,8 @@ public:
 	virtual void OnImGuiRender() override
 	{
 		ImGui::Begin("Settings");
-		ImGui::ColorEdit3("Color", glm::value_ptr(m_Color));
+		ImGui::ColorEdit3("Color A", glm::value_ptr(m_ColorA));
+		ImGui::ColorEdit3("Color B", glm::value_ptr(m_ColorB));
 		ImGui::DragFloat("Metallic", &m_Metallic, 0.001f, 0.0f, 1.0f);
 		ImGui::DragFloat("Roughness", &m_Roughness, 0.001f, 0.0f, 1.0f);
 		ImGui::End();
@@ -497,9 +499,10 @@ private:
 	ge::Ref<ge::Shader> m_FlatColorShader;			// Flat color shader
 	ge::Ref<ge::VertexArray> m_SquareVA;			// Vertex array for square
 
-	glm::vec3 m_Color = { 0.9f, 0.2f, 0.0f };	// Color
-	float m_Metallic = 0.0f;
-	float m_Roughness = 0.6f;
+	glm::vec3 m_ColorA = { 0.9f, 1.0f, 0.8f };	// Color
+	glm::vec3 m_ColorB = { 0.1f, 0.9f, 0.2f };	// Color
+	float m_Metallic = 0.2f;
+	float m_Roughness = 0.4f;
 
 	// 3D Scene Varaibles
 	ge::PerspectiveCameraController m_PerspectiveCameraController;	// Perspective Camera Controller
