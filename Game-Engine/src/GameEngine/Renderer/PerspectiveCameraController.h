@@ -42,6 +42,7 @@ namespace ge {
 	private:
 		bool OnMouseScrolled(MouseScrolledEvent& e);
 		bool OnMouseMoved(MouseMovedEvent& e);
+		void MousePan(const glm::vec2& delta);
 		bool OnWindowResized(WindowResizeEvent& e);
 	private:
 		float m_AspectRatio;
@@ -50,13 +51,14 @@ namespace ge {
 		PerspectiveCamera m_Camera;
 
 		//glm::vec3 m_CameraPosition = { -2.0f, -2.0f, 4.0f };
-		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 10.0f };
+		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 20.0f };
 		glm::vec3 m_CameraFront = { 0.0f, 0.0f, -1.0f };
 		glm::vec3 m_CameraUp = { 0.0f, 1.0f, 0.0f };
+		glm::vec2 m_initialMousePosition = { 0.0f, 0.0f };
 		float m_Yaw = -90.0f;
 		float m_Pitch = 0.0f;
 		float m_CameraRotation = 0.0f;
-		float m_CameraTranslationSpeed = 2.5f, m_CameraRotationSpeed = 180.0f;
+		float m_CameraTranslationSpeed = 5.0f, m_CameraRotationSpeed = 180.0f;
 
 		uint32_t m_ScreenWidth, m_ScreenHeight;
 

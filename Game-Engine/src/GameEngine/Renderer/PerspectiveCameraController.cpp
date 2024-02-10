@@ -9,6 +9,7 @@
 
 #include "GameEngine/Core/Input.h"
 #include "GameEngine/Core/KeyCodes.h"
+#include "GameEngine/Core/MouseButtonCodes.h"
 
 namespace ge {
 
@@ -33,6 +34,21 @@ namespace ge {
 		else if (Input::IsKeyPressed(GE_KEY_D))
 			m_CameraPosition += (m_CameraTranslationSpeed * dt) * glm::normalize(glm::cross(m_CameraFront, m_CameraUp));
 
+		if (Input::IsMouseButtonPressed(GE_MOUSE_BUTTON_MIDDLE))
+		{
+			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+			glm::vec2 delta = (mouse - m_initialMousePosition) * 0.003f;
+			m_initialMousePosition = mouse;
+
+			MousePan(delta);
+		}
+		else
+		{
+			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+			glm::vec2 delta = (mouse - m_initialMousePosition) * 0.003f;
+			m_initialMousePosition = mouse;
+		}
+
 	}
 
 	void PerspectiveCameraController::OnEvent(Event& e)
@@ -56,25 +72,53 @@ namespace ge {
 
 	bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent& e)
 	{
-		float xpos = e.GetX(), ypos = e.GetY();
-		//GE_CORE_TRACE("({0},{1})", xpos, ypos);
-
-		if (m_FirstMouse)
+		/*if (Input::IsMouseButtonPressed(GE_MOUSE_BUTTON_MIDDLE))
 		{
-			m_LastX = xpos;
-			m_LastY = ypos;
-			m_FirstMouse = false;
-		}
+			const glm::vec2& mouse{ Input::GetMouseX(), Input::GetMouseY() };
+			glm::vec2 delta = (mouse - m_initialMousePosition) * 0.003f;
+			m_initialMousePosition = mouse;
 
-		float xoffset = xpos - m_LastX;
-		float yoffset = m_LastY - ypos;
-		m_LastX = xpos, m_LastY = ypos;
+			float xpos = e.GetX(), ypos = e.GetY();
+			//GE_CORE_TRACE("({0},{1})", xpos, ypos);
 
-		xoffset *= m_Sensitivity;
-		yoffset *= m_Sensitivity;
+			if (m_FirstMouse)
+			{
+				m_LastX = xpos;
+				m_LastY = ypos;
+				m_FirstMouse = false;
+			}
 
-		m_Yaw += xoffset;
-		m_Pitch += yoffset;
+			float xoffset = xpos - m_LastX;
+			float yoffset = m_LastY - ypos;
+			m_LastX = xpos, m_LastY = ypos;
+
+			xoffset *= m_Sensitivity;
+			yoffset *= m_Sensitivity;
+
+			m_Yaw += xoffset;
+			m_Pitch += yoffset;
+
+			if (m_Pitch > 89.0f)
+				m_Pitch = 89.0f;
+			else if (m_Pitch < -89.0f)
+				m_Pitch = -89.0f;
+
+			glm::vec3 direction;
+			direction.x = cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+			direction.y = sin(glm::radians(m_Pitch));
+			direction.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+			m_CameraFront = glm::normalize(direction);
+		}*/
+
+		return false;
+	}
+
+	void PerspectiveCameraController::MousePan(const glm::vec2& delta)
+	{
+		float panSpeed = 1.0f;
+		float distance = glm::length(m_CameraPosition);
+		m_Yaw += delta.x * panSpeed * distance;
+		m_Pitch -= delta.y * panSpeed * distance;
 
 		if (m_Pitch > 89.0f)
 			m_Pitch = 89.0f;
@@ -86,8 +130,6 @@ namespace ge {
 		direction.y = sin(glm::radians(m_Pitch));
 		direction.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
 		m_CameraFront = glm::normalize(direction);
-
-		return false;
 	}
 
 	bool PerspectiveCameraController::OnWindowResized(WindowResizeEvent& e)

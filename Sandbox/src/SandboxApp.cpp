@@ -22,7 +22,7 @@ public:
 			ge::RenderCommand::EnableZBuffer();
 			ge::RenderCommand::DepthFunc("LEQUAL");
 			// enable seamless cubemap sampling for lower mip levels in the pre-filter map.
-			ge::RenderCommand::EnableSeamlessCubemap();
+			//ge::RenderCommand::EnableSeamlessCubemap();
 
 			// Create VAOs for all the objects
 			m_PbrVA.reset(ge::VertexArray::Create());
@@ -81,16 +81,16 @@ public:
 				data.push_back(positions[i].x);
 				data.push_back(positions[i].y);
 				data.push_back(positions[i].z);
+				if (uv.size() > 0)
+				{
+					data.push_back(uv[i].x);
+					data.push_back(uv[i].y);
+				}
 				if (normals.size() > 0)
 				{
 					data.push_back(normals[i].x);
 					data.push_back(normals[i].y);
 					data.push_back(normals[i].z);
-				}
-				if (uv.size() > 0)
-				{
-					data.push_back(uv[i].x);
-					data.push_back(uv[i].y);
 				}
 			}
 
@@ -100,8 +100,8 @@ public:
 
 			pbrVB->SetLayout({
 				{ ge::ShaderDataType::Float3, "a_Position" },
-				{ ge::ShaderDataType::Float3, "a_Normal" },
-				{ ge::ShaderDataType::Float2, "a_TexCoords" }
+				{ ge::ShaderDataType::Float2, "a_TexCoords" },
+				{ ge::ShaderDataType::Float3, "a_Normal" }
 				});
 
 			m_PbrVA->AddVertexBuffer(pbrVB);
@@ -110,11 +110,8 @@ public:
 			pbrIB.reset(ge::IndexBuffer::Create(&indices[0], indices.size()));
 			m_PbrVA->SetIndexBuffer(pbrIB);
 
-			// Create model with relative path
-			m_Model = ge::Model("assets/cerberus/Cerberus_LP.fbx");
-
 			// Shaders
-			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR6.glsl");
+			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR4.glsl");
 			auto equirectangularToCubemapShader = m_ShaderLibrary.Load("assets/shaders/EquirectangularToCubemap.glsl");
 			auto irradianceShader = m_ShaderLibrary.Load("assets/shaders/IBLIrradiance.glsl");
 			auto prefilterShader = m_ShaderLibrary.Load("assets/shaders/Prefilter.glsl");
@@ -125,22 +122,11 @@ public:
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_IrradianceMap", 0);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_PrefilterMap", 1);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_BrdfLUT", 2);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_AlbedoMap", 3);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_NormalMap", 4);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_MetallicMap", 5);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_RoughnessMap", 6);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_AoMap", 7);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", { 0.5f, 0.0f, 0.0f });
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Ao", 1.0f);
 
 			std::dynamic_pointer_cast<ge::OpenGLShader>(backgroundShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(backgroundShader)->UploadUniformInt("u_EnvironmentMap", 0);
-
-			// Add textures
-			// rusted iron
-			m_IronAlbedo = ge::Texture2D::Create("assets/cerberus/Textures/Cerberus_A.tga");
-			m_IronNormal = ge::Texture2D::Create("assets/cerberus/Textures/Cerberus_N.tga");
-			m_IronMetallic = ge::Texture2D::Create("assets/cerberus/Textures/Cerberus_M.tga");
-			m_IronRoughness = ge::Texture2D::Create("assets/cerberus/Textures/Cerberus_R.tga");
-			m_IronAo = ge::Texture2D::Create("assets/cerberus/Textures/Raw/Cerberus_AO.tga");
 
 			// lighting info
 			// -------------
@@ -452,37 +438,26 @@ public:
 			// Begin the current scene
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
-			auto pbrShader = m_ShaderLibrary.Get("PBR6");
+			auto pbrShader = m_ShaderLibrary.Get("PBR4");
 
 			// Set up uniforms
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
 
-
 			m_HDREnvironmentMap->BindIrradianceMap(0);
 			m_HDREnvironmentMap->BindPrefilterMap(1);
 			m_HDREnvironmentMap->BindBrdfLUTTexture(2);
 
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", m_Color);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Metallic", m_Metallic);
+			// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look
+			// a bit off on direct lighting
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Roughness", glm::clamp(m_Roughness, 0.05f, 1.0f));
+
+			// render rows*columns number of spheres with varying metallic/roughness values scaled by rows/columns respectively
 			glm::mat4 transform = glm::mat4(1.0f);
 
-			// rusted iron
-			m_IronAlbedo->Bind(3);
-			m_IronNormal->Bind(4);
-			m_IronMetallic->Bind(5);
-			m_IronRoughness->Bind(6);
-			m_IronAo->Bind(7);
-
-			transform = glm::mat4(1.0f);
-			transform = glm::translate(transform, glm::vec3(0.0, 0.0, 0.0));
-			transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-			transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-			transform = glm::scale(transform, glm::vec3(0.1f));
-
-			// Setup up the prejection matrix for the camera
-			ge::Renderer::SetProjection(pbrShader, transform);
-
-			// Draw model to screen
-			m_Model.Draw(pbrShader);
+			ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
 
 			m_TotalTime += dt;
 			// render light source (simply re-render sphere at light positions)
@@ -525,7 +500,7 @@ public:
 
 			// Set up uniform
 			std::dynamic_pointer_cast<ge::OpenGLShader>(m_FlatColorShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+			std::dynamic_pointer_cast<ge::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_Color);
 
 			// Render grid of blue squares
 			for (int x = -10; x < 11; x++) {
@@ -554,7 +529,9 @@ public:
 	virtual void OnImGuiRender() override
 	{
 		ImGui::Begin("Settings");
-		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+		ImGui::ColorEdit3("Color", glm::value_ptr(m_Color));
+		ImGui::DragFloat("Metallic", &m_Metallic, 0.001f, 0.0f, 1.0f);
+		ImGui::DragFloat("Roughness", &m_Roughness, 0.001f, 0.0f, 1.0f);
 		ImGui::End();
 	}
 
@@ -674,18 +651,16 @@ private:
 	ge::Ref<ge::Shader> m_FlatColorShader;			// Flat color shader
 	ge::Ref<ge::VertexArray> m_SquareVA;			// Vertex array for square
 
-	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };	// Square color
+	glm::vec3 m_Color = { 0.9f, 0.2f, 0.0f };	// Color
+	float m_Metallic = 0.0f;
+	float m_Roughness = 0.5f;
 
 	// 3D Scene Varaibles
 	ge::PerspectiveCameraController m_PerspectiveCameraController;	// Perspective Camera Controller
 
 	ge::Ref<ge::VertexArray> m_PbrVA, m_CubeVA, m_QuadVA;
 
-	ge::Ref<ge::Texture2D> m_IronAlbedo, m_IronNormal, m_IronMetallic, m_IronRoughness, m_IronAo;
-	ge::Ref<ge::Texture2D> m_GoldAlbedo, m_GoldNormal, m_GoldMetallic, m_GoldRoughness, m_GoldAo;
-	ge::Ref<ge::Texture2D> m_GrassAlbedo, m_GrassNormal, m_GrassMetallic, m_GrassRoughness, m_GrassAo;
-	ge::Ref<ge::Texture2D> m_PlasticAlbedo, m_PlasticNormal, m_PlasticMetallic, m_PlasticRoughness, m_PlasticAo;
-	ge::Ref<ge::Texture2D> m_WallAlbedo, m_WallNormal, m_WallMetallic, m_WallRoughness, m_WallAo;
+	//ge::Ref<ge::Texture2D> m_Albedo, m_Normal, m_Metallic, m_Roughness, m_Ao;
 
 	std::vector<glm::vec3> m_LightPositions;
 	std::vector<glm::vec3> m_LightColors;
