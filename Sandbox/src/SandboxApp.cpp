@@ -114,6 +114,12 @@ public:
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", { 0.5f, 0.0f, 0.0f });
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Ao", 1.0f);
 
+			// Create textures
+			m_Texture = ge::Texture2D::Create("assets/textures/Checkerboard.png");
+
+			// Bind shader and upload texture uniform
+			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_Texture", 0);		// 0 is the texure slot of m_Texture
+
 			// lighting info
 			// -------------
 			// positions
@@ -277,7 +283,7 @@ public:
 
 			// Rendering
 			// Clear previous frame
-			ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
+			ge::RenderCommand::SetClearColor({ 0.8f, 1.0f, 1.0f, 1 });
 			ge::RenderCommand::Clear();
 
 			// Begin the current scene
@@ -314,6 +320,7 @@ public:
 				transform = glm::mat4(1.0f);
 				transform = glm::translate(transform, newPos);
 				transform = glm::scale(transform, glm::vec3(0.5f));
+				m_Texture->Bind(0);
 				ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
 			}
 

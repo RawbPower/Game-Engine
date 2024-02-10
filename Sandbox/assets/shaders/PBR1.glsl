@@ -42,6 +42,8 @@ uniform vec3 u_LightColors[4];
 
 uniform vec3 u_ViewPosition;
 
+uniform sampler2D u_Texture;
+
 const float PI = 3.14159265359;
 
 // Use normal distribution to calculate the alignment of microfacets
@@ -130,7 +132,9 @@ void main()
     }
 
     vec3 ambient = vec3(0.03) * u_Albedo * u_Ao;
-    vec3 color = ambient + Lo;
+
+    vec4 textureColor = texture(u_Texture, v_TexCoords);
+    vec3 color = textureColor.rgb * (ambient + Lo);
 
     color = color / (color + vec3(1.0));                        // Reinhard tone mapping
     color = pow(color, vec3(1.0/2.2));                          // Gamme correction
