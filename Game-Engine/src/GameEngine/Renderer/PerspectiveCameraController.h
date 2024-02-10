@@ -51,7 +51,7 @@ namespace ge {
 		PerspectiveCamera m_Camera;
 
 		//glm::vec3 m_CameraPosition = { -2.0f, -2.0f, 4.0f };
-		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 20.0f };
+		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 16.0f };
 		glm::vec3 m_CameraFront = { 0.0f, 0.0f, -1.0f };
 		glm::vec3 m_CameraUp = { 0.0f, 1.0f, 0.0f };
 		glm::vec2 m_initialMousePosition = { 0.0f, 0.0f };

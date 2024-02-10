@@ -20,9 +20,6 @@ public:
 		{
 			// Enable z-buffer for 3D rendering only
 			ge::RenderCommand::EnableZBuffer();
-			ge::RenderCommand::DepthFunc("LEQUAL");
-			// enable seamless cubemap sampling for lower mip levels in the pre-filter map.
-			//ge::RenderCommand::EnableSeamlessCubemap();
 
 			// Create VAOs for all the objects
 			m_PbrVA.reset(ge::VertexArray::Create());
@@ -111,22 +108,11 @@ public:
 			m_PbrVA->SetIndexBuffer(pbrIB);
 
 			// Shaders
-			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR4.glsl");
-			auto equirectangularToCubemapShader = m_ShaderLibrary.Load("assets/shaders/EquirectangularToCubemap.glsl");
-			auto irradianceShader = m_ShaderLibrary.Load("assets/shaders/IBLIrradiance.glsl");
-			auto prefilterShader = m_ShaderLibrary.Load("assets/shaders/Prefilter.glsl");
-			auto brdfShader = m_ShaderLibrary.Load("assets/shaders/BRDF.glsl");
-			auto backgroundShader = m_ShaderLibrary.Load("assets/shaders/Background.glsl");
+			auto pbrShader = m_ShaderLibrary.Load("assets/shaders/PBR1.glsl");
 
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_IrradianceMap", 0);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_PrefilterMap", 1);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformInt("u_BrdfLUT", 2);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", { 0.5f, 0.0f, 0.0f });
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Ao", 1.0f);
-
-			std::dynamic_pointer_cast<ge::OpenGLShader>(backgroundShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(backgroundShader)->UploadUniformInt("u_EnvironmentMap", 0);
 
 			// lighting info
 			// -------------
@@ -140,147 +126,6 @@ public:
 			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
 			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
 			m_LightColors.push_back(glm::vec3(300.0f, 300.0f, 300.0f));
-
-			// pbr: setup framebuffer (Framebuffer Environment)
-			// ----------------------
-			m_Framebuffer.reset(ge::Framebuffer::Create(512, 512, true));
-
-			// pbr: load the HDR environment map (New texture type)
-			// ---------------------------------
-
-			m_HDREnvironmentMap = ge::HDREnvironmentMap::Create("assets/textures/hdr/newport_loft.hdr");
-
-			// pbr: setup cubemap to render to and attach to framebuffer (Put in textures)
-			// ---------------------------------------------------------
-
-			m_HDREnvironmentMap->SetupCubemap(512, 512);
-
-			// pbr: set up projection and view matrices for capturing data onto the 6 cubemap face directions
-			// ----------------------------------------------------------------------------------------------
-
-			glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
-			glm::mat4 captureViews[] =
-			{
-				glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-				glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-				glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-				glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-				glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-				glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-			};
-
-			// pbr: convert HDR equirectangular environment map to cubemap equivalent (texture)
-			// ----------------------------------------------------------------------
-
-			std::dynamic_pointer_cast<ge::OpenGLShader>(equirectangularToCubemapShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(equirectangularToCubemapShader)->UploadUniformInt("u_EquirectangularMap", 0);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(equirectangularToCubemapShader)->UploadUniformMat4("u_Projection", captureProjection);
-
-			m_HDREnvironmentMap->Bind(0);
-
-			ge::RenderCommand::SetViewport(0, 0, 512, 512);
-
-			setupCube();
-
-			m_Framebuffer->Bind();
-			for (unsigned int i = 0; i < 6; ++i)
-			{
-				std::dynamic_pointer_cast<ge::OpenGLShader>(equirectangularToCubemapShader)->UploadUniformMat4("u_View", captureViews[i]);
-				m_Framebuffer->AttachCubemapTexture(m_HDREnvironmentMap->GetCubemapID(), i);
-				ge::RenderCommand::Clear();
-
-				ge::Renderer::SubmitFramebuffer(m_CubeVA, 36);
-			}
-
-			m_Framebuffer->Unbind();
-
-			// then let OpenGL generate mipmaps from first mip face (combatting visible dots artifact)
-			m_HDREnvironmentMap->GenerateMipmap();
-
-			// pbr: create an irradiance cubemap, and re-scale capture FBO to irradiance scale.
-			// -------------------------------------------------------------------------------
-
-			m_HDREnvironmentMap->SetupIrradianceMap(32, 32);
-
-			m_Framebuffer->Rescale(32, 32);
-
-			// pbr: solve diffuse integral by convolution to create an irradiance (cube)map.
-			// -----------------------------------------------------------------------------
-
-			std::dynamic_pointer_cast<ge::OpenGLShader>(irradianceShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(irradianceShader)->UploadUniformInt("u_EnvironmentMap", 0);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(irradianceShader)->UploadUniformMat4("u_Projection", captureProjection);
-
-			m_HDREnvironmentMap->BindCubemap(0);
-
-			ge::RenderCommand::SetViewport(0, 0, 32, 32);
-
-			m_Framebuffer->Bind();
-			for (unsigned int i = 0; i < 6; ++i)
-			{
-				std::dynamic_pointer_cast<ge::OpenGLShader>(irradianceShader)->UploadUniformMat4("u_View", captureViews[i]);
-				m_Framebuffer->AttachCubemapTexture(m_HDREnvironmentMap->GetIrradianceID(), i);
-				ge::RenderCommand::Clear();
-
-				ge::Renderer::SubmitFramebuffer(m_CubeVA, 36);
-			}
-
-			m_Framebuffer->Unbind();
-
-			// pbr: create a pre-filter cubemap, and re-scale capture FBO to pre-filter scale.
-			// --------------------------------------------------------------------------------
-			m_HDREnvironmentMap->SetupPrefilterMap(128, 128);
-
-			// pbr: run a quasi monte-carlo simulation on the environment lighting to create a prefilter (cube)map.
-			// ----------------------------------------------------------------------------------------------------
-
-			std::dynamic_pointer_cast<ge::OpenGLShader>(prefilterShader)->Bind();
-			std::dynamic_pointer_cast<ge::OpenGLShader>(prefilterShader)->UploadUniformInt("u_EnvironmentMap", 0);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(prefilterShader)->UploadUniformMat4("u_Projection", captureProjection);
-
-			m_HDREnvironmentMap->BindCubemap(0);
-
-			m_Framebuffer->Bind();
-			unsigned int maxMipLevels = 5;
-			for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
-			{
-				// resize framebuffer according to mip-level size
-				unsigned int mipWidth = 128 * std::pow(0.5, mip);
-				unsigned int mipHeight = 128 * std::pow(0.5, mip);
-				m_Framebuffer->ResizeRenderBuffer(mipWidth, mipHeight);
-				ge::RenderCommand::SetViewport(0, 0, mipWidth, mipHeight);
-
-				float roughness = (float)mip / (float)(maxMipLevels - 1);
-				std::dynamic_pointer_cast<ge::OpenGLShader>(prefilterShader)->UploadUniformFloat("u_Roughness", roughness);
-				for (unsigned int i = 0; i < 6; ++i)
-				{
-					std::dynamic_pointer_cast<ge::OpenGLShader>(prefilterShader)->UploadUniformMat4("u_View", captureViews[i]);
-					m_Framebuffer->AttachCubemapTexture(m_HDREnvironmentMap->GetPrefilterID(), i, mip);
-					ge::RenderCommand::Clear();
-
-					ge::Renderer::SubmitFramebuffer(m_CubeVA, 36);
-				}
-			}
-
-			m_Framebuffer->Unbind();
-
-			// pbr: generate a 2D LUT from the BRDF equations used.
-			// ----------------------------------------------------
-
-			m_HDREnvironmentMap->SetupBrdfLUTTexture(512, 512);
-
-			m_Framebuffer->Rescale(512, 512);
-			m_Framebuffer->Attach2DTexture(m_HDREnvironmentMap->GetBrdfLUTTextureID());
-
-			ge::RenderCommand::SetViewport(0, 0, 512, 512);
-			std::dynamic_pointer_cast<ge::OpenGLShader>(brdfShader)->Bind();
-			ge::RenderCommand::Clear();
-			setupQuad();
-			ge::Renderer::SubmitFramebuffer(m_QuadVA, 4);
-			m_Framebuffer->Unbind();
-
-			// then before rendering, configure the viewport to the original framebuffer's screen dimensions
-			ge::RenderCommand::SetViewport(0, 0, 1280, 720);
 
 			//ge::RenderCommand::WireFrame();
 		}
@@ -432,21 +277,17 @@ public:
 
 			// Rendering
 			// Clear previous frame
-			ge::RenderCommand::SetClearColor({ 0.2f, 0.3f, 0.3f, 1 });
+			ge::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
 			ge::RenderCommand::Clear();
 
 			// Begin the current scene
 			ge::Renderer::BeginScene(m_PerspectiveCameraController.GetCamera());
 
-			auto pbrShader = m_ShaderLibrary.Get("PBR4");
+			auto pbrShader = m_ShaderLibrary.Get("PBR1");
 
 			// Set up uniforms
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->Bind();
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_ViewPosition", m_PerspectiveCameraController.GetCameraPosition());
-
-			m_HDREnvironmentMap->BindIrradianceMap(0);
-			m_HDREnvironmentMap->BindPrefilterMap(1);
-			m_HDREnvironmentMap->BindBrdfLUTTexture(2);
 
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", m_Color);
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Metallic", m_Metallic);
@@ -475,11 +316,6 @@ public:
 				transform = glm::scale(transform, glm::vec3(0.5f));
 				ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
 			}
-
-			// render skybox(render as last to prevent overdraw)
-			auto backgroundShader = m_ShaderLibrary.Get("Background");
-			m_HDREnvironmentMap->BindCubemap(0);
-			ge::Renderer::SubmitSkybox(backgroundShader, m_CubeVA, 36);
 
 			ge::Renderer::EndScene();
 		}
@@ -666,8 +502,6 @@ private:
 	std::vector<glm::vec3> m_LightColors;
 
 	ge::Ref<ge::Framebuffer> m_Framebuffer;
-
-	ge::Ref<ge::HDREnvironmentMap> m_HDREnvironmentMap;
 
 	ge::Model m_Model;								// Model to be rendered
 
