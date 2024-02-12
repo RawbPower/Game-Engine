@@ -108,6 +108,15 @@ namespace ge::math
 		return *this;
 	}
 
+	// Quaternion Rules
+	// i*i = j*j = k*k = -1
+	// i = j*k = -k*j
+	// j = k*i = -i*k 
+	// k = i*j = -j*i
+	// 
+	// Multiplication
+	// q = w + v = w + x*i + y*j + z*k
+	// q1*q2 = (w1*w2 - Dot(v1,v2), w1 * v2 + w2 * v1 + Cross(v1,v2)
 	inline Quat Quat::operator * (const Quat& rhs) const 
 	{
 		Quat temp;
