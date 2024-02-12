@@ -272,7 +272,8 @@ namespace ge::math
 	Mat4
 	===============================
 	*/
-	class Mat4 {
+	class Mat4 
+	{
 	public:
 		Mat4() {}
 		Mat4(const Mat4& rhs);
@@ -444,7 +445,7 @@ namespace ge::math
 
 	inline void Mat4::Orient(Vec3 pos, Vec3 fwd, Vec3 up) 
 	{
-		Vec3 right = fwd.Cross(up);
+		Vec3 right = Cross(fwd, up);
 
 		// For coordinate system where:
 		// +x-axis = right
@@ -461,11 +462,11 @@ namespace ge::math
 		Vec3 fwd = pos - lookAt;
 		fwd.Normalize();
 
-		Vec3 right = fwd.Cross(up);
+		Vec3 right = Cross(fwd, up);
 		right.Normalize();
 
 
-		up = right.Cross(fwd);
+		up = Cross(right, fwd);
 		up.Normalize();
 
 		// For OpenGL coordinate system where:
@@ -485,10 +486,10 @@ namespace ge::math
 		Vec3 fwd = pos - lookAt;
 		fwd.Normalize();
 
-		Vec3 right = up.Cross(fwd);
+		Vec3 right = Cross(up, fwd);
 		right.Normalize();
 
-		up = fwd.Cross(right);
+		up = Cross(fwd, right);
 		up.Normalize();
 
 		// For OpenGL coordinate system where:

@@ -4,10 +4,12 @@
 bin-int/
 
 # Files
+Game-Engine/Game-Engine.vcxproj
+Game-Engine/Game-Engine.vcxproj.filters
+Game-Engine/vendor/Glad/bin-int/
+Game-Engine/vendor/Glad/bin/
 .vs/
 **.sln
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
-Game-Engine/Game-Engine.vcxproj
-Game-Engine/Game-Engine.vcxproj.filters
