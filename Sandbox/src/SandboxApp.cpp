@@ -6,6 +6,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 #include "Platform/OpenGL/OpenGLShader.h"
 
@@ -13,10 +14,10 @@ class ExampleLayer : public ge::Layer {
 
 public:
 	ExampleLayer()
-		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Model(""), m_Scene(Scene::Scene3D)
+		: Layer("Example"), m_OrthographicCameraController(1280.0f / 720.0f, true), m_PerspectiveCameraController(45.0f, 1280.0f / 720.0f, 0.1f, 1000.0f), m_Model(""), m_SceneType(SceneType::Scene3D)
 	{
 		// Code for 3D Scene
-		if (m_Scene == Scene::Scene3D)
+		if (m_SceneType == SceneType::Scene3D)
 		{
 			// Enable z-buffer for 3D rendering only
 			ge::RenderCommand::EnableZBuffer();
@@ -128,11 +129,15 @@ public:
 			// colors
 			m_LightColors.push_back(glm::vec3(200.0f, 200.0f, 200.0f));
 
+			// Setup Scene
+			m_scene = new ge::Scene;
+			m_scene->Initialize();
+
 			//ge::RenderCommand::WireFrame();
 		}
 
 		// Code for 2D scene
-		else if (m_Scene == Scene::Scene2D)
+		else if (m_SceneType == SceneType::Scene2D)
 		{
 			/* Vertex Array (required for core OpenGL profile) */
 			m_VertexArray.reset(ge::VertexArray::Create());
@@ -267,11 +272,17 @@ public:
 		}
 	}
 
+	~ExampleLayer()
+	{
+		delete m_scene;
+		m_scene = NULL;
+	}
+
 	// Function called every frame
 	void OnUpdate(ge::DeltaTime dt) override
 	{
 		// Code for 3D scene
-		if (m_Scene == Scene::Scene3D)
+		if (m_SceneType == SceneType::Scene3D)
 		{
 			// Update Camera
 			m_PerspectiveCameraController.OnUpdate(dt);
@@ -296,11 +307,15 @@ public:
 			// we clamp the roughness to 0.025 - 1.0 as perfectly smooth surfaces (roughness of 0.0) tend to look
 			// a bit off on direct lighting
 			std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat("u_Roughness", glm::clamp(m_Roughness, 0.05f, 1.0f));
-
-			// render rows*columns number of spheres with varying metallic/roughness values scaled by rows/columns respectively
 			glm::mat4 transform = glm::mat4(1.0f);
 
-			ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
+			for (int i = 0; i < m_scene->m_bodies.size(); i++) 
+			{
+				ge::Body& body = m_scene->m_bodies[i];
+				transform = glm::mat4(1.0f);
+				transform = body.GetRenderTransform();
+				ge::Renderer::Submit(pbrShader, m_PbrVA, transform);
+			}
 
 			m_TotalTime += dt;
 			// render light source (simply re-render sphere at light positions)
@@ -332,7 +347,7 @@ public:
 		}
 
 		// Code for 2D scene
-		else if (m_Scene == Scene::Scene2D)
+		else if (m_SceneType == SceneType::Scene2D)
 		{
 			// Update
 			m_OrthographicCameraController.OnUpdate(dt);
@@ -385,9 +400,9 @@ public:
 
 	void OnEvent(ge::Event& e) override
 	{
-		if (m_Scene == Scene::Scene2D)
+		if (m_SceneType == SceneType::Scene2D)
 			m_OrthographicCameraController.OnEvent(e);
-		else if (m_Scene == Scene::Scene3D)
+		else if (m_SceneType == SceneType::Scene3D)
 			m_PerspectiveCameraController.OnEvent(e);
 	}
 
@@ -524,12 +539,14 @@ private:
 	float m_Spacing = 2.5;
 
 	// Enumerator for switching between 2D and 3D rendering
-	enum class Scene : uint32_t
+	enum class SceneType : uint32_t
 	{
 		Scene2D = 0, Scene3D = 1
 	};
 
-	Scene m_Scene;
+	SceneType m_SceneType;
+
+	ge::Scene* m_scene;
 
 };
 

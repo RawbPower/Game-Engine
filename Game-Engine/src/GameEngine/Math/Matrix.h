@@ -2,7 +2,7 @@
 
 #include "Vector.h"
 
-namespace ge::math
+namespace ge
 {
 	/*
 	===============================
@@ -445,7 +445,7 @@ namespace ge::math
 
 	inline void Mat4::Orient(Vec3 pos, Vec3 fwd, Vec3 up) 
 	{
-		Vec3 right = Cross(fwd, up);
+		Vec3 right = Vec3::Cross(fwd, up);
 
 		// For coordinate system where:
 		// +x-axis = right
@@ -462,11 +462,11 @@ namespace ge::math
 		Vec3 fwd = pos - lookAt;
 		fwd.Normalize();
 
-		Vec3 right = Cross(fwd, up);
+		Vec3 right = Vec3::Cross(fwd, up);
 		right.Normalize();
 
 
-		up = Cross(right, fwd);
+		up = Vec3::Cross(right, fwd);
 		up.Normalize();
 
 		// For OpenGL coordinate system where:
@@ -486,10 +486,10 @@ namespace ge::math
 		Vec3 fwd = pos - lookAt;
 		fwd.Normalize();
 
-		Vec3 right = Cross(up, fwd);
+		Vec3 right = Vec3::Cross(up, fwd);
 		right.Normalize();
 
-		up = Cross(fwd, right);
+		up = Vec3::Cross(fwd, right);
 		up.Normalize();
 
 		// For OpenGL coordinate system where:

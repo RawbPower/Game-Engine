@@ -15,6 +15,13 @@
 #include "GameEngine/Renderer/PerspectiveCameraController.h"
 #include "GameEngine/Renderer/Model.h"
 #include "GameEngine/Renderer/Framebuffer.h"
+#include "GameEngine/Core/Scene.h"
+
+#include "GameEngine/Math/Quat.h"
+#include "GameEngine/Math/Matrix.h"
+#include "GameEngine/Math/Vector.h"
+
+#include "GameEngine/Physics/Body.h"
 
 #include "GameEngine/ImGui/ImGuiLayer.h"
 

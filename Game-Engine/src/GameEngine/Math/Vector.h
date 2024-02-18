@@ -2,7 +2,9 @@
 
 #include "GameEngine/Core/Log.h"
 
-namespace ge::math
+#include <glm/glm.hpp>
+
+namespace ge
 {
 	/* 
 	===============================
@@ -251,6 +253,8 @@ namespace ge::math
 		float operator [] (const int idx) const;
 		float& operator [] (const int idx);
 
+		operator glm::vec3() const;
+
 		void Zero() { x = 0.0f; y = 0.0f; z = 0.0f; }
 
 		const Vec3& Normalize();
@@ -434,6 +438,15 @@ namespace ge::math
 		return (&x)[idx];
 	}
 
+	inline Vec3::operator glm::vec3() const
+	{
+		glm::vec3 v;
+		v.x = x;
+		v.y = y;
+		v.z = z;
+		return v;
+	}
+
 	inline const Vec3& Vec3::Normalize()
 	{
 		float mag = GetMagnitude();
@@ -495,7 +508,7 @@ namespace ge::math
 		u.Normalize();
 	}
 
-	Vec3 Vec3::Cross(const Vec3& rhs) const
+	inline Vec3 Vec3::Cross(const Vec3& rhs) const
 	{
 		// This cross product is A x B, where this is A and rhs is B
 		Vec3 temp;
@@ -505,18 +518,18 @@ namespace ge::math
 		return temp;
 	}
 
-	float Vec3::Dot(const Vec3& rhs) const 
+	inline float Vec3::Dot(const Vec3& rhs) const
 	{
 		float temp = (x * rhs.x) + (y * rhs.y) + (z * rhs.z);
 		return temp;
 	}
 
-	Vec3 Cross(const Vec3& a, const Vec3& b)
+	inline Vec3 Vec3::Cross(const Vec3& a, const Vec3& b)
 	{
 		return a.Cross(b);
 	}
 
-	float Dot(const Vec3& a, const Vec3& b)
+	inline float Vec3::Dot(const Vec3& a, const Vec3& b)
 	{
 		return a.Dot(b);
 	}

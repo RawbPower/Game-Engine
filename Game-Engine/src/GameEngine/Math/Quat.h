@@ -3,7 +3,7 @@
 #include "Vector.h"
 #include "Matrix.h"
 
-namespace ge::math
+namespace ge
 {
 	/*
 	===============================
@@ -35,6 +35,9 @@ namespace ge::math
 
 		Mat3	ToMat3() const;
 		Vec4	ToVec4() const { return Vec4(w, x, y, z); }
+
+		Vec3    GetNormal() const { return GetAngle() > 0.0f ? Vec3(x, y, z) / sinf(GetAngle() / 2.0f) : Vec3(1, 0, 0); }
+		float   GetAngle() const { return acos(w) * 2.0f; }
 
 	public:
 		float w;
