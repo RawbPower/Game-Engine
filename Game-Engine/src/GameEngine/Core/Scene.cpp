@@ -1,5 +1,6 @@
 #include "gepch.h"
 #include "Scene.h"
+#include "GameEngine/Physics/Intersections.h"
 
 namespace ge 
 {
@@ -33,6 +34,28 @@ namespace ge
 			float mass = 1.0f / body->m_invMass;
 			Vec3 impulseGravity = Vec3(0, 0, -9.8) * mass * dt;
 			body->ApplyImpulseLinear(impulseGravity);
+		}
+
+		// Check for collisions with bodies
+		for (int i = 0; i < m_bodies.size(); i++)
+		{
+			for (int j = i+1; j < m_bodies.size(); j++)
+			{
+				Body* bodyA = &m_bodies[i];
+				Body* bodyB = &m_bodies[j];
+
+				// Skip body pairs with infinite mass
+				if (bodyA->m_invMass == 0.0f && bodyB->m_invMass == 0.0f)
+				{
+					continue;
+				}
+
+				if (Intersect(bodyA, bodyB))
+				{
+					bodyA->m_linearVelocity.Zero();
+					bodyB->m_linearVelocity.Zero();
+				}
+			}
 		}
 
 		for (int i = 0; i < m_bodies.size(); i++)
