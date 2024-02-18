@@ -32,12 +32,27 @@ namespace ge
 		return worldSpace;
 	}
 
+	void Body::ApplyImpulseLinear(const Vec3& impulse)
+	{
+		if (m_invMass == 0.0f)
+		{
+			return;
+		}
+
+		// p = mv
+		// dp = m dv
+		// => dv = dp / m
+		m_linearVelocity += impulse * m_invMass;
+	}
+
 	glm::mat4 Body::GetRenderTransform()
 	{
 		glm::mat4 transform = glm::mat4(1.0f);
-		transform = glm::translate(transform, (glm::vec3)m_position);
+		glm::vec3 pos = glm::vec3(m_position.x, m_position.z, -m_position.y);
+		transform = glm::translate(transform, pos);
 		float angle = m_orientation.GetAngle();
 		Vec3 normal = m_orientation.GetNormal();
+		normal = Vec3(normal.x, normal.z, -normal.y);
 		transform = glm::rotate(transform, angle, (glm::vec3)normal);
 		transform = glm::scale(transform, glm::vec3(m_shape->GetScale()));
 		return transform;

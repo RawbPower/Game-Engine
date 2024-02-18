@@ -13,6 +13,8 @@ namespace ge
 	public:
 		Vec3 m_position;
 		Quat m_orientation;
+		Vec3 m_linearVelocity;
+		float m_invMass;
 		Shape* m_shape;
 
 		// Body Space - Origin an COM
@@ -23,6 +25,8 @@ namespace ge
 
 		Vec3 WorldSpaceToBodySpace(const Vec3& worldPt) const;
 		Vec3 BodySpaceToWorldSpace(const Vec3& bodyPt) const;
+
+		void ApplyImpulseLinear(const Vec3& impulse);
 
 		glm::mat4 GetRenderTransform();
 	};

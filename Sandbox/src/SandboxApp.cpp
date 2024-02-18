@@ -19,6 +19,11 @@ public:
 		// Code for 3D Scene
 		if (m_SceneType == SceneType::Scene3D)
 		{
+			m_PerspectiveCameraController.SetCameraPosition(glm::vec3(0,10,25));
+			glm::vec3 forwardDirection = glm::vec3(0, -0.2f, -0.95f);
+			forwardDirection = glm::normalize(forwardDirection);
+			m_PerspectiveCameraController.SetCameraFront(forwardDirection);
+
 			// Enable z-buffer for 3D rendering only
 			ge::RenderCommand::EnableZBuffer();
 
@@ -284,6 +289,8 @@ public:
 		// Code for 3D scene
 		if (m_SceneType == SceneType::Scene3D)
 		{
+			m_scene->Update(dt);
+
 			// Update Camera
 			m_PerspectiveCameraController.OnUpdate(dt);
 
@@ -311,6 +318,13 @@ public:
 
 			for (int i = 0; i < m_scene->m_bodies.size(); i++) 
 			{
+				if (i == m_scene->m_bodies.size() - 1)
+				{
+					// Use ground colours
+					std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_Albedo", glm::vec3(0.075, 0.192, 0.426));
+					std::dynamic_pointer_cast<ge::OpenGLShader>(pbrShader)->UploadUniformFloat3("u_AlbedoB", glm::vec3(0, 0.082, 0.388));
+				}
+
 				ge::Body& body = m_scene->m_bodies[i];
 				transform = glm::mat4(1.0f);
 				transform = body.GetRenderTransform();
